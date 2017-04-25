@@ -1,8 +1,8 @@
-package wifeye.app.android.mahorad.com.wifeye.engine;
+package wifeye.app.android.mahorad.com.wifeye.states;
 
-public class StateKnownArea extends State {
+public class StateUnknownArea extends State {
 
-    public StateKnownArea(Engine machine) {
+    public StateUnknownArea(Engine machine) {
         super(machine);
     }
 
@@ -17,16 +17,17 @@ public class StateKnownArea extends State {
 
     @Override
     public void onReceivedKnownTowerId() {
+        engine.toKnownAreaState();
         engine.standbyWifi();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toUnknownAreaState();
+        engine.disableWifi();
     }
 
     @Override
     public String toString() {
-        return "KNOWN AREA: received a recognized tower identifier";
+        return "UNKNOWN AREA: received an unrecognized tower identifier";
     }
 }

@@ -1,7 +1,10 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-import wifeye.app.android.mahorad.com.wifeye.engine.Engine;
+import wifeye.app.android.mahorad.com.wifeye.states.Engine;
 
+/**
+ * informs the engine about occurring events
+ */
 public class BaseConsumer implements INetConsumer, ITowerConsumer {
 
     private final Engine engine;
