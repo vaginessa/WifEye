@@ -67,6 +67,7 @@ public class HourGlass {
         @Override
         public void run() throws Exception {
             Log.d(TAG, String.format("COMPLETED %s", getName()));
+            stop();
             onComplete.run();
         }
     };
