@@ -1,5 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.utilities;
 
+import android.util.Log;
+
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.annotations.NonNull;
@@ -17,6 +19,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class HourGlass {
 
+    private static final String TAG = HourGlass.class.getSimpleName();
+
     private static final int DURATION_IN_SECONDS = 3;
     private static final int MAXIMUM_FLIP_COUNTS = 1;
     private static final Runnable NO_ACTION = new Runnable() {
@@ -30,6 +34,7 @@ public class HourGlass {
 
     private Disposable timer;
     private Scheduler scheduler;
+    private String name;
 
     private int flips = MAXIMUM_FLIP_COUNTS;
     private int duration = DURATION_IN_SECONDS;
@@ -118,6 +123,7 @@ public class HourGlass {
                 .doOnError(exceptionAction)
                 .doOnComplete(completedAction)
                 .subscribe();
+        Log.d(TAG, String.format("%sstarted", name == null ? "" : name.concat(" ")));
     }
 
     public void stop() {
@@ -125,6 +131,7 @@ public class HourGlass {
         isActive = false;
         timer.dispose();
         scheduler.shutdown();
+        Log.d(TAG, String.format("%sstopped", name == null ? "" : name.concat(" ")));
     }
 
     public void setFlips(int flipsCount) {
@@ -137,5 +144,9 @@ public class HourGlass {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

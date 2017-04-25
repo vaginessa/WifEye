@@ -18,6 +18,8 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.INetConsumer;
  */
 public class BssidNamePublisher extends BroadcastReceiver {
 
+    private static String TAG = BssidNamePublisher.class.getSimpleName();
+
     private static String ssid;
     private final WifiManager wifiManager;
     private final Context context;

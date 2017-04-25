@@ -4,6 +4,8 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.HourGlass;
 
 public class Wifi {
 
+    private static final String TAG = Wifi.class.getSimpleName();
+
     private static final int PEEK_REPEAT_COUNT = 6;
     private static final int PEEK_INTERVAL_SECONDS = 5;
     private static final int WIFI_DISABLE_TIMEOUT = 10;
