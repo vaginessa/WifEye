@@ -11,6 +11,10 @@ import io.reactivex.schedulers.Schedulers;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+/**
+ * An RxJava based countdown timer which performs
+ * the given runnable after countdown finishes.
+ */
 public class HourGlass {
 
     private static final int DURATION_IN_SECONDS = 3;
