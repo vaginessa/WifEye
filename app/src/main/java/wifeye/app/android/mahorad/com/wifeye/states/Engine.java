@@ -84,21 +84,25 @@ public class Engine implements IStateMachine, IActuator {
 
     @Override
     public void disableWifi() {
+        Log.i(TAG, "---- DISABLING WIFI...");
         wifi.disable();
     }
 
     @Override
     public void standbyWifi() {
+        Log.i(TAG, "---- BEGIN WIFI PEEK...");
         wifi.standby();
     }
 
     @Override
     public void halt() {
+        Log.i(TAG, "---- CANCELLING...");
         wifi.halt();
     }
 
     @Override
     public void persist() {
+        Log.i(TAG, "---- PERSISTING...");
         persistence.persist(ssid, ctid);
     }
 }
