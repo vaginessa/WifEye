@@ -3,7 +3,7 @@ package wifeye.app.android.mahorad.com.wifeye.consumers;
 import wifeye.app.android.mahorad.com.wifeye.states.Engine;
 
 /**
- * informs the engine about occurring events
+ * An even consumer which informs the engine about events.
  */
 public class BaseConsumer implements INetConsumer, ITowerConsumer {
 

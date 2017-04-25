@@ -5,6 +5,11 @@ import android.util.Log;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.wifi.WifiController;
 
+/**
+ * A state machine and an actuator.
+ * It keeps the system state as well as allowing
+ * different states to make the right action.
+ */
 public class Engine implements IStateMachine, IActuator {
 
     private static final String TAG = Engine.class.getSimpleName();
