@@ -1,10 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.publishers;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -15,6 +11,10 @@ import java.util.List;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ITowerConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 
+/**
+ * listens to receiving cell tower identifiers and
+ * notifies the consumers.
+ */
 public class CellTowerPublisher extends PhoneStateListener {
 
     private static String ctid;

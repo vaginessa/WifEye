@@ -12,6 +12,10 @@ import java.util.List;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.INetConsumer;
 
+/**
+ * listens to connected ssid names and notifies consumers
+ * if the Internet is connected or disconnected.
+ */
 public class BssidNamePublisher extends BroadcastReceiver {
 
     private static String ssid;
