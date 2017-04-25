@@ -16,6 +16,14 @@ public class Wifi {
         @Override
         public void run() {
             wifiHandler.disable();
+            stopPeekingTimer();
+        }
+    };
+
+    private final Runnable disablingCompleted = new Runnable() {
+        @Override
+        public void run() {
+            stopDisablingTimer();
         }
     };
 
@@ -55,7 +63,7 @@ public class Wifi {
         if (disablingTimer != null && disablingTimer.isActive())
             return;
         halt();
-        disablingTimer = new HourGlass(disableWifi);
+        disablingTimer = new HourGlass(disableWifi, disablingCompleted);
         disablingTimer.setFlips(1);
         disablingTimer.setDuration(WIFI_DISABLE_TIMEOUT);
         disablingTimer.setName("Wifi Disabling Timer");
