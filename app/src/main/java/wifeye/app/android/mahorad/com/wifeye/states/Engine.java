@@ -3,7 +3,7 @@ package wifeye.app.android.mahorad.com.wifeye.states;
 import android.util.Log;
 
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.wifi.WifiController;
+import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
 
 /**
  * A state machine and an actuator.
@@ -25,11 +25,11 @@ public class Engine implements IStateMachine, IActuator {
     private String ssid;
     private String ctid;
 
-    private final WifiController wifiController;
+    private final Wifi wifi;
     private final IPersistence persistence;
 
-    public Engine(WifiController wifiController, IPersistence persistence) {
-        this.wifiController = wifiController;
+    public Engine(Wifi wifi, IPersistence persistence) {
+        this.wifi = wifi;
         this.persistence = persistence;
     }
 
@@ -79,22 +79,22 @@ public class Engine implements IStateMachine, IActuator {
 
     private void setState(IState state) {
         currentState = state;
-        Log.d(TAG, currentState.toString());
+        Log.d(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
     }
 
     @Override
     public void disableWifi() {
-        wifiController.disable();
+        wifi.disable();
     }
 
     @Override
     public void standbyWifi() {
-        wifiController.standby();
+        wifi.standby();
     }
 
     @Override
     public void halt() {
-        wifiController.halt();
+        wifi.halt();
     }
 
     @Override
