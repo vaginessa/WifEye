@@ -7,7 +7,9 @@ public class StateRouterArea extends State {
     }
 
     @Override
-    public void onInternetConnected() {/*do nothing*/}
+    public void onInternetConnected() {
+        engine.halt();
+    }
 
     @Override
     public void onInternetDisconnects() {

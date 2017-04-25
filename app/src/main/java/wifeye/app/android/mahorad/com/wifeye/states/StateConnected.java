@@ -8,8 +8,8 @@ public class StateConnected extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.persist(); // persist another SSIDs perhaps
         engine.halt(); // stop any ongoing timeouts
+        engine.persist(); // persist another SSIDs perhaps
     }
 
     @Override

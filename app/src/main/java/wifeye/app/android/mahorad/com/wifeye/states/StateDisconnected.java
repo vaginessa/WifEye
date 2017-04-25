@@ -9,6 +9,7 @@ public class StateDisconnected extends State {
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
+        engine.halt();
         engine.persist();
     }
 

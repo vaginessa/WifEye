@@ -34,7 +34,7 @@ public class HourGlass {
 
     private Disposable timer;
     private Scheduler scheduler;
-    private String name;
+    private String name = "";
 
     private int flips = MAXIMUM_FLIP_COUNTS;
     private int duration = DURATION_IN_SECONDS;
@@ -50,6 +50,7 @@ public class HourGlass {
     private final Consumer<Long> nextFlipAction = new Consumer<Long>() {
         @Override
         public void accept(@NonNull Long aLong) throws Exception {
+            Log.d(TAG, String.format("finished %d seconds countdown. Lap: %d", duration, aLong + 1));
             onNextFlip.run();
         }
     };
@@ -57,6 +58,7 @@ public class HourGlass {
     private final Consumer<Throwable> exceptionAction = new Consumer<Throwable>() {
         @Override
         public void accept(@NonNull Throwable throwable) throws Exception {
+            Log.e(TAG, "exception while counting down", throwable);
             onException.run();
         }
     };
@@ -64,6 +66,7 @@ public class HourGlass {
     private final Action completedAction = new Action() {
         @Override
         public void run() throws Exception {
+            Log.d(TAG, "all countdown laps are done.");
             onComplete.run();
         }
     };
@@ -123,7 +126,7 @@ public class HourGlass {
                 .doOnError(exceptionAction)
                 .doOnComplete(completedAction)
                 .subscribe();
-        Log.d(TAG, String.format("%sstarted", name == null ? "" : name.concat(" ")));
+        Log.d(TAG, String.format("%sstarted", getName()));
     }
 
     public void stop() {
@@ -131,7 +134,7 @@ public class HourGlass {
         isActive = false;
         timer.dispose();
         scheduler.shutdown();
-        Log.d(TAG, String.format("%sstopped", name == null ? "" : name.concat(" ")));
+        Log.d(TAG, String.format("%sstopped", getName()));
     }
 
     public void setFlips(int flipsCount) {
@@ -146,7 +149,14 @@ public class HourGlass {
         return isActive;
     }
 
+    @android.support.annotation.NonNull
+    private String getName() {
+        return name + " ";
+    }
+
     public void setName(String name) {
+        if (name == null)
+            return;
         this.name = name;
     }
 }

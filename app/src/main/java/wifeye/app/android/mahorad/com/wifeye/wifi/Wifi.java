@@ -1,5 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
+import android.util.Log;
+
 import wifeye.app.android.mahorad.com.wifeye.utilities.HourGlass;
 
 public class Wifi {
@@ -47,6 +49,7 @@ public class Wifi {
 
     public void disable() {
         if (!isEnabled()) return;
+        Log.d(TAG, "wifi is enabled");
         if (peekingTimer != null && peekingTimer.isActive())
             return;
         if (disablingTimer != null && disablingTimer.isActive())
@@ -55,6 +58,7 @@ public class Wifi {
         disablingTimer = new HourGlass(disableWifi);
         disablingTimer.setFlips(1);
         disablingTimer.setDuration(WIFI_DISABLE_TIMEOUT);
+        disablingTimer.setName("Wifi Disabling Timer");
         disablingTimer.start();
     }
 
@@ -71,6 +75,7 @@ public class Wifi {
         peekingTimer = new HourGlass(toggleWifi, disableWifi);
         peekingTimer.setFlips(PEEK_REPEAT_COUNT);
         peekingTimer.setDuration(PEEK_INTERVAL_SECONDS);
+        disablingTimer.setName("Wifi Peeking Timer");
         peekingTimer.start();
     }
 

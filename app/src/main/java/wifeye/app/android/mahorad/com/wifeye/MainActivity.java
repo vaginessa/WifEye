@@ -61,6 +61,8 @@ public class MainActivity extends ActivityManagePermission {
 
     private void setup() {
         Log.d(TAG, "setting up messaging");
+        if (bssidNamePublisher != null)
+            return;
         createPublishers();
         subscribeConsumer();
         startPublishers();
