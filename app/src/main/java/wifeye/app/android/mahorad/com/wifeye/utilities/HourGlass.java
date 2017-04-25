@@ -22,7 +22,7 @@ public class HourGlass {
     private static final String TAG = HourGlass.class.getSimpleName();
 
     private static final int DURATION_IN_SECONDS = 3;
-    private static final int MAXIMUM_FLIP_COUNTS = 1;
+    private static final int MINIMUM_FLIP_COUNTS = 1;
     private static final Runnable NO_ACTION = new Runnable() {
         @Override
         public void run() {}
@@ -36,14 +36,14 @@ public class HourGlass {
     private Scheduler scheduler;
     private String name = "";
 
-    private int flips = MAXIMUM_FLIP_COUNTS;
+    private int flips = MINIMUM_FLIP_COUNTS;
     private int duration = DURATION_IN_SECONDS;
     private boolean isActive;
 
     private final Predicate<Long> lessThanFlipsCount = new Predicate<Long>() {
         @Override
         public boolean test(@NonNull Long aLong) throws Exception {
-            return isActive && aLong < flips;
+            return isActive && aLong < flips - 1;
         }
     };
 
@@ -138,6 +138,8 @@ public class HourGlass {
     }
 
     public void setFlips(int flipsCount) {
+        if (flipsCount < 1)
+            return;
         flips = flipsCount;
     }
 
