@@ -49,7 +49,6 @@ public class Wifi {
 
     public void disable() {
         if (!isEnabled()) return;
-        Log.d(TAG, "wifi is enabled");
         if (peekingTimer != null && peekingTimer.isActive())
             return;
         if (disablingTimer != null && disablingTimer.isActive())

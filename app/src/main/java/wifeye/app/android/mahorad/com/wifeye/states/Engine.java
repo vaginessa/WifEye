@@ -79,7 +79,7 @@ public class Engine implements IStateMachine, IActuator {
 
     private void setState(IState state) {
         currentState = state;
-        Log.d(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
+        Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
     }
 
     @Override

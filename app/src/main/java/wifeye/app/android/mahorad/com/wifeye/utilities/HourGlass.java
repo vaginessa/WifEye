@@ -34,7 +34,7 @@ public class HourGlass {
 
     private Disposable timer;
     private Scheduler scheduler;
-    private String name = "";
+    private String name = this.toString().split("@")[1];
 
     private int flips = MINIMUM_FLIP_COUNTS;
     private int duration = DURATION_IN_SECONDS;
@@ -50,7 +50,7 @@ public class HourGlass {
     private final Consumer<Long> nextFlipAction = new Consumer<Long>() {
         @Override
         public void accept(@NonNull Long aLong) throws Exception {
-            Log.d(TAG, String.format("ITERATION %d DURATION %d", aLong + 1, duration));
+            Log.d(TAG, String.format("ITERATION %d", aLong + 1));
             onNextFlip.run();
         }
     };
@@ -127,7 +127,7 @@ public class HourGlass {
                 .doOnError(exceptionAction)
                 .doOnComplete(completedAction)
                 .subscribe();
-        Log.d(TAG, String.format("STARTED %s", getName()));
+        Log.d(TAG, String.format("STARTED %s, DURATION %ds", getName(), duration));
     }
 
     public void stop() {
