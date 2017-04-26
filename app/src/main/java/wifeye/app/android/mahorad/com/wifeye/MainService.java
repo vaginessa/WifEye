@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.consumers.BaseConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.EventConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.BasePersistence;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
@@ -18,20 +18,21 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 
 public class MainService extends Service {
 
+    private static final String TAG = MainServiceBinder.class.getSimpleName();
+
     class MainServiceBinder extends Binder {
         public MainServiceBinder getService() {
             return MainServiceBinder.this;
         }
     }
 
-    private static final String TAG = MainServiceBinder.class.getSimpleName();
-
     private final IBinder binder = new MainServiceBinder();
     private ResultReceiver resultReceiver;
 
-    @Override
-    public void onCreate() {
-    }
+    private final IPersistence persistence = new BasePersistence();
+    private BssidNamePublisher bssidNamePublisher;
+    private CellTowerPublisher cellTowerPublisher;
+    private EventConsumer consumer;
 
     @Nullable
     @Override
@@ -42,35 +43,17 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        start();
         return START_STICKY;
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return false;
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
-
-    /** -------------------------- */
-    private final IPersistence persistence = new BasePersistence();
-    private BssidNamePublisher bssidNamePublisher;
-    private CellTowerPublisher cellTowerPublisher;
-
-    private void setup() {
-        Log.d(TAG, "setting up messaging");
+    private void start() {
         if (bssidNamePublisher != null)
             return;
         createPublishers();
         subscribeConsumer();
         startPublishers();
+        Log.v(TAG, "started main service");
     }
 
     private void createPublishers() {
@@ -81,7 +64,7 @@ public class MainService extends Service {
 
     private void subscribeConsumer() {
         final Context context = getApplicationContext();
-        BaseConsumer consumer = BaseConsumer.build(context, persistence);
+        consumer = EventConsumer.build(context, persistence);
         bssidNamePublisher.subscribe(consumer);
         cellTowerPublisher.subscribe(consumer);
     }
@@ -91,4 +74,27 @@ public class MainService extends Service {
         cellTowerPublisher.start();
     }
 
+    @Override
+    public void onDestroy() {
+        stopPublishers();
+        unsubscribeConsumer();
+        deletePublishers();
+        Log.v(TAG, "stopped main service");
+    }
+
+    private void stopPublishers() {
+        bssidNamePublisher.stop();
+        cellTowerPublisher.stop();
+    }
+
+    private void unsubscribeConsumer() {
+        bssidNamePublisher.subscribe(consumer);
+        cellTowerPublisher.subscribe(consumer);
+        consumer = null;
+    }
+
+    private void deletePublishers() {
+        bssidNamePublisher = null;
+        cellTowerPublisher = null;
+    }
 }

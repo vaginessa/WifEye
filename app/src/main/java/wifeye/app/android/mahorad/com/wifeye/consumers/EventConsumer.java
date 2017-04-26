@@ -12,11 +12,11 @@ import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
 /**
  * An even consumer which informs the engine about events.
  */
-public class BaseConsumer implements INetConsumer, ITowerConsumer {
+public class EventConsumer implements INetConsumer, ITowerConsumer {
 
     private final Engine engine;
 
-    public BaseConsumer(Engine engine) {
+    public EventConsumer(Engine engine) {
         if (engine == null)
             throw new IllegalArgumentException();
         this.engine = engine;
@@ -50,7 +50,7 @@ public class BaseConsumer implements INetConsumer, ITowerConsumer {
         }
     }
 
-    public static BaseConsumer build(Context context, IPersistence persistence) {
+    public static EventConsumer build(Context context, IPersistence persistence) {
         if (context == null)
             throw new IllegalArgumentException();
         if (persistence == null)
@@ -60,7 +60,7 @@ public class BaseConsumer implements INetConsumer, ITowerConsumer {
         IWifiHandler androidWifiHandler = new AndroidWifiHandler(wifiManager);
         Wifi wifi = new Wifi(androidWifiHandler);
         Engine engine = new Engine(wifi, persistence);
-        return new BaseConsumer(engine);
+        return new EventConsumer(engine);
     }
 
 }

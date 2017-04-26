@@ -1,18 +1,11 @@
 package wifeye.app.android.mahorad.com.wifeye;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.EditText;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
-import wifeye.app.android.mahorad.com.wifeye.consumers.BaseConsumer;
-import wifeye.app.android.mahorad.com.wifeye.persist.BasePersistence;
-import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 
 public class MainActivity extends ActivityManagePermission {
 
