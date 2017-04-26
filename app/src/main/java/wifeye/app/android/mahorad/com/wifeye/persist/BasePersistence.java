@@ -20,7 +20,7 @@ public class BasePersistence implements IPersistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
-            Log.d(TAG, String.format("PERSISTED CTID %d -> SSID %s", ctid, ssid));
+            Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
         }

@@ -20,12 +20,6 @@ public class MainActivity extends ActivityManagePermission {
 
     private EditText contents;
 
-    private final IPersistence persistence = new BasePersistence();
-
-    private BssidNamePublisher bssidNamePublisher;
-
-    private CellTowerPublisher cellTowerPublisher;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +35,29 @@ public class MainActivity extends ActivityManagePermission {
 
     private void handlePermissions() {
         handleCoarseLocationPermission();
+        handleDiskReadWritePermissions();
     }
 
     private void handleCoarseLocationPermission() {
+        String permission = PermissionUtils.Manifest_ACCESS_COARSE_LOCATION;
+        askCompactPermission(permission, new PermissionResult() {
+            @Override
+            public void permissionGranted() { start(); }
+            @Override
+            public void permissionDenied() { finish(); }
+            @Override
+            public void permissionForeverDenied() {}
+        });
+    }
+
+    private void handleDiskReadWritePermissions() {
         String[] permissionRequests = {
-                PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
                 PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE,
                 PermissionUtils.Manifest_READ_EXTERNAL_STORAGE
         };
         askCompactPermissions(permissionRequests, new PermissionResult() {
             @Override
-            public void permissionGranted() { setup();}
+            public void permissionGranted() { start(); }
             @Override
             public void permissionDenied() { finish(); }
             @Override
@@ -59,31 +65,8 @@ public class MainActivity extends ActivityManagePermission {
         });
     }
 
-    private void setup() {
-        Log.d(TAG, "setting up messaging");
-        if (bssidNamePublisher != null)
-            return;
-        createPublishers();
-        subscribeConsumer();
-        startPublishers();
-    }
-
-    private void createPublishers() {
-        final Context context = getApplicationContext();
-        bssidNamePublisher = new BssidNamePublisher(context);
-        cellTowerPublisher = new CellTowerPublisher(context, persistence);
-    }
-
-    private void subscribeConsumer() {
-        final Context context = getApplicationContext();
-        BaseConsumer consumer = BaseConsumer.build(context, persistence);
-        bssidNamePublisher.subscribe(consumer);
-        cellTowerPublisher.subscribe(consumer);
-    }
-
-    private void startPublishers() {
-        bssidNamePublisher.start();
-        cellTowerPublisher.start();
+    private void start() {
+        // TODO start main service
     }
 
     @Override

@@ -36,22 +36,26 @@ public class Engine implements IStateMachine, IActuator {
     /* used by client */
     @Override
     public void internetConnected(String ssid) {
+        Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
         this.ssid = ssid;
         currentState.onInternetConnected();
     }
 
     @Override
     public void internetDisconnected() {
+        Log.i(TAG, String.format("--| EVENT: disconnected |"));
         currentState.onInternetDisconnects();
     }
 
     @Override
     public void receivedKnownTowerId() {
+        Log.i(TAG, String.format("--| EVENT: unknown ctid |"));
         currentState.onReceivedKnownTowerId();
     }
 
     @Override
     public void receivedUnknownTowerId(String ctid) {
+        Log.i(TAG, String.format("--| EVENT: known ctid %s |", ctid));
         this.ctid = ctid;
         currentState.onReceivedUnknownTowerId();
     }
@@ -84,25 +88,25 @@ public class Engine implements IStateMachine, IActuator {
 
     @Override
     public void disableWifi() {
-        Log.i(TAG, "---- DISABLING WIFI...");
+        Log.i(TAG, "----> DISABLING WIFI...");
         wifi.disable();
     }
 
     @Override
     public void standbyWifi() {
-        Log.i(TAG, "---- BEGIN WIFI PEEK...");
+        Log.i(TAG, "----> BEGIN WIFI PEEK...");
         wifi.standby();
     }
 
     @Override
     public void halt() {
-        Log.i(TAG, "---- CANCELLING...");
+        Log.i(TAG, "----> CANCELLING...");
         wifi.halt();
     }
 
     @Override
     public void persist() {
-        Log.i(TAG, "---- PERSISTING...");
+        Log.i(TAG, "----> PERSISTING...");
         persistence.persist(ssid, ctid);
     }
 }
