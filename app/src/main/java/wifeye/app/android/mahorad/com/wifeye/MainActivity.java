@@ -1,5 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -35,11 +36,11 @@ public class MainActivity extends ActivityManagePermission {
         String permission = PermissionUtils.Manifest_ACCESS_COARSE_LOCATION;
         askCompactPermission(permission, new PermissionResult() {
             @Override
-            public void permissionGranted() { start(); }
+            public void permissionGranted() { }
             @Override
             public void permissionDenied() { finish(); }
             @Override
-            public void permissionForeverDenied() {}
+            public void permissionForeverDenied() { }
         });
     }
 
@@ -58,8 +59,11 @@ public class MainActivity extends ActivityManagePermission {
         });
     }
 
+    /**
+     * starting main service
+     */
     private void start() {
-        // TODO start main service
+        startService(new Intent(this, MainService.class));
     }
 
     @Override

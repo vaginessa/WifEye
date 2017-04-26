@@ -33,6 +33,7 @@ public class MainService extends Service {
     private BssidNamePublisher bssidNamePublisher;
     private CellTowerPublisher cellTowerPublisher;
     private EventConsumer consumer;
+    private boolean started;
 
     @Nullable
     @Override
@@ -48,11 +49,11 @@ public class MainService extends Service {
     }
 
     private void start() {
-        if (bssidNamePublisher != null)
-            return;
+        if (started) return;
         createPublishers();
         subscribeConsumer();
         startPublishers();
+        started = true;
         Log.v(TAG, "started main service");
     }
 
@@ -76,9 +77,15 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
+        stop();
+    }
+
+    private void stop() {
+        if (!started) return;
         stopPublishers();
         unsubscribeConsumer();
         deletePublishers();
+        started = false;
         Log.v(TAG, "stopped main service");
     }
 
