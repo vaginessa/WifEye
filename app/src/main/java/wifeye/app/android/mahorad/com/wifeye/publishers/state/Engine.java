@@ -1,8 +1,13 @@
-package wifeye.app.android.mahorad.com.wifeye.states;
+package wifeye.app.android.mahorad.com.wifeye.publishers.state;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import wifeye.app.android.mahorad.com.wifeye.consumers.IStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
+import wifeye.app.android.mahorad.com.wifeye.publishers.ISystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
 
 /**
@@ -10,7 +15,7 @@ import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
  * It keeps the system state as well as allowing
  * different states to make the right action.
  */
-public class Engine implements IStateMachine, IActuator {
+public class Engine implements IStateMachine, IActuator, ISystemStatePublisher {
 
     private static final String TAG = Engine.class.getSimpleName();
 
@@ -27,8 +32,17 @@ public class Engine implements IStateMachine, IActuator {
 
     private final Wifi wifi;
     private final IPersistence persistence;
+    private final List<IStateConsumer> consumers;
 
+    /**
+     * Creates a state machine engine with wifi controller
+     * and persistence abilities.
+     *
+     * @param wifi
+     * @param persistence
+     */
     public Engine(Wifi wifi, IPersistence persistence) {
+        consumers = new ArrayList<>();
         this.wifi = wifi;
         this.persistence = persistence;
     }
@@ -82,8 +96,25 @@ public class Engine implements IStateMachine, IActuator {
     }
 
     private void setState(IState state) {
-        currentState = state;
-        Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
+        synchronized (this) {
+            currentState = state;
+            Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
+            publishStateChanged();
+        }
+    }
+
+    @Override
+    public void publishStateChanged() {
+        for (final IStateConsumer consumer : consumers) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    consumer.onStateChanged(currentState);
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @Override
@@ -108,5 +139,9 @@ public class Engine implements IStateMachine, IActuator {
     public void persist() {
         Log.i(TAG, "----> PERSISTING...");
         persistence.persist(ssid, ctid);
+    }
+
+    public boolean subscribe(IStateConsumer consumer) {
+        return consumers.add(consumer);
     }
 }

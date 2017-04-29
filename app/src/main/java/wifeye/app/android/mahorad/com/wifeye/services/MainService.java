@@ -1,8 +1,9 @@
-package wifeye.app.android.mahorad.com.wifeye;
+package wifeye.app.android.mahorad.com.wifeye.services;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.ResultReceiver;
@@ -11,12 +12,18 @@ import android.util.Log;
 
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.consumers.EventConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.BasePersistence;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.state.Engine;
+import wifeye.app.android.mahorad.com.wifeye.publishers.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.wifi.AndroidWifiHandler;
+import wifeye.app.android.mahorad.com.wifeye.wifi.IWifiHandler;
+import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
 
-public class MainService extends Service {
+public class MainService extends Service implements IStateConsumer {
 
     private static final String TAG = MainServiceBinder.class.getSimpleName();
 
@@ -32,7 +39,7 @@ public class MainService extends Service {
     private final IPersistence persistence = new BasePersistence();
     private BssidNamePublisher bssidNamePublisher;
     private CellTowerPublisher cellTowerPublisher;
-    private EventConsumer consumer;
+    private EventConsumer eventConsumer;
     private boolean started;
 
     @Nullable
@@ -65,9 +72,9 @@ public class MainService extends Service {
 
     private void subscribeConsumer() {
         final Context context = getApplicationContext();
-        consumer = EventConsumer.build(context, persistence);
-        bssidNamePublisher.subscribe(consumer);
-        cellTowerPublisher.subscribe(consumer);
+        eventConsumer = build(context, persistence);
+        bssidNamePublisher.subscribe(eventConsumer);
+        cellTowerPublisher.subscribe(eventConsumer);
     }
 
     private void startPublishers() {
@@ -95,13 +102,33 @@ public class MainService extends Service {
     }
 
     private void unsubscribeConsumer() {
-        bssidNamePublisher.subscribe(consumer);
-        cellTowerPublisher.subscribe(consumer);
-        consumer = null;
+        bssidNamePublisher.subscribe(eventConsumer);
+        cellTowerPublisher.subscribe(eventConsumer);
+        eventConsumer = null;
     }
 
     private void deletePublishers() {
         bssidNamePublisher = null;
         cellTowerPublisher = null;
     }
+
+    private EventConsumer build(Context context, IPersistence persistence) {
+        if (context == null)
+            throw new IllegalArgumentException();
+        if (persistence == null)
+            throw new IllegalArgumentException();
+        Object systemService = context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) systemService;
+        IWifiHandler androidWifiHandler = new AndroidWifiHandler(wifiManager);
+        Wifi wifi = new Wifi(androidWifiHandler);
+        Engine engine = new Engine(wifi, persistence);
+        engine.subscribe(this);
+        return new EventConsumer(engine);
+    }
+
+    @Override
+    public void onStateChanged(IState state) {
+        // broadcast state changed
+    }
+
 }

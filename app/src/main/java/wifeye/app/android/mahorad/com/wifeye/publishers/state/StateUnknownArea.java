@@ -1,8 +1,8 @@
-package wifeye.app.android.mahorad.com.wifeye.states;
+package wifeye.app.android.mahorad.com.wifeye.publishers.state;
 
-public class StateDisconnected extends State {
+public class StateUnknownArea extends State {
 
-    public StateDisconnected(Engine machine) {
+    public StateUnknownArea(Engine machine) {
         super(machine);
     }
 
@@ -24,12 +24,11 @@ public class StateDisconnected extends State {
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toUnknownAreaState();
         engine.disableWifi();
     }
 
     @Override
     public String toString() {
-        return "INTERNET DISCONNECTED: device is no longer connected to the Internet";
+        return "UNKNOWN AREA: received an unrecognized tower identifier";
     }
 }

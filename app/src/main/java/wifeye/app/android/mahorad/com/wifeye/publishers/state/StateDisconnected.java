@@ -1,20 +1,20 @@
-package wifeye.app.android.mahorad.com.wifeye.states;
+package wifeye.app.android.mahorad.com.wifeye.publishers.state;
 
-public class StateInitial extends State {
+public class StateDisconnected extends State {
 
-    public StateInitial(Engine machine) {
+    public StateDisconnected(Engine machine) {
         super(machine);
     }
 
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
+        engine.halt();
+        engine.persist();
     }
 
     @Override
-    public void onInternetDisconnects() {
-        engine.toDisconnectedState();
-    }
+    public void onInternetDisconnects() {/*do nothing*/}
 
     @Override
     public void onReceivedKnownTowerId() {
@@ -25,10 +25,11 @@ public class StateInitial extends State {
     @Override
     public void onReceivedUnknownTowerId() {
         engine.toUnknownAreaState();
+        engine.disableWifi();
     }
 
     @Override
     public String toString() {
-        return "INITIAL STATE";
+        return "INTERNET DISCONNECTED: device is no longer connected to the Internet";
     }
 }

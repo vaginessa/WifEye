@@ -2,29 +2,50 @@ package wifeye.app.android.mahorad.com.wifeye;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.view.View;
+import android.widget.Button;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
+import wifeye.app.android.mahorad.com.wifeye.services.MainService;
 
 public class MainActivity extends ActivityManagePermission {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private EditText contents;
+    private Button startService;
+    private Button stopService;
+    private Button permissions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        contents = (EditText) findViewById(R.id.contents);
+        startService = (Button) findViewById(R.id.startService);
+        stopService = (Button) findViewById(R.id.stopService);
+        permissions = (Button) findViewById(R.id.permissions);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        handlePermissions();
+        setupButtons();
+    }
+
+    private void setupButtons() {
+        startService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { start(); }
+        });
+        stopService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { stop(); }
+        });
+        permissions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { handlePermissions(); }
+        });
     }
 
     private void handlePermissions() {
@@ -66,9 +87,12 @@ public class MainActivity extends ActivityManagePermission {
         startService(new Intent(this, MainService.class));
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+    /**
+     * starting main service
+     */
+    private void stop() {
+        stopService(new Intent(this, MainService.class));
     }
+
 
 }

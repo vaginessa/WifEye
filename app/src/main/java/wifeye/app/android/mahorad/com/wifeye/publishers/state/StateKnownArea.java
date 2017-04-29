@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.states;
+package wifeye.app.android.mahorad.com.wifeye.publishers.state;
 
 public class StateKnownArea extends State {
 

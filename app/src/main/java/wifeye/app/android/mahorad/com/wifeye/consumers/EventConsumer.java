@@ -1,13 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-import android.content.Context;
-import android.net.wifi.WifiManager;
-
-import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.states.Engine;
-import wifeye.app.android.mahorad.com.wifeye.wifi.AndroidWifiHandler;
-import wifeye.app.android.mahorad.com.wifeye.wifi.IWifiHandler;
-import wifeye.app.android.mahorad.com.wifeye.wifi.Wifi;
+import wifeye.app.android.mahorad.com.wifeye.publishers.state.Engine;
 
 /**
  * An even consumer which informs the engine about events.
@@ -49,18 +42,4 @@ public class EventConsumer implements INetConsumer, ITowerConsumer {
             engine.receivedUnknownTowerId(ctid);
         }
     }
-
-    public static EventConsumer build(Context context, IPersistence persistence) {
-        if (context == null)
-            throw new IllegalArgumentException();
-        if (persistence == null)
-            throw new IllegalArgumentException();
-        Object systemService = context.getSystemService(Context.WIFI_SERVICE);
-        WifiManager wifiManager = (WifiManager) systemService;
-        IWifiHandler androidWifiHandler = new AndroidWifiHandler(wifiManager);
-        Wifi wifi = new Wifi(androidWifiHandler);
-        Engine engine = new Engine(wifi, persistence);
-        return new EventConsumer(engine);
-    }
-
 }

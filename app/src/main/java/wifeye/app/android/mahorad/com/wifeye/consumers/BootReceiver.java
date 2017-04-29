@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import wifeye.app.android.mahorad.com.wifeye.MainService;
+import wifeye.app.android.mahorad.com.wifeye.services.MainService;
 
 import static android.content.Intent.ACTION_BOOT_COMPLETED;
 

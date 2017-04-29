@@ -1,20 +1,20 @@
-package wifeye.app.android.mahorad.com.wifeye.states;
+package wifeye.app.android.mahorad.com.wifeye.publishers.state;
 
-public class StateUnknownArea extends State {
+public class StateInitial extends State {
 
-    public StateUnknownArea(Engine machine) {
+    public StateInitial(Engine machine) {
         super(machine);
     }
 
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
-        engine.halt();
-        engine.persist();
     }
 
     @Override
-    public void onInternetDisconnects() {/*do nothing*/}
+    public void onInternetDisconnects() {
+        engine.toDisconnectedState();
+    }
 
     @Override
     public void onReceivedKnownTowerId() {
@@ -24,11 +24,11 @@ public class StateUnknownArea extends State {
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.disableWifi();
+        engine.toUnknownAreaState();
     }
 
     @Override
     public String toString() {
-        return "UNKNOWN AREA: received an unrecognized tower identifier";
+        return "INITIAL STATE";
     }
 }
