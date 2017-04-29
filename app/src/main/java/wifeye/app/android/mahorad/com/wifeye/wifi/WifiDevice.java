@@ -1,12 +1,10 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
-import android.util.Log;
-
 import wifeye.app.android.mahorad.com.wifeye.utilities.HourGlass;
 
-public class Wifi {
+public class WifiDevice {
 
-    private static final String TAG = Wifi.class.getSimpleName();
+    private static final String TAG = WifiDevice.class.getSimpleName();
 
     private static final int PEEK_REPEAT_COUNT = 6;
     private static final int PEEK_INTERVAL_SECONDS = 5;
@@ -39,7 +37,7 @@ public class Wifi {
      * @param wifiHandler Android wifi manager for controlling
      *                    wifi behaviours on the phone/tablet
      */
-    public Wifi(IWifiHandler wifiHandler) {
+    public WifiDevice(IWifiHandler wifiHandler) {
         this.wifiHandler = wifiHandler;
     }
 

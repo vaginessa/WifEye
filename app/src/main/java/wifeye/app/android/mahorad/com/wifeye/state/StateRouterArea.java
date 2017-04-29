@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.publishers.state;
+package wifeye.app.android.mahorad.com.wifeye.state;
 
 public class StateRouterArea extends State {
 

@@ -10,7 +10,7 @@ import android.net.wifi.WifiManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import wifeye.app.android.mahorad.com.wifeye.consumers.INetConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
 
 /**
  * listens to connected ssid names and notifies consumers
@@ -23,7 +23,7 @@ public class BssidNamePublisher extends BroadcastReceiver {
     private static String ssid;
     private final WifiManager wifiManager;
     private final Context context;
-    private final List<INetConsumer> consumers;
+    private final List<ISsidNameConsumer> consumers;
 
     public BssidNamePublisher(Context context) {
         if (context == null)
@@ -56,7 +56,7 @@ public class BssidNamePublisher extends BroadcastReceiver {
     }
 
     private void notifyInternetGotConnected() {
-        for (final INetConsumer consumer : consumers) {
+        for (final ISsidNameConsumer consumer : consumers) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -69,7 +69,7 @@ public class BssidNamePublisher extends BroadcastReceiver {
     }
 
     private void notifyInternetDisconnected() {
-        for (final INetConsumer consumer : consumers) {
+        for (final ISsidNameConsumer consumer : consumers) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -89,11 +89,11 @@ public class BssidNamePublisher extends BroadcastReceiver {
         context.unregisterReceiver(this);
     }
 
-    public boolean subscribe(INetConsumer consumer) {
+    public boolean subscribe(ISsidNameConsumer consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(INetConsumer consumer) {
+    public boolean unsubscribe(ISsidNameConsumer consumer) {
         return consumers.remove(consumer);
     }
 

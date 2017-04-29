@@ -2,7 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye.services;
 
 import android.content.Context;
 
-import wifeye.app.android.mahorad.com.wifeye.publishers.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.state.IState;
 
 public class Broadcast {
 

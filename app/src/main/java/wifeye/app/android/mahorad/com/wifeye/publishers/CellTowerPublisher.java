@@ -8,7 +8,7 @@ import android.telephony.TelephonyManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import wifeye.app.android.mahorad.com.wifeye.consumers.ITowerConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 
 /**
@@ -18,7 +18,7 @@ import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 public class CellTowerPublisher extends PhoneStateListener {
 
     private static String ctid;
-    private final List<ITowerConsumer> consumers;
+    private final List<ICellTowerConsumer> consumers;
     private final Context context;
     private final IPersistence persistence;
 
@@ -36,9 +36,9 @@ public class CellTowerPublisher extends PhoneStateListener {
             if (isSame(towerId)) return;
             ctid = towerId;
             if (persistence.exist(ctid))
-                notifyReceivedKnownTowerId();
+                publishReceivedKnownTowerId();
             else
-                notifyReceivedUnknownTowerId();
+                publishReceivedUnknownTowerId();
         }
     }
 
@@ -48,8 +48,8 @@ public class CellTowerPublisher extends PhoneStateListener {
         return !anyNull && ctid.equals(text);
     }
 
-    private void notifyReceivedKnownTowerId() {
-        for (final ITowerConsumer consumer : consumers) {
+    private void publishReceivedKnownTowerId() {
+        for (final ICellTowerConsumer consumer : consumers) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -61,8 +61,8 @@ public class CellTowerPublisher extends PhoneStateListener {
         }
     }
 
-    private void notifyReceivedUnknownTowerId() {
-        for (final ITowerConsumer consumer : consumers) {
+    private void publishReceivedUnknownTowerId() {
+        for (final ICellTowerConsumer consumer : consumers) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -84,11 +84,11 @@ public class CellTowerPublisher extends PhoneStateListener {
         telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
     }
 
-    public boolean subscribe(ITowerConsumer consumer) {
+    public boolean subscribe(ICellTowerConsumer consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(ITowerConsumer consumer) {
+    public boolean unsubscribe(ICellTowerConsumer consumer) {
         return consumers.remove(consumer);
     }
 

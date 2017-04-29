@@ -1,15 +1,15 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-import wifeye.app.android.mahorad.com.wifeye.publishers.state.Engine;
+import wifeye.app.android.mahorad.com.wifeye.state.Engine;
 
 /**
  * An even consumer which informs the engine about events.
  */
-public class EventConsumer implements INetConsumer, ITowerConsumer {
+public class SsidAndCellConsumer implements ISsidNameConsumer, ICellTowerConsumer {
 
     private final Engine engine;
 
-    public EventConsumer(Engine engine) {
+    public SsidAndCellConsumer(Engine engine) {
         if (engine == null)
             throw new IllegalArgumentException();
         this.engine = engine;
