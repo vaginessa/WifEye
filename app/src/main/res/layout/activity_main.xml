@@ -110,7 +110,7 @@
             <TextView
                 android:layout_width="123dp"
                 android:layout_height="wrap_content"
-                android:text="Connected Wifi"
+                android:text="Connection Name"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -135,7 +135,7 @@
             <TextView
                 android:layout_width="123dp"
                 android:layout_height="wrap_content"
-                android:text="Last Connected"
+                android:text="Connected Since"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 

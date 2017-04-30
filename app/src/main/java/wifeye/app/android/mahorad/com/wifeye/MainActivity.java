@@ -14,7 +14,6 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
-import wifeye.app.android.mahorad.com.wifeye.services.MainService;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 
 public class MainActivity extends ActivityManagePermission {
@@ -49,7 +48,7 @@ public class MainActivity extends ActivityManagePermission {
     protected void onResume() {
         super.onResume();
         updateServiceState();
-        MainApp
+        MainApplication
                 .mainComponent()
                 .statePublisher()
                 .subscribe(new ISystemStateConsumer() {
@@ -63,7 +62,7 @@ public class MainActivity extends ActivityManagePermission {
                         });
                     }
                 });
-        MainApp
+        MainApplication
                 .mainComponent()
                 .bssidPublisher()
                 .subscribe(new ISsidNameConsumer() {
@@ -157,7 +156,7 @@ public class MainActivity extends ActivityManagePermission {
     }
 
     private void updateServiceState() {
-        serviceEnabled = MainApp.mainComponent()
+        serviceEnabled = MainApplication.mainComponent()
                 .utilities()
                 .isServiceRunning(MainService.class);
         serviceState.setText(serviceEnabled ? "ENABLE" : "DISABLE");

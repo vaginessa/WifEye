@@ -4,7 +4,7 @@ import android.app.Application;
 
 import wifeye.app.android.mahorad.com.wifeye.dagger.*;
 
-public class MainApp extends Application {
+public class MainApplication extends Application {
 
     private static MainComponent mainComponent;
 

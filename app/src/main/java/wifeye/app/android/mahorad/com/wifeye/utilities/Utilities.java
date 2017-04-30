@@ -6,9 +6,9 @@ import android.content.Context;
 
 import java.util.List;
 
-import wifeye.app.android.mahorad.com.wifeye.MainApp;
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 
-public class Utils {
+public class Utilities {
 
     public boolean isServiceRunning(Class<?> serviceClass) {
         if (serviceClass == null) return false;
@@ -27,7 +27,7 @@ public class Utils {
     }
 
     private ActivityManager getActivityManager() {
-        return (ActivityManager) MainApp
+        return (ActivityManager) MainApplication
                     .mainComponent()
                     .context()
                     .getSystemService(Context.ACTIVITY_SERVICE);

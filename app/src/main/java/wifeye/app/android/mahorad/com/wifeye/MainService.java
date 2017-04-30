@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.services;
+package wifeye.app.android.mahorad.com.wifeye;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import wifeye.app.android.mahorad.com.wifeye.MainApp;
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 
 public class MainService extends Service {
@@ -42,11 +42,11 @@ public class MainService extends Service {
     private void start() {
         if (started) return;
 
-        MainApp.mainComponent()
+        MainApplication.mainComponent()
                 .towerPublisher()
                 .start();
 
-        MainApp.mainComponent()
+        MainApplication.mainComponent()
                 .bssidPublisher()
                 .start();
 
@@ -62,11 +62,11 @@ public class MainService extends Service {
     private void stop() {
         if (!started) return;
 
-        MainApp.mainComponent()
+        MainApplication.mainComponent()
                 .towerPublisher()
                 .stop();
 
-        MainApp.mainComponent()
+        MainApplication.mainComponent()
                 .bssidPublisher()
                 .stop();
 

@@ -14,7 +14,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.Engine;
-import wifeye.app.android.mahorad.com.wifeye.utilities.Utils;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.wifi.AndroidWifiHandler;
 import wifeye.app.android.mahorad.com.wifeye.wifi.IWifiHandler;
 import wifeye.app.android.mahorad.com.wifeye.wifi.WifiDevice;
@@ -74,7 +74,7 @@ public class MainModule {
     }
 
     @Provides
-    public Utils utils() {
-        return new Utils();
+    public Utilities utils() {
+        return new Utilities();
     }
 }

@@ -8,7 +8,7 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.SsidAndCellConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
-import wifeye.app.android.mahorad.com.wifeye.utilities.Utils;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 @Singleton
 @dagger.Component(modules = MainModule.class)
@@ -16,7 +16,7 @@ public interface MainComponent {
 
     Context context();
 
-    Utils utilities();
+    Utilities utilities();
 
     SystemStatePublisher statePublisher();
 
