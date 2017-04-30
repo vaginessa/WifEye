@@ -6,9 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.services.MainService;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
@@ -23,6 +27,8 @@ public class MainActivity extends ActivityManagePermission {
 
     private TextView serviceState;
     private TextView deviceState;
+    private TextView ssidTextView;
+    private TextView lastConnect;
 
     private boolean serviceEnabled;
 
@@ -35,14 +41,16 @@ public class MainActivity extends ActivityManagePermission {
         permissions = (Button) findViewById(R.id.permissions);
         serviceState = (TextView) findViewById(R.id.serviceState);
         deviceState = (TextView) findViewById(R.id.deviceState);
+        ssidTextView = (TextView) findViewById(R.id.ssid);
+        lastConnect = (TextView) findViewById(R.id.lastConnect);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         updateServiceState();
-        MainApp.
-                mainComponent()
+        MainApp
+                .mainComponent()
                 .statePublisher()
                 .subscribe(new ISystemStateConsumer() {
                     @Override
@@ -51,6 +59,33 @@ public class MainActivity extends ActivityManagePermission {
                             @Override
                             public void run() {
                                 deviceState.setText(state.toString());
+                            }
+                        });
+                    }
+                });
+        MainApp
+                .mainComponent()
+                .bssidPublisher()
+                .subscribe(new ISsidNameConsumer() {
+                    @Override
+                    public void onInternetConnected(String ssid) {
+                        updateSsid(ssid);
+                    }
+
+                    @Override
+                    public void onInternetDisconnected() {
+                        updateSsid(null);
+                    }
+
+                    private void updateSsid(final String ssid) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ssidTextView.setText(ssid == null ? "" : ssid);
+                                if (ssid == null) return;
+                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String formattedDate = df.format(Calendar.getInstance().getTime());
+                                lastConnect.setText(formattedDate);
                             }
                         });
                     }
