@@ -6,8 +6,8 @@ public class WifiDevice {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    private static final int PEEK_REPEAT_COUNT = 6;
-    private static final int PEEK_INTERVAL_SECONDS = 5;
+    private static final int PEEK_REPEAT_COUNT = 60;
+    private static final int PEEK_INTERVAL_SECONDS = 60;
     private static final int WIFI_DISABLE_TIMEOUT = 10;
 
     private final Runnable disableWifi = new Runnable() {

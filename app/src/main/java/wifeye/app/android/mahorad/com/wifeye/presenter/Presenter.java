@@ -3,6 +3,9 @@ package wifeye.app.android.mahorad.com.wifeye.presenter;
 import android.content.Context;
 import android.content.Intent;
 
+import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
+import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
+import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
@@ -10,7 +13,8 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
-public class Presenter implements IPresenter, ISsidNameConsumer, ISystemStateConsumer {
+public class Presenter
+        implements IPresenter, ISsidNameConsumer, ISystemStateConsumer {
 
     private final IMainView view;
 
@@ -71,6 +75,42 @@ public class Presenter implements IPresenter, ISsidNameConsumer, ISystemStateCon
         Intent intent = new Intent(context, MainService.class);
         context.stopService(intent);
         updateServiceState();
+    }
+
+    @Override
+    public void handlePermissions() {
+        handleCoarseLocationPermission();
+        handleDiskReadWritePermissions();
+
+    }
+
+    private void handleCoarseLocationPermission() {
+        String permission = PermissionUtils.Manifest_ACCESS_COARSE_LOCATION;
+        final ActivityManagePermission activity = (ActivityManagePermission) this.view;
+        activity.askCompactPermission(permission, new PermissionResult() {
+            @Override
+            public void permissionGranted() { }
+            @Override
+            public void permissionDenied() { activity.finish(); }
+            @Override
+            public void permissionForeverDenied() { }
+        });
+    }
+
+    private void handleDiskReadWritePermissions() {
+        String[] permissionRequests = {
+                PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE,
+                PermissionUtils.Manifest_READ_EXTERNAL_STORAGE
+        };
+        final ActivityManagePermission activity = (ActivityManagePermission) this.view;
+        activity.askCompactPermissions(permissionRequests, new PermissionResult() {
+            @Override
+            public void permissionGranted() { }
+            @Override
+            public void permissionDenied() { activity.finish(); }
+            @Override
+            public void permissionForeverDenied() { }
+        });
     }
 
     private void updateServiceState() {

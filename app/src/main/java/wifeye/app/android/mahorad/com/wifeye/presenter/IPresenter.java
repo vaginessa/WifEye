@@ -13,4 +13,6 @@ public interface IPresenter {
     void startMainService();
 
     void stopMainService();
+
+    void handlePermissions();
 }

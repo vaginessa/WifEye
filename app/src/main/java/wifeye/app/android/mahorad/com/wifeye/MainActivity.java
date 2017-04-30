@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
-import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
-import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
@@ -59,35 +57,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     }
 
     public void handlePermissions(View view) {
-        handleCoarseLocationPermission();
-        handleDiskReadWritePermissions();
-    }
-
-    private void handleCoarseLocationPermission() {
-        String permission = PermissionUtils.Manifest_ACCESS_COARSE_LOCATION;
-        askCompactPermission(permission, new PermissionResult() {
-            @Override
-            public void permissionGranted() { }
-            @Override
-            public void permissionDenied() { finish(); }
-            @Override
-            public void permissionForeverDenied() { }
-        });
-    }
-
-    private void handleDiskReadWritePermissions() {
-        String[] permissionRequests = {
-                PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE,
-                PermissionUtils.Manifest_READ_EXTERNAL_STORAGE
-        };
-        askCompactPermissions(permissionRequests, new PermissionResult() {
-            @Override
-            public void permissionGranted() { }
-            @Override
-            public void permissionDenied() { finish(); }
-            @Override
-            public void permissionForeverDenied() { }
-        });
+        presenter.handlePermissions();
     }
 
     public void startMainService(View view) {
