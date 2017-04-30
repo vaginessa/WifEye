@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.services.MainService;
+import wifeye.app.android.mahorad.com.wifeye.state.IState;
 
 public class MainActivity extends ActivityManagePermission {
 
@@ -18,6 +21,11 @@ public class MainActivity extends ActivityManagePermission {
     private Button stopService;
     private Button permissions;
 
+    private TextView serviceState;
+    private TextView deviceState;
+
+    private boolean serviceEnabled;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +33,28 @@ public class MainActivity extends ActivityManagePermission {
         startService = (Button) findViewById(R.id.startService);
         stopService = (Button) findViewById(R.id.stopService);
         permissions = (Button) findViewById(R.id.permissions);
+        serviceState = (TextView) findViewById(R.id.serviceState);
+        deviceState = (TextView) findViewById(R.id.deviceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        updateServiceState();
+        MainApp.
+                mainComponent()
+                .statePublisher()
+                .subscribe(new ISystemStateConsumer() {
+                    @Override
+                    public void onStateChanged(final IState state) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                deviceState.setText(state.toString());
+                            }
+                        });
+                    }
+                });
         setupButtons();
     }
 
@@ -85,6 +110,7 @@ public class MainActivity extends ActivityManagePermission {
      */
     private void start() {
         startService(new Intent(this, MainService.class));
+        updateServiceState();
     }
 
     /**
@@ -92,6 +118,14 @@ public class MainActivity extends ActivityManagePermission {
      */
     private void stop() {
         stopService(new Intent(this, MainService.class));
+        updateServiceState();
+    }
+
+    private void updateServiceState() {
+        serviceEnabled = MainApp.mainComponent()
+                .utilities()
+                .isServiceRunning(MainService.class);
+        serviceState.setText(serviceEnabled ? "ENABLE" : "DISABLE");
     }
 
 

@@ -14,6 +14,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.Engine;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utils;
 import wifeye.app.android.mahorad.com.wifeye.wifi.AndroidWifiHandler;
 import wifeye.app.android.mahorad.com.wifeye.wifi.IWifiHandler;
 import wifeye.app.android.mahorad.com.wifeye.wifi.WifiDevice;
@@ -51,17 +52,29 @@ public class MainModule {
     }
 
     @Provides @Singleton
-    public BssidNamePublisher bssidPublisher(Context context) {
-        return new BssidNamePublisher(context);
+    public BssidNamePublisher bssidPublisher(Context context,
+                                             SsidAndCellConsumer consumer) {
+        BssidNamePublisher publisher = new BssidNamePublisher(context);
+        publisher.subscribe(consumer);
+        return publisher;
     }
 
     @Provides @Singleton
-    public CellTowerPublisher towerPublisher(Context context, IPersistence persistence) {
-        return new CellTowerPublisher(context, persistence);
+    public CellTowerPublisher towerPublisher(Context context,
+                                             IPersistence persistence,
+                                             SsidAndCellConsumer consumer) {
+        CellTowerPublisher publisher = new CellTowerPublisher(context, persistence);
+        publisher.subscribe(consumer);
+        return publisher;
     }
 
     @Provides @Singleton
     public SystemStatePublisher statePublisher() {
         return new SystemStatePublisher();
+    }
+
+    @Provides
+    public Utils utils() {
+        return new Utils();
     }
 }

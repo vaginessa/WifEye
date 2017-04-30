@@ -10,10 +10,6 @@ import android.util.Log;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApp;
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.consumers.SsidAndCellConsumer;
-import wifeye.app.android.mahorad.com.wifeye.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
 
 public class MainService extends Service {
 
@@ -27,10 +23,6 @@ public class MainService extends Service {
 
     private final IBinder binder = new MainServiceBinder();
     private ResultReceiver resultReceiver;
-
-    private BssidNamePublisher bssidNamePublisher;
-    private CellTowerPublisher cellTowerPublisher;
-    private SsidAndCellConsumer ssidAndCellConsumer;
 
     private boolean started;
 
@@ -49,14 +41,15 @@ public class MainService extends Service {
 
     private void start() {
         if (started) return;
-        MainComponent component = MainApp.mainComponent();
-        cellTowerPublisher = component.towerPublisher();
-        bssidNamePublisher = component.bssidPublisher();
-        ssidAndCellConsumer = component.ssidCellConsumer();
-        bssidNamePublisher.subscribe(ssidAndCellConsumer);
-        cellTowerPublisher.subscribe(ssidAndCellConsumer);
-        bssidNamePublisher.start();
-        cellTowerPublisher.start();
+
+        MainApp.mainComponent()
+                .towerPublisher()
+                .start();
+
+        MainApp.mainComponent()
+                .bssidPublisher()
+                .start();
+
         started = true;
         Log.v(TAG, "started main service");
     }
@@ -68,13 +61,15 @@ public class MainService extends Service {
 
     private void stop() {
         if (!started) return;
-        bssidNamePublisher.stop();
-        cellTowerPublisher.stop();
-        bssidNamePublisher.subscribe(ssidAndCellConsumer);
-        cellTowerPublisher.subscribe(ssidAndCellConsumer);
-        ssidAndCellConsumer = null;
-        bssidNamePublisher = null;
-        cellTowerPublisher = null;
+
+        MainApp.mainComponent()
+                .towerPublisher()
+                .stop();
+
+        MainApp.mainComponent()
+                .bssidPublisher()
+                .stop();
+
         started = false;
         Log.v(TAG, "stopped main service");
     }

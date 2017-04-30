@@ -17,18 +17,21 @@ public class AndroidWifiHandler implements IWifiHandler {
 
     @Override
     public boolean isEnabled() {
-        return wifiManager.isWifiEnabled();
+        int wifiState = wifiManager.getWifiState();
+        boolean enabled = (wifiState == WifiManager.WIFI_STATE_ENABLED);
+        Log.d(TAG, String.format("[[ wifi is %s ]]", enabled ? "ENABLE" : "DISABLE"));
+        return enabled;
     }
 
     @Override
     public void enable() {
         wifiManager.setWifiEnabled(true);
-        Log.d(TAG, "enabling wifi...");
+        Log.d(TAG, "[[ enabling wifi... ]]");
     }
 
     @Override
     public void disable() {
         wifiManager.setWifiEnabled(false);
-        Log.d(TAG, "disabling wifi...");
+        Log.d(TAG, "[[ disabling wifi... ]]");
     }
 }
