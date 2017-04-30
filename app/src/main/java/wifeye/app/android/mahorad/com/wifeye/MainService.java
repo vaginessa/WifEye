@@ -8,7 +8,6 @@ import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 
 public class MainService extends Service {
@@ -42,12 +41,14 @@ public class MainService extends Service {
     private void start() {
         if (started) return;
 
-        MainApplication.mainComponent()
-                .towerPublisher()
+        MainApplication
+                .mainComponent()
+                .ctidPublisher()
                 .start();
 
-        MainApplication.mainComponent()
-                .bssidPublisher()
+        MainApplication
+                .mainComponent()
+                .ssidPublisher()
                 .start();
 
         started = true;
@@ -63,11 +64,11 @@ public class MainService extends Service {
         if (!started) return;
 
         MainApplication.mainComponent()
-                .towerPublisher()
+                .ctidPublisher()
                 .stop();
 
         MainApplication.mainComponent()
-                .bssidPublisher()
+                .ssidPublisher()
                 .stop();
 
         started = false;

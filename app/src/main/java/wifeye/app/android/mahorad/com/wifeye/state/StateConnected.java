@@ -8,14 +8,14 @@ public class StateConnected extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.halt(); // stop any ongoing timeouts
+        engine.halt(); // stopMainService any ongoing timeouts
         engine.persist(); // persist another SSIDs perhaps
     }
 
     @Override
     public void onInternetDisconnects() {
         engine.toDisconnectedState();
-        engine.disableWifi(); // start a disabling timeout
+        engine.disableWifi(); // startMainService a disabling timeout
     }
 
     @Override

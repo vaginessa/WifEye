@@ -20,10 +20,10 @@ public interface MainComponent {
 
     SystemStatePublisher statePublisher();
 
-    CellTowerPublisher towerPublisher();
+    CellTowerPublisher ctidPublisher();
 
-    BssidNamePublisher bssidPublisher();
+    BssidNamePublisher ssidPublisher();
 
-    SsidAndCellConsumer ssidCellConsumer();
+    SsidAndCellConsumer ssidctidConsumer();
 
 }
