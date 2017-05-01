@@ -8,13 +8,17 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
-import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
-public class Presenter
-        implements IPresenter, ISsidNameConsumer, ISystemStateConsumer {
+public class Presenter implements
+        IPresenter,
+        IWifiSsidNameConsumer,
+        ISystemStateConsumer,
+        IOngoingActionConsumer {
 
     private final IMainView view;
 
@@ -34,17 +38,17 @@ public class Presenter
                 .statePublisher()
                 .subscribe(this);
 
+        MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .subscribe(this);
     }
 
     @Override
-    public void onCreate() {
-
-    }
+    public void onCreate() {}
 
     @Override
-    public void onPause() {
-
-    }
+    public void onPause() {}
 
     @Override
     public void onResume() {
@@ -52,9 +56,7 @@ public class Presenter
     }
 
     @Override
-    public void onDestroy() {
-
-    }
+    public void onDestroy() {}
 
     @Override
     public void startMainService() {
@@ -81,7 +83,6 @@ public class Presenter
     public void handlePermissions() {
         handleCoarseLocationPermission();
         handleDiskReadWritePermissions();
-
     }
 
     private void handleCoarseLocationPermission() {
@@ -134,5 +135,25 @@ public class Presenter
     @Override
     public void onStateChanged(IState state) {
         view.updateEngineState(state);
+    }
+
+    @Override
+    public void onDisabling() {
+        view.updateOngoingAction("DISABLING");
+    }
+
+    @Override
+    public void onObserveModeDisabling() {
+        view.updateOngoingAction("OBSERVE: Disabling");
+    }
+
+    @Override
+    public void onObserveModeEnabling() {
+        view.updateOngoingAction("OBSERVE: Enabling");
+    }
+
+    @Override
+    public void onHalted() {
+        view.updateOngoingAction("HALTED");
     }
 }

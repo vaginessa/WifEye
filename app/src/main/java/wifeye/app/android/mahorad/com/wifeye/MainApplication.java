@@ -18,7 +18,7 @@ public class MainApplication extends Application {
         mainComponent = DaggerMainComponent
                 .builder()
                 .contextModule(new ContextModule(this))
-                .mainModule(new wifeye.app.android.mahorad.com.wifeye.dagger.MainModule())
+                .mainModule(new MainModule())
                 .build();
     }
 }

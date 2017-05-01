@@ -10,4 +10,5 @@ public interface IMainView {
 
     void updateServiceState(boolean enabled);
 
+    void updateOngoingAction(String event);
 }

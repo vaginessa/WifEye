@@ -4,9 +4,10 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
-import wifeye.app.android.mahorad.com.wifeye.consumers.SsidAndCellConsumer;
-import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
+import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
@@ -18,12 +19,14 @@ public interface MainComponent {
 
     Utilities utilities();
 
+    OngoingActionPublisher actionPublisher();
+
     SystemStatePublisher statePublisher();
 
-    CellTowerPublisher ctidPublisher();
+    CellTowerIdPublisher ctidPublisher();
 
-    BssidNamePublisher ssidPublisher();
+    WifiSsidNamePublisher ssidPublisher();
 
-    SsidAndCellConsumer ssidctidConsumer();
+    SsidTowerIdConsumer ssidctidConsumer();
 
 }

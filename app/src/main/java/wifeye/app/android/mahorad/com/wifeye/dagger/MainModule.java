@@ -7,11 +7,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import wifeye.app.android.mahorad.com.wifeye.consumers.SsidAndCellConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.BasePersistence;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.publishers.BssidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
@@ -47,23 +48,28 @@ public class MainModule {
     }
 
     @Provides @Singleton
-    public SsidAndCellConsumer baseConsumer(Engine engine) {
-        return new SsidAndCellConsumer(engine);
+    public SsidTowerIdConsumer ssidTowerIdConsumer(Engine engine) {
+        return new SsidTowerIdConsumer(engine);
     }
 
     @Provides @Singleton
-    public BssidNamePublisher bssidPublisher(Context context,
-                                             SsidAndCellConsumer consumer) {
-        BssidNamePublisher publisher = new BssidNamePublisher(context);
+    public OngoingActionPublisher actionPublisher() {
+        return new OngoingActionPublisher() ;
+    }
+
+    @Provides @Singleton
+    public WifiSsidNamePublisher bssidPublisher(Context context,
+                                                SsidTowerIdConsumer consumer) {
+        WifiSsidNamePublisher publisher = new WifiSsidNamePublisher(context);
         publisher.subscribe(consumer);
         return publisher;
     }
 
     @Provides @Singleton
-    public CellTowerPublisher towerPublisher(Context context,
-                                             IPersistence persistence,
-                                             SsidAndCellConsumer consumer) {
-        CellTowerPublisher publisher = new CellTowerPublisher(context, persistence);
+    public CellTowerIdPublisher towerIdPublisher(Context context,
+                                                 IPersistence persistence,
+                                                 SsidTowerIdConsumer consumer) {
+        CellTowerIdPublisher publisher = new CellTowerIdPublisher(context, persistence);
         publisher.subscribe(consumer);
         return publisher;
     }

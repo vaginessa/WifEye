@@ -108,8 +108,8 @@ public class Engine implements IStateMachine, IActuator {
 
     @Override
     public void standbyWifi() {
-        Log.i(TAG, "----> BEGIN WIFI PEEK...");
-        wifiDevice.standby();
+        Log.i(TAG, "----> BEGIN WIFI OBSERVE...");
+        wifiDevice.observe();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-public interface ICellTowerConsumer {
+public interface ICellTowerIdConsumer {
 
     void onReceivedKnownTowerId();
 

@@ -57,7 +57,7 @@ public class BinaryCountdown {
                 .setLength(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
                 .setExceptionAction(exceptionAction)
-                .setCompletionAction(() -> startLessDelayedAction())
+                .setCompletionAction(this::startLessDelayedAction)
                 .build();
     }
 

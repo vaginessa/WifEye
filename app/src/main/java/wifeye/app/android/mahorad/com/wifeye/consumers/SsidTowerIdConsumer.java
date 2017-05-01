@@ -5,11 +5,11 @@ import wifeye.app.android.mahorad.com.wifeye.state.Engine;
 /**
  * An even consumer which informs the engine about events.
  */
-public class SsidAndCellConsumer implements ISsidNameConsumer, ICellTowerConsumer {
+public class SsidTowerIdConsumer implements IWifiSsidNameConsumer, ICellTowerIdConsumer {
 
     private final Engine engine;
 
-    public SsidAndCellConsumer(Engine engine) {
+    public SsidTowerIdConsumer(Engine engine) {
         if (engine == null)
             throw new IllegalArgumentException();
         this.engine = engine;

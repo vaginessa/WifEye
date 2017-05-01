@@ -10,22 +10,22 @@ import android.net.wifi.WifiManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import wifeye.app.android.mahorad.com.wifeye.consumers.ISsidNameConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 
 /**
  * listens to connected ssid names and notifies consumers
  * if the Internet is connected or disconnected.
  */
-public class BssidNamePublisher extends BroadcastReceiver {
+public class WifiSsidNamePublisher extends BroadcastReceiver {
 
-    private static String TAG = BssidNamePublisher.class.getSimpleName();
+    private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
 
     private static String ssid;
     private final WifiManager wifiManager;
     private final Context context;
-    private final List<ISsidNameConsumer> consumers;
+    private final List<IWifiSsidNameConsumer> consumers;
 
-    public BssidNamePublisher(Context context) {
+    public WifiSsidNamePublisher(Context context) {
         if (context == null)
             throw new IllegalArgumentException();
         this.context = context;
@@ -56,26 +56,16 @@ public class BssidNamePublisher extends BroadcastReceiver {
     }
 
     private void notifyInternetGotConnected() {
-        for (final ISsidNameConsumer consumer : consumers) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    consumer.onInternetConnected(ssid);
-                }
-            });
+        for (final IWifiSsidNameConsumer consumer : consumers) {
+            Thread thread = new Thread(() -> consumer.onInternetConnected(ssid));
             thread.setDaemon(true);
             thread.start();
         }
     }
 
     private void notifyInternetDisconnected() {
-        for (final ISsidNameConsumer consumer : consumers) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    consumer.onInternetDisconnected();
-                }
-            });
+        for (final IWifiSsidNameConsumer consumer : consumers) {
+            Thread thread = new Thread(() -> consumer.onInternetDisconnected());
             thread.setDaemon(true);
             thread.start();
         }
@@ -89,11 +79,11 @@ public class BssidNamePublisher extends BroadcastReceiver {
         context.unregisterReceiver(this);
     }
 
-    public boolean subscribe(ISsidNameConsumer consumer) {
+    public boolean subscribe(IWifiSsidNameConsumer consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(ISsidNameConsumer consumer) {
+    public boolean unsubscribe(IWifiSsidNameConsumer consumer) {
         return consumers.remove(consumer);
     }
 

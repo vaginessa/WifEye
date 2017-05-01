@@ -1,5 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdownBuilder;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
@@ -11,14 +12,14 @@ public class WifiDevice {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    private static final int PEEK_REPEAT_COUNT = 10;
+    private static final int OBSERVE_REPEAT_COUNT = 10;
     private static final int WIFI_ENABLE_TIMEOUT = 300;
     private static final int WIFI_DISABLE_TIMEOUT = 60;
 
     private final IWifiHandler wifiHandler;
 
     private UnaryCountdown disablingTimer;
-    private BinaryCountdown peekingTimer;
+    private BinaryCountdown observingTimer;
 
     /**
      * provides functionalities for controlling wifi on device
@@ -35,11 +36,12 @@ public class WifiDevice {
 
     public void disable() {
         if (!isEnabled()) return;
-        if (peekingTimer != null && peekingTimer.isActive())
+        if (observingTimer != null && observingTimer.isActive())
             return;
         if (disablingTimer != null && disablingTimer.isActive())
             return;
         halt();
+        publishDisabling();
         disablingTimer = new UnaryCountdownBuilder()
                 .setEnacts(1)
                 .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
@@ -48,41 +50,70 @@ public class WifiDevice {
         disablingTimer.start();
     }
 
-    public void enable() {
-        if (isEnabled()) return;
-        halt();
-        wifiHandler.enable();
-    }
-
-    public void standby() {
-        if (peekingTimer != null && peekingTimer.isActive())
+    public void observe() {
+        if (observingTimer != null && observingTimer.isActive())
             return;
         halt();
-        peekingTimer = new BinaryCountdownBuilder()
-                .setEnacts(PEEK_REPEAT_COUNT)
+        observingTimer = new BinaryCountdownBuilder()
+                .setEnacts(OBSERVE_REPEAT_COUNT)
                 .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
-                .setMoreDelayedAction(this::enable)
+                .setMoreDelayedAction(() ->  {
+                    wifiHandler.enable();
+                    publishObserveModeDisabling();
+                })
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
-                .setLessDelayedAction(wifiHandler::disable)
+                .setLessDelayedAction(() -> {
+                    wifiHandler.disable();
+                    publishObserveModeEnabling();
+                })
                 .setCompletionAction(wifiHandler::disable)
                 .build();
-        peekingTimer.start();
+        observingTimer.start();
     }
 
     public void halt() {
-        stopPeekingTimer();
+        publishHalt();
+        stopObservingTimer();
         stopDisablingTimer();
     }
 
-    private void stopPeekingTimer() {
-        if (peekingTimer == null) return;
-        peekingTimer.stop();
-        peekingTimer = null;
+    private void stopObservingTimer() {
+        if (observingTimer == null) return;
+        observingTimer.stop();
+        observingTimer = null;
     }
 
     private void stopDisablingTimer() {
         if (disablingTimer == null) return;
         disablingTimer.stop();
         disablingTimer = null;
+    }
+
+    private void publishDisabling() {
+        MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .publishDisabling();
+    }
+
+    private void publishObserveModeEnabling() {
+        MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .publishObserveModeEnabling();
+    }
+
+    private void publishObserveModeDisabling() {
+        MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .publishObserveModeDisabling();
+    }
+
+    private void publishHalt() {
+        MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .publishHalt();
     }
 }

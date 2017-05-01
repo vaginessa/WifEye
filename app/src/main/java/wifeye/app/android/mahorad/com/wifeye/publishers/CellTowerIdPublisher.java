@@ -8,21 +8,21 @@ import android.telephony.TelephonyManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 
 /**
  * listens to receiving cell tower identifiers and
  * notifies the consumers.
  */
-public class CellTowerPublisher extends PhoneStateListener {
+public class CellTowerIdPublisher extends PhoneStateListener {
 
     private static String ctid;
-    private final List<ICellTowerConsumer> consumers;
+    private final List<ICellTowerIdConsumer> consumers;
     private final Context context;
     private final IPersistence persistence;
 
-    public CellTowerPublisher(Context context, IPersistence persistence) {
+    public CellTowerIdPublisher(Context context, IPersistence persistence) {
         this.context = context;
         consumers = new ArrayList<>();
         this.persistence = persistence;
@@ -49,26 +49,16 @@ public class CellTowerPublisher extends PhoneStateListener {
     }
 
     private void publishReceivedKnownTowerId() {
-        for (final ICellTowerConsumer consumer : consumers) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    consumer.onReceivedKnownTowerId();
-                }
-            });
+        for (final ICellTowerIdConsumer consumer : consumers) {
+            Thread thread = new Thread(() -> consumer.onReceivedKnownTowerId());
             thread.setDaemon(true);
             thread.start();
         }
     }
 
     private void publishReceivedUnknownTowerId() {
-        for (final ICellTowerConsumer consumer : consumers) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    consumer.onReceivedUnknownTowerId(ctid);
-                }
-            });
+        for (final ICellTowerIdConsumer consumer : consumers) {
+            Thread thread = new Thread(() -> consumer.onReceivedUnknownTowerId(ctid));
             thread.setDaemon(true);
             thread.start();
         }
@@ -84,11 +74,11 @@ public class CellTowerPublisher extends PhoneStateListener {
         telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
     }
 
-    public boolean subscribe(ICellTowerConsumer consumer) {
+    public boolean subscribe(ICellTowerIdConsumer consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(ICellTowerConsumer consumer) {
+    public boolean unsubscribe(ICellTowerIdConsumer consumer) {
         return consumers.remove(consumer);
     }
 

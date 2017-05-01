@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-public interface ISsidNameConsumer {
+public interface IWifiSsidNameConsumer {
 
     void onInternetConnected(String ssid);
 

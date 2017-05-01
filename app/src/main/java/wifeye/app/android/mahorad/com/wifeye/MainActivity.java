@@ -22,6 +22,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private TextView deviceState;
     private TextView ssidTextView;
     private TextView lastConnect;
+    private TextView actionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         deviceState = (TextView) findViewById(R.id.deviceState);
         ssidTextView = (TextView) findViewById(R.id.ssid);
         lastConnect = (TextView) findViewById(R.id.lastConnect);
+        actionText = (TextView) findViewById(R.id.action);
     }
 
     public void handlePermissions(View view) {
@@ -70,22 +72,19 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
 
     @Override
     public void updateServiceState(final boolean enabled) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                serviceState.setText(enabled ? "ENABLE" : "DISABLE");
-            }
-        });
+        runOnUiThread(() -> serviceState.setText(enabled ? "ENABLE" : "DISABLE"));
+    }
+
+    @Override
+    public void updateOngoingAction(String event) {
+        runOnUiThread(() -> actionText.setText(event));
     }
 
     @Override
     public void updateSsidNameInfo(final String ssid) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ssidTextView.setText(ssid == null ? "" : ssid);
-                lastConnect.setText(ssid == null ? "" : getDate());
-            }
+        runOnUiThread(() -> {
+            ssidTextView.setText(ssid == null ? "" : ssid);
+            lastConnect.setText(ssid == null ? "" : getDate());
         });
     }
 
@@ -96,12 +95,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
 
     @Override
     public void updateEngineState(final IState state) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                deviceState.setText(state.toString());
-            }
-        });
+        runOnUiThread(() -> deviceState.setText(state.toString()));
     }
 
 }
