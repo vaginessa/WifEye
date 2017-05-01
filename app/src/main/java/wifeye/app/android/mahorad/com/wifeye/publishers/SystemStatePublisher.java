@@ -2,6 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye.publishers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
@@ -16,14 +17,9 @@ public class SystemStatePublisher {
 
     public void publish(final IState state) {
         for (final ISystemStateConsumer consumer : consumers) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    consumer.onStateChanged(state);
-                }
-            });
-            thread.setDaemon(true);
-            thread.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(() -> consumer.onStateChanged(state));
         }
     }
 

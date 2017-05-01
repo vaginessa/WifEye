@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 
@@ -57,17 +58,17 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
 
     private void notifyInternetGotConnected() {
         for (final IWifiSsidNameConsumer consumer : consumers) {
-            Thread thread = new Thread(() -> consumer.onInternetConnected(ssid));
-            thread.setDaemon(true);
-            thread.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(() -> consumer.onInternetConnected(ssid));
         }
     }
 
     private void notifyInternetDisconnected() {
         for (final IWifiSsidNameConsumer consumer : consumers) {
-            Thread thread = new Thread(() -> consumer.onInternetDisconnected());
-            thread.setDaemon(true);
-            thread.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(consumer::onInternetDisconnected);
         }
     }
 

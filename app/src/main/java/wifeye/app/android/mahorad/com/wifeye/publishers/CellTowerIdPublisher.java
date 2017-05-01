@@ -7,6 +7,7 @@ import android.telephony.TelephonyManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
@@ -50,17 +51,17 @@ public class CellTowerIdPublisher extends PhoneStateListener {
 
     private void publishReceivedKnownTowerId() {
         for (final ICellTowerIdConsumer consumer : consumers) {
-            Thread thread = new Thread(() -> consumer.onReceivedKnownTowerId());
-            thread.setDaemon(true);
-            thread.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(consumer::onReceivedKnownTowerId);
         }
     }
 
     private void publishReceivedUnknownTowerId() {
         for (final ICellTowerIdConsumer consumer : consumers) {
-            Thread thread = new Thread(() -> consumer.onReceivedUnknownTowerId(ctid));
-            thread.setDaemon(true);
-            thread.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(() -> consumer.onReceivedUnknownTowerId(ctid));
         }
     }
 
