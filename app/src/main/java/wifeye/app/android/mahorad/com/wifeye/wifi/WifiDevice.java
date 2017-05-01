@@ -1,36 +1,24 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
-import wifeye.app.android.mahorad.com.wifeye.utilities.HourGlass;
+import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdown;
+import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdownBuilder;
+import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
+import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdownBuilder;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class WifiDevice {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    private static final int PEEK_REPEAT_COUNT = 60;
-    private static final int PEEK_INTERVAL_SECONDS = 60;
-    private static final int WIFI_DISABLE_TIMEOUT = 10;
-
-    private final Runnable disableWifi = new Runnable() {
-        @Override
-        public void run() {
-            wifiHandler.disable();
-        }
-    };
-
-    private final Runnable toggleWifi = new Runnable() {
-        @Override
-        public void run() {
-            if (wifiHandler.isEnabled())
-                disable();
-            else
-                enable();
-        }
-    };
+    private static final int PEEK_REPEAT_COUNT = 10;
+    private static final int WIFI_ENABLE_TIMEOUT = 300;
+    private static final int WIFI_DISABLE_TIMEOUT = 60;
 
     private final IWifiHandler wifiHandler;
 
-    private HourGlass disablingTimer;
-    private HourGlass peekingTimer;
+    private UnaryCountdown disablingTimer;
+    private BinaryCountdown peekingTimer;
 
     /**
      * provides functionalities for controlling wifi on device
@@ -52,10 +40,11 @@ public class WifiDevice {
         if (disablingTimer != null && disablingTimer.isActive())
             return;
         halt();
-        disablingTimer = new HourGlass(disableWifi);
-        disablingTimer.setFlips(1);
-        disablingTimer.setDuration(WIFI_DISABLE_TIMEOUT);
-        disablingTimer.setName("Wifi Disabling Timer");
+        disablingTimer = new UnaryCountdownBuilder()
+                .setEnacts(1)
+                .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                .setIntervalsAction(wifiHandler::disable)
+                .build();
         disablingTimer.start();
     }
 
@@ -69,10 +58,14 @@ public class WifiDevice {
         if (peekingTimer != null && peekingTimer.isActive())
             return;
         halt();
-        peekingTimer = new HourGlass(toggleWifi, disableWifi);
-        peekingTimer.setFlips(PEEK_REPEAT_COUNT);
-        peekingTimer.setDuration(PEEK_INTERVAL_SECONDS);
-        disablingTimer.setName("Wifi Peeking Timer");
+        peekingTimer = new BinaryCountdownBuilder()
+                .setEnacts(PEEK_REPEAT_COUNT)
+                .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
+                .setMoreDelayedAction(this::enable)
+                .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                .setLessDelayedAction(wifiHandler::disable)
+                .setCompletionAction(wifiHandler::disable)
+                .build();
         peekingTimer.start();
     }
 
