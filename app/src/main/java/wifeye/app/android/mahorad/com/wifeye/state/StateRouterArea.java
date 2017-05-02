@@ -26,6 +26,6 @@ public class StateRouterArea extends State {
 
     @Override
     public String toString() {
-        return "ROUTER AREA: received a tower identifier while connected to Internet";
+        return "ROUTER AREA";
     }
 }

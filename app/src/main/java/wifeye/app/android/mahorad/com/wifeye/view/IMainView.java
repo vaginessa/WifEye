@@ -1,16 +1,16 @@
 package wifeye.app.android.mahorad.com.wifeye.view;
 
-import wifeye.app.android.mahorad.com.wifeye.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
 
 public interface IMainView {
 
-    void updateSsidNameInfo(String ssid);
+    void updateHotspotState(String ssid, String date);
 
-    void updateEngineState(IState state);
+    void updateServiceState(boolean enabled, String date);
 
-    void updateServiceState(boolean enabled);
+    void updateTowerIdState(String ctid, String date);
 
-    void updateOngoingAction(String event);
+    void updateEngineState(String state, String date);
 
-    void updateReceivedCtid(String ctid);
+    void updateActionState(Action action, String date);
 }

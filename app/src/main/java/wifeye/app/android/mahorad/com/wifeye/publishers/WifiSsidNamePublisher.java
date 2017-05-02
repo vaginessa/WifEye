@@ -88,7 +88,8 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
         return consumers.remove(consumer);
     }
 
-    public static String ssid() {
+    public String currentHotspot() {
         return ssid;
     }
+
 }

@@ -28,6 +28,6 @@ public class StateKnownArea extends State {
 
     @Override
     public String toString() {
-        return "KNOWN AREA: received a recognized tower identifier";
+        return "KNOWN AREA";
     }
 }

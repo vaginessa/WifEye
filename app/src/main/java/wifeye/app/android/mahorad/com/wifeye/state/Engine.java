@@ -124,4 +124,8 @@ public class Engine implements IStateMachine, IActuator {
         persistence.persist(ssid, ctid);
     }
 
+    public String state() {
+        return currentState.toString();
+    }
+
 }

@@ -9,11 +9,14 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 @Singleton
 @dagger.Component(modules = MainModule.class)
 public interface MainComponent {
+
+    Engine stateMachine();
 
     Context context();
 

@@ -3,6 +3,9 @@ package wifeye.app.android.mahorad.com.wifeye.presenter;
 import android.content.Context;
 import android.content.Intent;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
@@ -12,6 +15,8 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
@@ -59,7 +64,7 @@ public class Presenter implements
 
     @Override
     public void onResume() {
-        updateServiceState();
+        updateViewStates();
     }
 
     @Override
@@ -121,54 +126,86 @@ public class Presenter implements
         });
     }
 
+    private void updateViewStates() {
+        updateHotspotState();
+        updateServiceState();
+        updateTowerIdState();
+        updateActionState();
+        updateEngineState();
+    }
+
+    private void updateActionState() {
+        Action action = MainApplication
+                .mainComponent()
+                .actionPublisher()
+                .ongoingAction();
+        view.updateActionState(action, getDate());
+    }
+
+    private void updateHotspotState() {
+        String ssid = MainApplication
+                .mainComponent()
+                .ssidPublisher()
+                .currentHotspot();
+        view.updateHotspotState(ssid, getDate());
+    }
+
+    private void updateTowerIdState() {
+        String ctid = MainApplication
+                .mainComponent()
+                .ctidPublisher()
+                .currentTowerId();
+        String date = (ctid == null || ctid == "")
+                ? "" : getDate();
+        view.updateTowerIdState(ctid, date);
+    }
+
+    private void updateEngineState() {
+        String state = MainApplication
+                .mainComponent()
+                .stateMachine()
+                .state();
+        view.updateEngineState(state, getDate());
+    }
+
     private void updateServiceState() {
         boolean enabled = MainApplication
                 .mainComponent()
                 .utilities()
                 .isServiceRunning(MainService.class);
-        view.updateServiceState(enabled);
+        view.updateServiceState(enabled, getDate());
     }
 
     @Override
     public void onInternetConnected(String ssid) {
-        view.updateSsidNameInfo(ssid);
+        view.updateHotspotState(ssid, getDate());
     }
 
     @Override
     public void onInternetDisconnected() {
-        view.updateSsidNameInfo(null);
+        view.updateHotspotState(null, getDate());
     }
 
     @Override
-    public void onReceivedKnownTowerId(String ctid) { view.updateReceivedCtid(ctid); }
+    public void onReceivedKnownTowerId(String ctid) { view.updateTowerIdState(ctid, getDate()); }
 
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
-        view.updateReceivedCtid(ctid);
+        view.updateTowerIdState(ctid, getDate());
     }
 
     @Override
     public void onStateChanged(IState state) {
-        view.updateEngineState(state);
+        view.updateEngineState(state.toString(), getDate());
     }
 
     @Override
-    public void onDisabling() {
-        view.updateOngoingAction("DISABLING");
+    public void onActionChanged(Action action) {
+        view.updateActionState(action, getDate());
     }
 
-    @Override
-    public void onObserveModeDisabling() {
-        view.updateOngoingAction("OBSERVE: Disabling");
-    }
-
-    @Override
-    public void onObserveModeEnabling() {
-        view.updateOngoingAction("OBSERVE: Enabling");
-    }
-
-    @Override
-    public void onHalted() {
-        view.updateOngoingAction("HALTED");
+    private String getDate() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(Calendar.getInstance().getTime());
     }
 }

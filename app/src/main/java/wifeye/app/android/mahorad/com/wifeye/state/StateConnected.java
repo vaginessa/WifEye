@@ -31,6 +31,6 @@ public class StateConnected extends State {
 
     @Override
     public String toString() {
-        return "INTERNET CONNECTED: device is now connected to the Internet";
+        return "CONNECTED";
     }
 }

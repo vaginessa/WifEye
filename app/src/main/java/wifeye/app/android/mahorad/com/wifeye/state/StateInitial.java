@@ -29,6 +29,6 @@ public class StateInitial extends State {
 
     @Override
     public String toString() {
-        return "INITIAL STATE";
+        return "INITIAL";
     }
 }

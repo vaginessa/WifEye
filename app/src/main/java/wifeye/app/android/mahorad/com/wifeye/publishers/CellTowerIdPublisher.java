@@ -83,7 +83,8 @@ public class CellTowerIdPublisher extends PhoneStateListener {
         return consumers.remove(consumer);
     }
 
-    public static String ctid() {
+    public String currentTowerId() {
         return ctid;
     }
+
 }

@@ -29,6 +29,6 @@ public class StateUnknownArea extends State {
 
     @Override
     public String toString() {
-        return "UNKNOWN AREA: received an unrecognized tower identifier";
+        return "UNKNOWN AREA";
     }
 }

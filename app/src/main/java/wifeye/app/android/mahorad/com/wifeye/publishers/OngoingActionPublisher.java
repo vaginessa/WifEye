@@ -6,48 +6,53 @@ import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.Disabling;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.None;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeEnabling;
+
 public class OngoingActionPublisher {
 
     private List<IOngoingActionConsumer> consumers = new ArrayList<>();
 
+    Action ongoingAction = Action.None;
+
+    public enum Action {
+        None, Disabling, ObserveModeDisabling, ObserveModeEnabling
+    }
+
     public void publishDisabling() {
         synchronized (this) {
-            for (IOngoingActionConsumer consumer : consumers) {
-                Executors
-                        .newSingleThreadExecutor()
-                        .submit(consumer::onDisabling);
-            }
-
+            ongoingAction = Disabling;
+            publishOngoingAction();
         }
     }
 
     public void publishObserveModeDisabling() {
         synchronized (this) {
-            for (IOngoingActionConsumer consumer : consumers) {
-                Executors
-                        .newSingleThreadExecutor()
-                        .submit(consumer::onObserveModeDisabling);
-            }
+            ongoingAction = ObserveModeDisabling;
+            publishOngoingAction();
         }
     }
 
     public void publishObserveModeEnabling() {
         synchronized (this) {
-            for (IOngoingActionConsumer consumer : consumers) {
-                Executors
-                        .newSingleThreadExecutor()
-                        .submit(consumer::onObserveModeEnabling);
-            }
+            ongoingAction = ObserveModeEnabling;
+            publishOngoingAction();
         }
     }
 
     public void publishHalt() {
         synchronized (this) {
-            for (IOngoingActionConsumer consumer : consumers) {
-                Executors
-                        .newSingleThreadExecutor()
-                        .submit(consumer::onHalted);
-            }
+            ongoingAction = None;
+            publishOngoingAction();
+        }
+    }
+
+    private void publishOngoingAction() {
+        for (IOngoingActionConsumer consumer : consumers) {
+            Executors.newSingleThreadExecutor()
+                    .submit(() -> consumer.onActionChanged(ongoingAction));
         }
     }
 
@@ -59,4 +64,7 @@ public class OngoingActionPublisher {
         return consumers.remove(consumer);
     }
 
+    public Action ongoingAction() {
+        return ongoingAction;
+    }
 }

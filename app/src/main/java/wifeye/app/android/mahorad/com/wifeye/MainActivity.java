@@ -4,12 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
-import wifeye.app.android.mahorad.com.wifeye.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
 public class MainActivity extends ActivityManagePermission implements IMainView {
@@ -18,13 +15,15 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
 
     private final Presenter presenter = new Presenter(this);
 
-    private TextView serviceState;
-    private TextView deviceState;
-    private TextView ssidTextView;
-    private TextView lastConnect;
+    private TextView serviceText;
+    private TextView stateText;
+    private TextView stateDate;
+    private TextView ssidText;
+    private TextView ssidDate;
     private TextView ctidText;
     private TextView ctidDate;
     private TextView actionText;
+    private TextView actionDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +52,15 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     }
 
     private void setupUserInterface() {
-        serviceState = (TextView) findViewById(R.id.serviceState);
-        deviceState = (TextView) findViewById(R.id.deviceState);
-        ssidTextView = (TextView) findViewById(R.id.ssid);
-        lastConnect = (TextView) findViewById(R.id.lastConnect);
+        serviceText = (TextView) findViewById(R.id.service);
+        stateText = (TextView) findViewById(R.id.state);
+        stateDate = (TextView) findViewById(R.id.stateDate);
+        ssidText = (TextView) findViewById(R.id.ssid);
+        ssidDate = (TextView) findViewById(R.id.ssidDate);
         ctidText = (TextView) findViewById(R.id.ctid);
         ctidDate = (TextView) findViewById(R.id.ctidDate);
         actionText = (TextView) findViewById(R.id.action);
+        actionDate = (TextView) findViewById(R.id.actionDate);
     }
 
     public void handlePermissions(View view) {
@@ -75,37 +76,40 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     }
 
     @Override
-    public void updateServiceState(final boolean enabled) {
-        runOnUiThread(() -> serviceState.setText(enabled ? "ENABLE" : "DISABLE"));
+    public void updateServiceState(final boolean enabled, final String date) {
+        runOnUiThread(() -> serviceText.setText(enabled ? "ENABLE" : "DISABLE"));
     }
 
     @Override
-    public void updateOngoingAction(String event) {
-        runOnUiThread(() -> actionText.setText(event));
-    }
-
-    @Override
-    public void updateReceivedCtid(String ctid) {
-        runOnUiThread(() -> ctidText.setText(ctid));
-        runOnUiThread(() -> ctidDate.setText(getDate()));
-    }
-
-    @Override
-    public void updateSsidNameInfo(final String ssid) {
+    public void updateActionState(final Action action, final String date) {
         runOnUiThread(() -> {
-            ssidTextView.setText(ssid == null ? "" : ssid);
-            lastConnect.setText(ssid == null ? "" : getDate());
+            actionText.setText(action.toString());
+            actionDate.setText(date);
         });
     }
 
-    private String getDate() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return df.format(Calendar.getInstance().getTime());
+    @Override
+    public void updateTowerIdState(final String ctid, final String date) {
+        runOnUiThread(() -> {
+            ctidText.setText(ctid);
+            ctidDate.setText(date);
+        });
     }
 
     @Override
-    public void updateEngineState(final IState state) {
-        runOnUiThread(() -> deviceState.setText(state.toString()));
+    public void updateHotspotState(final String ssid, final String date) {
+        runOnUiThread(() -> {
+            ssidText.setText(ssid == null ? "" : ssid);
+            ssidDate.setText(date);
+        });
+    }
+
+    @Override
+    public void updateEngineState(final String state, String date) {
+        runOnUiThread(() -> {
+            stateText.setText(state);
+            stateDate.setText(date);
+        });
     }
 
 }

@@ -1,12 +1,9 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+
 public interface IOngoingActionConsumer {
 
-    void onDisabling();
+    void onActionChanged(Action action);
 
-    void onObserveModeDisabling();
-
-    void onObserveModeEnabling();
-
-    void onHalted();
 }

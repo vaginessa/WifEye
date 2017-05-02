@@ -30,6 +30,6 @@ public class StateDisconnected extends State {
 
     @Override
     public String toString() {
-        return "INTERNET DISCONNECTED: device is no longer connected to the Internet";
+        return "DISCONNECTED";
     }
 }
