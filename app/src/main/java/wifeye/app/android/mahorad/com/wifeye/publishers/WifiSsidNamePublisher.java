@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 
 /**
@@ -22,6 +23,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
     private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
 
     private static String ssid;
+    private static String date;
     private final WifiManager wifiManager;
     private final Context context;
     private final List<IWifiSsidNameConsumer> consumers;
@@ -43,6 +45,10 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
             if ("0x".equals(hotSpot)) return;
             if (isSame(hotSpot)) return;
             ssid = hotSpot;
+            date = MainApplication
+                    .mainComponent()
+                    .utilities()
+                    .simpleDate();
             if (hotSpot == null)
                 notifyInternetDisconnected();
             else
@@ -88,8 +94,10 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
         return consumers.remove(consumer);
     }
 
-    public String currentHotspot() {
+    public String ssid() {
         return ssid;
     }
+
+    public String date() { return date; }
 
 }

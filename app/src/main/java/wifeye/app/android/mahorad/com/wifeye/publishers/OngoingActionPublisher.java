@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.Disabling;
 import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.None;
@@ -15,7 +17,12 @@ public class OngoingActionPublisher {
 
     private List<IOngoingActionConsumer> consumers = new ArrayList<>();
 
-    Action ongoingAction = Action.None;
+    private static Action action = Action.None;
+    private static String date;
+    private Utilities utils =
+            MainApplication
+                    .mainComponent()
+                    .utilities();
 
     public enum Action {
         None, Disabling, ObserveModeDisabling, ObserveModeEnabling
@@ -23,28 +30,29 @@ public class OngoingActionPublisher {
 
     public void publishDisabling() {
         synchronized (this) {
-            ongoingAction = Disabling;
+            action = Disabling;
+            date = utils.simpleDate();
             publishOngoingAction();
         }
     }
 
     public void publishObserveModeDisabling() {
         synchronized (this) {
-            ongoingAction = ObserveModeDisabling;
+            action = ObserveModeDisabling;
             publishOngoingAction();
         }
     }
 
     public void publishObserveModeEnabling() {
         synchronized (this) {
-            ongoingAction = ObserveModeEnabling;
+            action = ObserveModeEnabling;
             publishOngoingAction();
         }
     }
 
     public void publishHalt() {
         synchronized (this) {
-            ongoingAction = None;
+            action = None;
             publishOngoingAction();
         }
     }
@@ -52,7 +60,7 @@ public class OngoingActionPublisher {
     private void publishOngoingAction() {
         for (IOngoingActionConsumer consumer : consumers) {
             Executors.newSingleThreadExecutor()
-                    .submit(() -> consumer.onActionChanged(ongoingAction));
+                    .submit(() -> consumer.onActionChanged(action));
         }
     }
 
@@ -64,7 +72,9 @@ public class OngoingActionPublisher {
         return consumers.remove(consumer);
     }
 
-    public Action ongoingAction() {
-        return ongoingAction;
+    public Action action() {
+        return action;
     }
+
+    public String date() { return date; }
 }

@@ -3,9 +3,6 @@ package wifeye.app.android.mahorad.com.wifeye.presenter;
 import android.content.Context;
 import android.content.Intent;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
@@ -15,9 +12,13 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
 public class Presenter implements
@@ -29,31 +30,45 @@ public class Presenter implements
 
     private final IMainView view;
 
+    private Utilities utils =
+            MainApplication
+                    .mainComponent()
+                    .utilities();
+
+    private WifiSsidNamePublisher ssidPublisher =
+            MainApplication
+                    .mainComponent()
+                    .ssidPublisher();
+
+    private OngoingActionPublisher actionPublisher =
+            MainApplication
+                    .mainComponent()
+                    .actionPublisher();
+
+    private CellTowerIdPublisher ctidPublisher =
+            MainApplication
+                    .mainComponent()
+                    .ctidPublisher();
+
+    private SystemStatePublisher statePublisher =
+            MainApplication
+                    .mainComponent()
+                    .statePublisher();
+
+    /**
+     *
+     * @param view
+     */
     public Presenter(IMainView view) {
         this.view = view;
         subscribe();
     }
 
     private void subscribe() {
-        MainApplication
-                .mainComponent()
-                .ssidPublisher()
-                .subscribe(this);
-
-        MainApplication
-                .mainComponent()
-                .ctidPublisher()
-                .subscribe(this);
-
-        MainApplication
-                .mainComponent()
-                .statePublisher()
-                .subscribe(this);
-
-        MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .subscribe(this);
+        ssidPublisher.subscribe(this);
+        ctidPublisher.subscribe(this);
+        statePublisher.subscribe(this);
+        actionPublisher.subscribe(this);
     }
 
     @Override
@@ -63,9 +78,7 @@ public class Presenter implements
     public void onPause() {}
 
     @Override
-    public void onResume() {
-        updateViewStates();
-    }
+    public void onResume() { updateViewStates(); }
 
     @Override
     public void onDestroy() {}
@@ -78,7 +91,6 @@ public class Presenter implements
         Intent intent = new Intent(context, MainService.class);
         context.startService(intent);
         updateServiceState();
-
     }
 
     @Override
@@ -135,77 +147,63 @@ public class Presenter implements
     }
 
     private void updateActionState() {
-        Action action = MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .ongoingAction();
-        view.updateActionState(action, getDate());
+        Action action = actionPublisher.action();
+        String date = actionPublisher.date();
+        view.updateActionState(action, date);
     }
 
     private void updateHotspotState() {
-        String ssid = MainApplication
-                .mainComponent()
-                .ssidPublisher()
-                .currentHotspot();
-        view.updateHotspotState(ssid, getDate());
+        String ssid = ssidPublisher.ssid();
+        String date = ssidPublisher.date();
+        view.updateHotspotState(ssid, date);
     }
 
     private void updateTowerIdState() {
-        String ctid = MainApplication
-                .mainComponent()
-                .ctidPublisher()
-                .currentTowerId();
-        String date = (ctid == null || ctid == "")
-                ? "" : getDate();
+        String ctid = ctidPublisher.ctid();
+        String date = (ctid == null || ctid.equals(""))
+                ? "" : ctidPublisher.date();
         view.updateTowerIdState(ctid, date);
     }
 
     private void updateEngineState() {
-        String state = MainApplication
-                .mainComponent()
-                .stateMachine()
-                .state();
-        view.updateEngineState(state, getDate());
+        String state = statePublisher.state();
+        String date = statePublisher.date();
+        view.updateEngineState(state, date);
     }
 
     private void updateServiceState() {
-        boolean enabled = MainApplication
-                .mainComponent()
-                .utilities()
-                .isServiceRunning(MainService.class);
-        view.updateServiceState(enabled, getDate());
+        boolean enabled = utils.isRunning(MainService.class);
+        view.updateServiceState(enabled, utils.simpleDate());
     }
 
     @Override
     public void onInternetConnected(String ssid) {
-        view.updateHotspotState(ssid, getDate());
+        view.updateHotspotState(ssid, utils.simpleDate());
     }
 
     @Override
     public void onInternetDisconnected() {
-        view.updateHotspotState(null, getDate());
+        view.updateHotspotState(null, utils.simpleDate());
     }
 
     @Override
-    public void onReceivedKnownTowerId(String ctid) { view.updateTowerIdState(ctid, getDate()); }
+    public void onReceivedKnownTowerId(String ctid) {
+        view.updateTowerIdState(ctid, utils.simpleDate());
+    }
 
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
-        view.updateTowerIdState(ctid, getDate());
+        view.updateTowerIdState(ctid, utils.simpleDate());
     }
 
     @Override
     public void onStateChanged(IState state) {
-        view.updateEngineState(state.toString(), getDate());
+        view.updateEngineState(state.toString(), utils.simpleDate());
     }
 
     @Override
     public void onActionChanged(Action action) {
-        view.updateActionState(action, getDate());
+        view.updateActionState(action, utils.simpleDate());
     }
 
-    private String getDate() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return df.format(Calendar.getInstance().getTime());
-    }
 }

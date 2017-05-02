@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 
@@ -19,6 +20,7 @@ import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 public class CellTowerIdPublisher extends PhoneStateListener {
 
     private static String ctid;
+    private static String date;
     private final List<ICellTowerIdConsumer> consumers;
     private final Context context;
     private final IPersistence persistence;
@@ -36,6 +38,10 @@ public class CellTowerIdPublisher extends PhoneStateListener {
             String towerId = cellLocation.toString();
             if (isSame(towerId)) return;
             ctid = towerId;
+            date = MainApplication
+                    .mainComponent()
+                    .utilities()
+                    .simpleDate();
             if (persistence.exist(ctid))
                 publishReceivedKnownTowerId();
             else
@@ -83,8 +89,12 @@ public class CellTowerIdPublisher extends PhoneStateListener {
         return consumers.remove(consumer);
     }
 
-    public String currentTowerId() {
+    public String ctid() {
         return ctid;
+    }
+
+    public String date() {
+        return date;
     }
 
 }

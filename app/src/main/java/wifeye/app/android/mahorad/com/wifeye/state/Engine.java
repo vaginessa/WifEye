@@ -123,9 +123,4 @@ public class Engine implements IStateMachine, IActuator {
         Log.i(TAG, "----> PERSISTING...");
         persistence.persist(ssid, ctid);
     }
-
-    public String state() {
-        return currentState.toString();
-    }
-
 }

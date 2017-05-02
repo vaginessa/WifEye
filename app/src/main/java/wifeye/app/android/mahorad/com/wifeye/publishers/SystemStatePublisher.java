@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 
 public class SystemStatePublisher {
 
+    private static String state;
+    private static String date;
     private final List<ISystemStateConsumer> consumers;
 
     public SystemStatePublisher() {
@@ -16,6 +19,11 @@ public class SystemStatePublisher {
     }
 
     public void publish(final IState state) {
+        this.state = state.toString();
+        date = MainApplication
+                .mainComponent()
+                .utilities()
+                .simpleDate();
         for (final ISystemStateConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
@@ -29,5 +37,13 @@ public class SystemStatePublisher {
 
     public boolean unsubscribe(ISystemStateConsumer consumer) {
         return consumers.remove(consumer);
+    }
+
+    public String state() {
+        return state;
+    }
+
+    public String date() {
+        return date;
     }
 }
