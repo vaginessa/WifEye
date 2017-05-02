@@ -13,6 +13,7 @@ import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IPersistenceConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
@@ -62,6 +63,11 @@ public class Presenter implements
             MainApplication
                     .mainComponent()
                     .repoPublisher();
+
+    private IPersistence persistence =
+            MainApplication
+                    .mainComponent()
+                    .persistence();
 
     /**
      *
@@ -153,6 +159,7 @@ public class Presenter implements
         updateTowerIdState();
         updateActionState();
         updateEngineState();
+        updateRepositoryState();
     }
 
     private void updateActionState() {
@@ -178,6 +185,10 @@ public class Presenter implements
         String state = statePublisher.state();
         String date = statePublisher.date();
         view.updateEngineState(state, date);
+    }
+
+    private void updateRepositoryState() {
+        view.updatePersistence(persistence.toString());
     }
 
     private void updateServiceState() {
@@ -217,10 +228,7 @@ public class Presenter implements
 
     @Override
     public void onDataPersisted() {
-        String contents = MainApplication
-                .mainComponent()
-                .persistence()
-                .toString();
+        String contents = persistence.toString();
         view.updatePersistence(contents);
     }
 }
