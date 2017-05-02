@@ -60,13 +60,13 @@ public class Engine implements IStateMachine, IActuator {
 
     @Override
     public void receivedKnownTowerId() {
-        Log.i(TAG, String.format("--| EVENT: unknown ctid |"));
+        Log.i(TAG, String.format("--| EVENT: known ctid |"));
         currentState.onReceivedKnownTowerId();
     }
 
     @Override
     public void receivedUnknownTowerId(String ctid) {
-        Log.i(TAG, String.format("--| EVENT: known ctid %s |", ctid));
+        Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
         this.ctid = ctid;
         currentState.onReceivedUnknownTowerId();
     }

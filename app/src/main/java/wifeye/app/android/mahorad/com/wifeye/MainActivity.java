@@ -22,6 +22,8 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private TextView deviceState;
     private TextView ssidTextView;
     private TextView lastConnect;
+    private TextView ctidText;
+    private TextView ctidDate;
     private TextView actionText;
 
     @Override
@@ -55,6 +57,8 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         deviceState = (TextView) findViewById(R.id.deviceState);
         ssidTextView = (TextView) findViewById(R.id.ssid);
         lastConnect = (TextView) findViewById(R.id.lastConnect);
+        ctidText = (TextView) findViewById(R.id.ctid);
+        ctidDate = (TextView) findViewById(R.id.ctidDate);
         actionText = (TextView) findViewById(R.id.action);
     }
 
@@ -78,6 +82,12 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     @Override
     public void updateOngoingAction(String event) {
         runOnUiThread(() -> actionText.setText(event));
+    }
+
+    @Override
+    public void updateReceivedCtid(String ctid) {
+        runOnUiThread(() -> ctidText.setText(ctid));
+        runOnUiThread(() -> ctidDate.setText(getDate()));
     }
 
     @Override

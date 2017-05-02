@@ -53,7 +53,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
         for (final ICellTowerIdConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
-                    .submit(consumer::onReceivedKnownTowerId);
+                    .submit(() -> consumer.onReceivedKnownTowerId(ctid));
         }
     }
 

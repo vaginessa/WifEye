@@ -8,6 +8,7 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
@@ -17,8 +18,9 @@ import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 public class Presenter implements
         IPresenter,
         IWifiSsidNameConsumer,
+        ICellTowerIdConsumer,
         ISystemStateConsumer,
-        IOngoingActionConsumer {
+        IOngoingActionConsumer  {
 
     private final IMainView view;
 
@@ -31,6 +33,11 @@ public class Presenter implements
         MainApplication
                 .mainComponent()
                 .ssidPublisher()
+                .subscribe(this);
+
+        MainApplication
+                .mainComponent()
+                .ctidPublisher()
                 .subscribe(this);
 
         MainApplication
@@ -130,6 +137,14 @@ public class Presenter implements
     @Override
     public void onInternetDisconnected() {
         view.updateSsidNameInfo(null);
+    }
+
+    @Override
+    public void onReceivedKnownTowerId(String ctid) { view.updateReceivedCtid(ctid); }
+
+    @Override
+    public void onReceivedUnknownTowerId(String ctid) {
+        view.updateReceivedCtid(ctid);
     }
 
     @Override

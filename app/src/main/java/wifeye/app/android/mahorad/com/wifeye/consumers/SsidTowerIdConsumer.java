@@ -30,7 +30,7 @@ public class SsidTowerIdConsumer implements IWifiSsidNameConsumer, ICellTowerIdC
     }
 
     @Override
-    public void onReceivedKnownTowerId() {
+    public void onReceivedKnownTowerId(String ctid) {
         synchronized (this) {
             engine.receivedKnownTowerId();
         }
