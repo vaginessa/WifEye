@@ -5,7 +5,9 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
@@ -15,8 +17,6 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 @Singleton
 @dagger.Component(modules = MainModule.class)
 public interface MainComponent {
-
-    Engine stateMachine();
 
     Context context();
 
@@ -30,6 +30,8 @@ public interface MainComponent {
 
     WifiSsidNamePublisher ssidPublisher();
 
-    SsidTowerIdConsumer ssidctidConsumer();
+    PersistencePublisher repoPublisher();
+
+    IPersistence persistence();
 
 }

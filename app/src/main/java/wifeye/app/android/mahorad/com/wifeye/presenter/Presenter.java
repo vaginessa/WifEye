@@ -10,11 +10,13 @@ import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IPersistenceConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
@@ -26,7 +28,8 @@ public class Presenter implements
         IWifiSsidNameConsumer,
         ICellTowerIdConsumer,
         ISystemStateConsumer,
-        IOngoingActionConsumer  {
+        IOngoingActionConsumer,
+        IPersistenceConsumer {
 
     private final IMainView view;
 
@@ -55,6 +58,11 @@ public class Presenter implements
                     .mainComponent()
                     .statePublisher();
 
+    private PersistencePublisher repoPublisher =
+            MainApplication
+                    .mainComponent()
+                    .repoPublisher();
+
     /**
      *
      * @param view
@@ -69,6 +77,7 @@ public class Presenter implements
         ctidPublisher.subscribe(this);
         statePublisher.subscribe(this);
         actionPublisher.subscribe(this);
+        repoPublisher.subscribe(this);
     }
 
     @Override
@@ -206,4 +215,12 @@ public class Presenter implements
         view.updateActionState(action, utils.simpleDate());
     }
 
+    @Override
+    public void onDataPersisted() {
+        String contents = MainApplication
+                .mainComponent()
+                .persistence()
+                .toString();
+        view.updatePersistence(contents);
+    }
 }

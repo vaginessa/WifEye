@@ -6,11 +6,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BasePersistence implements IPersistence {
+import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 
-    private static final String TAG = BasePersistence.class.getSimpleName();
+public class MemoryPersistence extends Persistence {
+
+    private static final String TAG = MemoryPersistence.class.getSimpleName();
 
     private final HashMap<String, Set<String>> db = new HashMap<>();
+
+    public MemoryPersistence(PersistencePublisher publisher) {
+        super(publisher);
+    }
 
     @Override
     public void persist(String ssid, final String ctid) {
@@ -20,9 +26,11 @@ public class BasePersistence implements IPersistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
+            publisher.publishDataPersisted();
             Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
+            publisher.publishDataPersisted();
         }
     }
 
@@ -40,5 +48,18 @@ public class BasePersistence implements IPersistence {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String message = "";
+        for (String ssid : db.keySet()) {
+            message += ssid + "\n";
+            Set<String> ctids = db.get(ssid);
+            for (String ctid : ctids) {
+                message += "  " + ctid + "\n";
+            }
+        }
+        return message;
     }
 }

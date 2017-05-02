@@ -13,4 +13,6 @@ public interface IMainView {
     void updateEngineState(String state, String date);
 
     void updateActionState(Action action, String date);
+
+    void updatePersistence(String repository);
 }

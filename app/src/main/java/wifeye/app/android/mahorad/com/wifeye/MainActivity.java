@@ -2,6 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
@@ -24,6 +25,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private TextView ctidDate;
     private TextView actionText;
     private TextView actionDate;
+    private EditText persistence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         ctidDate = (TextView) findViewById(R.id.ctidDate);
         actionText = (TextView) findViewById(R.id.action);
         actionDate = (TextView) findViewById(R.id.actionDate);
+        persistence = (EditText) findViewById(R.id.persistence);
     }
 
     public void handlePermissions(View view) {
@@ -89,6 +92,11 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     }
 
     @Override
+    public void updatePersistence(String repository) {
+        runOnUiThread(() -> persistence.setText(repository));
+    }
+
+    @Override
     public void updateTowerIdState(final String ctid, final String date) {
         runOnUiThread(() -> {
             ctidText.setText(ctid);
@@ -111,5 +119,6 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
             stateDate.setText(date);
         });
     }
+
 
 }

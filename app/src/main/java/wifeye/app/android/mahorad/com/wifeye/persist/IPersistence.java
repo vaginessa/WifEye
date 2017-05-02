@@ -7,4 +7,5 @@ public interface IPersistence {
     boolean exist(String ssid, String ctid);
 
     boolean exist(String ctid);
+
 }

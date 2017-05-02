@@ -7,10 +7,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IPersistenceConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
-import wifeye.app.android.mahorad.com.wifeye.persist.BasePersistence;
+import wifeye.app.android.mahorad.com.wifeye.persist.MemoryPersistence;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
@@ -36,8 +38,8 @@ public class MainModule {
     }
 
     @Provides @Singleton
-    public IPersistence persistence() {
-        return new BasePersistence();
+    public IPersistence persistence(PersistencePublisher publisher) {
+        return new MemoryPersistence(publisher);
     }
 
     @Provides @Singleton
@@ -50,6 +52,11 @@ public class MainModule {
     @Provides @Singleton
     public SsidTowerIdConsumer ssidTowerIdConsumer(Engine engine) {
         return new SsidTowerIdConsumer(engine);
+    }
+
+    @Provides @Singleton
+    public PersistencePublisher persistencePublisher() {
+        return new PersistencePublisher();
     }
 
     @Provides @Singleton
