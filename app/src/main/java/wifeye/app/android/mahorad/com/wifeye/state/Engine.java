@@ -47,28 +47,36 @@ public class Engine implements IStateMachine, IActuator {
     /* used by client */
     @Override
     public void internetConnected(String ssid) {
-        Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
-        this.ssid = ssid;
-        currentState.onInternetConnected();
+        synchronized (this) {
+            Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
+            this.ssid = ssid;
+            currentState.onInternetConnected();
+        }
     }
 
     @Override
     public void internetDisconnected() {
-        Log.i(TAG, String.format("--| EVENT: disconnected |"));
-        currentState.onInternetDisconnects();
+        synchronized (this) {
+            Log.i(TAG, String.format("--| EVENT: disconnected |"));
+            currentState.onInternetDisconnects();
+        }
     }
 
     @Override
     public void receivedKnownTowerId() {
-        Log.i(TAG, String.format("--| EVENT: known ctid |"));
-        currentState.onReceivedKnownTowerId();
+        synchronized (this) {
+            Log.i(TAG, String.format("--| EVENT: known ctid |"));
+            currentState.onReceivedKnownTowerId();
+        }
     }
 
     @Override
     public void receivedUnknownTowerId(String ctid) {
-        Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
-        this.ctid = ctid;
-        currentState.onReceivedUnknownTowerId();
+        synchronized (this) {
+            Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
+            this.ctid = ctid;
+            currentState.onReceivedUnknownTowerId();
+        }
     }
 
     /* used by states */
@@ -93,11 +101,9 @@ public class Engine implements IStateMachine, IActuator {
     }
 
     private void setState(IState state) {
-        synchronized (this) {
-            currentState = state;
-            Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
-            publisher.publish(state);
-        }
+        currentState = state;
+        Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
+        publisher.publish(state);
     }
 
     @Override
