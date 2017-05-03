@@ -3,6 +3,8 @@ package wifeye.app.android.mahorad.com.wifeye.presenter;
 import android.content.Context;
 import android.content.Intent;
 
+import javax.inject.Inject;
+
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
@@ -34,40 +36,13 @@ public class Presenter implements
 
     private final IMainView view;
 
-    private Utilities utils =
-            MainApplication
-                    .mainComponent()
-                    .utilities();
-
-    private WifiSsidNamePublisher ssidPublisher =
-            MainApplication
-                    .mainComponent()
-                    .ssidPublisher();
-
-    private OngoingActionPublisher actionPublisher =
-            MainApplication
-                    .mainComponent()
-                    .actionPublisher();
-
-    private CellTowerIdPublisher ctidPublisher =
-            MainApplication
-                    .mainComponent()
-                    .ctidPublisher();
-
-    private SystemStatePublisher statePublisher =
-            MainApplication
-                    .mainComponent()
-                    .statePublisher();
-
-    private PersistencePublisher repoPublisher =
-            MainApplication
-                    .mainComponent()
-                    .repoPublisher();
-
-    private IPersistence persistence =
-            MainApplication
-                    .mainComponent()
-                    .persistence();
+    @Inject Utilities utils;
+    @Inject WifiSsidNamePublisher ssidPublisher;
+    @Inject OngoingActionPublisher actionPublisher;
+    @Inject CellTowerIdPublisher ctidPublisher;
+    @Inject SystemStatePublisher statePublisher;
+    @Inject PersistencePublisher repoPublisher;
+    @Inject IPersistence persistence;
 
     /**
      *
@@ -75,6 +50,9 @@ public class Presenter implements
      */
     public Presenter(IMainView view) {
         this.view = view;
+        MainApplication
+                .mainComponent()
+                .inject(this);
         subscribe();
     }
 
@@ -101,7 +79,7 @@ public class Presenter implements
     @Override
     public void startMainService() {
         Context context = MainApplication
-                .mainComponent()
+                .appComponent()
                 .context();
         Intent intent = new Intent(context, MainService.class);
         context.startService(intent);
@@ -111,7 +89,7 @@ public class Presenter implements
     @Override
     public void stopMainService() {
         Context context = MainApplication
-                .mainComponent()
+                .appComponent()
                 .context();
         Intent intent = new Intent(context, MainService.class);
         context.stopService(intent);

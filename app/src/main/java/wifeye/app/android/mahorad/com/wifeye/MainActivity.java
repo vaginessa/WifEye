@@ -1,9 +1,12 @@
 package wifeye.app.android.mahorad.com.wifeye;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
@@ -27,12 +30,16 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private TextView actionDate;
     private EditText persistence;
 
+    @Inject
+    SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupUserInterface();
         presenter.onCreate();
+        MainApplication.mainComponent().inject(this);
     }
 
     @Override

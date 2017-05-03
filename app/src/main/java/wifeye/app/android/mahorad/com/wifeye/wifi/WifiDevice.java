@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
-import wifeye.app.android.mahorad.com.wifeye.MainApplication;
+import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdownBuilder;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
@@ -17,6 +17,7 @@ public class WifiDevice {
     private static final int WIFI_DISABLE_TIMEOUT = 60;
 
     private final IWifiHandler wifiHandler;
+    private final OngoingActionPublisher publisher;
 
     private UnaryCountdown disablingTimer;
     private BinaryCountdown observingTimer;
@@ -26,8 +27,9 @@ public class WifiDevice {
      * @param wifiHandler Android wifi manager for controlling
      *                    wifi behaviours on the phone/tablet
      */
-    public WifiDevice(IWifiHandler wifiHandler) {
+    public WifiDevice(IWifiHandler wifiHandler, OngoingActionPublisher publisher) {
         this.wifiHandler = wifiHandler;
+        this.publisher = publisher;
     }
 
     public boolean isEnabled() {
@@ -35,11 +37,8 @@ public class WifiDevice {
     }
 
     public void disable() {
-        if (!isEnabled()) return;
-        if (observingTimer != null && observingTimer.isActive())
-            return;
-        if (disablingTimer != null && disablingTimer.isActive())
-            return;
+        if (!isEnabled())  return;
+        if (isDisabling()) return;
         halt();
         publishDisabling();
         disablingTimer = new UnaryCountdownBuilder()
@@ -50,9 +49,12 @@ public class WifiDevice {
         disablingTimer.start();
     }
 
+    private boolean isDisabling() {
+        return disablingTimer != null && disablingTimer.isActive();
+    }
+
     public void observe() {
-        if (observingTimer != null && observingTimer.isActive())
-            return;
+        if (isObserving()) return;
         halt();
         observingTimer = new BinaryCountdownBuilder()
                 .setEnacts(OBSERVE_REPEAT_COUNT)
@@ -69,6 +71,10 @@ public class WifiDevice {
                 .setCompletionAction(wifiHandler::disable)
                 .build();
         observingTimer.start();
+    }
+
+    private boolean isObserving() {
+        return observingTimer != null && observingTimer.isActive();
     }
 
     public void halt() {
@@ -90,30 +96,18 @@ public class WifiDevice {
     }
 
     private void publishDisabling() {
-        MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .publishDisabling();
+        publisher.publishDisabling();
     }
 
     private void publishObserveModeEnabling() {
-        MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .publishObserveModeEnabling();
+        publisher.publishObserveModeEnabling();
     }
 
     private void publishObserveModeDisabling() {
-        MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .publishObserveModeDisabling();
+        publisher.publishObserveModeDisabling();
     }
 
     private void publishHalt() {
-        MainApplication
-                .mainComponent()
-                .actionPublisher()
-                .publishHalt();
+        publisher.publishHalt();
     }
 }

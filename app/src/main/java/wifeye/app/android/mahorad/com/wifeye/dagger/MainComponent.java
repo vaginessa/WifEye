@@ -1,26 +1,23 @@
 package wifeye.app.android.mahorad.com.wifeye.dagger;
 
-import android.content.Context;
-
-import javax.inject.Singleton;
-
-import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
+import dagger.Component;
+import wifeye.app.android.mahorad.com.wifeye.MainActivity;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
+import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
+import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
-import wifeye.app.android.mahorad.com.wifeye.state.Engine;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
-@Singleton
-@dagger.Component(modules = MainModule.class)
+@ApplicationScope
+@Component(modules = MainModule.class)
 public interface MainComponent {
 
-    Context context();
+    void inject(MainActivity activity);
 
-    Utilities utilities();
+    void inject(Presenter presenter);
 
     OngoingActionPublisher actionPublisher();
 
@@ -31,6 +28,8 @@ public interface MainComponent {
     WifiSsidNamePublisher ssidPublisher();
 
     PersistencePublisher repoPublisher();
+
+    Utilities utilities();
 
     IPersistence persistence();
 

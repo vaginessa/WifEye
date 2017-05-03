@@ -6,8 +6,12 @@ import wifeye.app.android.mahorad.com.wifeye.dagger.*;
 
 public class MainApplication extends Application {
 
+    private static AppComponent appComponent;
     private static MainComponent mainComponent;
 
+    public static AppComponent appComponent() {
+        return appComponent;
+    }
     public static MainComponent mainComponent() {
         return mainComponent;
     }
@@ -15,9 +19,16 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppModule applicationModule = new AppModule(this);
+
+        appComponent = DaggerAppComponent
+                .builder()
+                .appModule(applicationModule)
+                .build();
+
         mainComponent = DaggerMainComponent
                 .builder()
-                .contextModule(new ContextModule(this))
+                .appModule(applicationModule)
                 .mainModule(new MainModule())
                 .build();
     }

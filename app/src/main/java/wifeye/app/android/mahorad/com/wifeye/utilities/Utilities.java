@@ -30,7 +30,7 @@ public class Utilities {
 
     private ActivityManager getActivityManager() {
         return (ActivityManager) MainApplication
-                    .mainComponent()
+                    .appComponent()
                     .context()
                     .getSystemService(Context.ACTIVITY_SERVICE);
     }
