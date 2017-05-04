@@ -7,6 +7,10 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdownBuilder;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.None;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeEnabling;
 
 public class WifiDevice {
 
@@ -40,7 +44,7 @@ public class WifiDevice {
         if (!isEnabled())  return;
         if (isDisabling()) return;
         halt();
-        publishDisabling();
+        publisher.publish(DisablingMode);
         disablingTimer = new UnaryCountdownBuilder()
                 .setEnacts(1)
                 .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
@@ -61,12 +65,12 @@ public class WifiDevice {
                 .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                 .setMoreDelayedAction(() ->  {
                     wifiHandler.enable();
-                    publishObserveModeDisabling();
+                    publisher.publish(ObserveModeDisabling);
                 })
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
                 .setLessDelayedAction(() -> {
                     wifiHandler.disable();
-                    publishObserveModeEnabling();
+                    publisher.publish(ObserveModeEnabling);
                 })
                 .setCompletionAction(wifiHandler::disable)
                 .build();
@@ -78,7 +82,7 @@ public class WifiDevice {
     }
 
     public void halt() {
-        publishHalt();
+        publisher.publish(None);
         stopObservingTimer();
         stopDisablingTimer();
     }
@@ -95,19 +99,4 @@ public class WifiDevice {
         disablingTimer = null;
     }
 
-    private void publishDisabling() {
-        publisher.publishDisabling();
-    }
-
-    private void publishObserveModeEnabling() {
-        publisher.publishObserveModeEnabling();
-    }
-
-    private void publishObserveModeDisabling() {
-        publisher.publishObserveModeDisabling();
-    }
-
-    private void publishHalt() {
-        publisher.publishHalt();
-    }
 }
