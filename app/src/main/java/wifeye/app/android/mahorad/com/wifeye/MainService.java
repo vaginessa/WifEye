@@ -8,7 +8,13 @@ import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
+import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 
 public class MainService extends Service {
 
@@ -24,6 +30,11 @@ public class MainService extends Service {
     private ResultReceiver resultReceiver;
 
     private boolean started;
+
+    @Inject WifiDeviceStatePublisher wifiPublisher;
+    @Inject CellTowerIdPublisher ctidPublisher;
+    @Inject WifiSsidNamePublisher ssidPublisher;
+    @Inject SsidTowerIdConsumer consumer;
 
     @Nullable
     @Override
@@ -43,13 +54,13 @@ public class MainService extends Service {
 
         MainApplication
                 .mainComponent()
-                .ctidPublisher()
-                .start();
+                .inject(this);
 
-        MainApplication
-                .mainComponent()
-                .ssidPublisher()
-                .start();
+        ctidPublisher.subscribe(consumer);
+        ssidPublisher.subscribe(consumer);
+        wifiPublisher.start();
+        ctidPublisher.start();
+        ssidPublisher.start();
 
         started = true;
         Log.v(TAG, "started main service");
@@ -63,13 +74,11 @@ public class MainService extends Service {
     private void stop() {
         if (!started) return;
 
-        MainApplication.mainComponent()
-                .ctidPublisher()
-                .stop();
-
-        MainApplication.mainComponent()
-                .ssidPublisher()
-                .stop();
+        ctidPublisher.unsubscribe(consumer);
+        ssidPublisher.unsubscribe(consumer);
+        wifiPublisher.stop();
+        ctidPublisher.stop();
+        ssidPublisher.stop();
 
         started = false;
         Log.v(TAG, "stopped main service");

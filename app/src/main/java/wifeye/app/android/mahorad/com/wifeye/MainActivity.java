@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 
 public class MainActivity extends ActivityManagePermission implements IMainView {
@@ -20,6 +22,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private final Presenter presenter = new Presenter(this);
 
     private TextView serviceText;
+    private TextView wifiText;
     private TextView stateText;
     private TextView stateDate;
     private TextView ssidText;
@@ -70,6 +73,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         ctidDate = (TextView) findViewById(R.id.ctidDate);
         actionText = (TextView) findViewById(R.id.action);
         actionDate = (TextView) findViewById(R.id.actionDate);
+        wifiText = (TextView) findViewById(R.id.wifi);
         persistence = (EditText) findViewById(R.id.persistence);
     }
 
@@ -77,13 +81,14 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         presenter.handlePermissions();
     }
 
-    public void startMainService(View view) {
-        presenter.startMainService();
+    public void toggleService(View view) {
+        ToggleButton b = (ToggleButton) view;
+        if (b.isChecked())
+            presenter.startMainService();
+        else
+            presenter.stopMainService();
     }
 
-    public void stopMainService(View view) {
-        presenter.stopMainService();
-    }
 
     @Override
     public void updateServiceState(final boolean enabled, final String date) {
@@ -101,6 +106,11 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     @Override
     public void updatePersistence(String repository) {
         runOnUiThread(() -> persistence.setText(repository));
+    }
+
+    @Override
+    public void updateWifiDeviceState(WifiState state) {
+        runOnUiThread(() -> wifiText.setText(state.toString()));
     }
 
     @Override

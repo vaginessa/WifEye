@@ -12,6 +12,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
@@ -70,21 +71,20 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiSsidNamePublisher bssidPublisher(Context context,
-                                                SsidTowerIdConsumer consumer) {
-        WifiSsidNamePublisher publisher = new WifiSsidNamePublisher(context);
-        publisher.subscribe(consumer);
-        return publisher;
+    public WifiSsidNamePublisher bssidPublisher(Context context) {
+        return new WifiSsidNamePublisher(context);
     }
 
     @Provides
     @ApplicationScope
-    public CellTowerIdPublisher towerIdPublisher(Context context,
-                                                 IPersistence persistence,
-                                                 SsidTowerIdConsumer consumer) {
-        CellTowerIdPublisher publisher = new CellTowerIdPublisher(context, persistence);
-        publisher.subscribe(consumer);
-        return publisher;
+    public WifiDeviceStatePublisher wifiPublisher(Context context) {
+        return new WifiDeviceStatePublisher(context);
+    }
+
+    @Provides
+    @ApplicationScope
+    public CellTowerIdPublisher towerIdPublisher(Context context, IPersistence persistence) {
+        return new CellTowerIdPublisher(context, persistence);
     }
 
     @Provides

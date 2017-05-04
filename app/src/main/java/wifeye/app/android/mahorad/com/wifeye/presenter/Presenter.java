@@ -13,6 +13,7 @@ import wifeye.app.android.mahorad.com.wifeye.MainService;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IPersistenceConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
@@ -21,7 +22,9 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
@@ -32,7 +35,8 @@ public class Presenter implements
         ICellTowerIdConsumer,
         ISystemStateConsumer,
         IOngoingActionConsumer,
-        IPersistenceConsumer {
+        IPersistenceConsumer,
+        IWifiDeviceStateConsumer {
 
     private final IMainView view;
 
@@ -42,6 +46,7 @@ public class Presenter implements
     @Inject CellTowerIdPublisher ctidPublisher;
     @Inject SystemStatePublisher statePublisher;
     @Inject PersistencePublisher repoPublisher;
+    @Inject WifiDeviceStatePublisher wifiPublisher;
     @Inject IPersistence persistence;
 
     /**
@@ -61,6 +66,7 @@ public class Presenter implements
         ctidPublisher.subscribe(this);
         statePublisher.subscribe(this);
         actionPublisher.subscribe(this);
+        wifiPublisher.subscribe(this);
         repoPublisher.subscribe(this);
     }
 
@@ -137,6 +143,7 @@ public class Presenter implements
         updateTowerIdState();
         updateActionState();
         updateEngineState();
+        updateWifiDeviceState();
         updateRepositoryState();
     }
 
@@ -169,6 +176,10 @@ public class Presenter implements
         view.updatePersistence(persistence.toString());
     }
 
+    private void updateWifiDeviceState() {
+        view.updateWifiDeviceState(wifiPublisher.state());
+    }
+
     private void updateServiceState() {
         boolean enabled = utils.isRunning(MainService.class);
         view.updateServiceState(enabled, utils.simpleDate());
@@ -192,6 +203,11 @@ public class Presenter implements
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
         view.updateTowerIdState(ctid, utils.simpleDate());
+    }
+
+    @Override
+    public void onWifiStateChanged(WifiState state) {
+        view.updateWifiDeviceState(state);
     }
 
     @Override
