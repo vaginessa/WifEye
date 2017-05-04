@@ -1,5 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -31,7 +32,15 @@ public class AndroidWifiHandler implements IWifiHandler {
 
     @Override
     public void disable() {
+        if (isConnected()) return;
         wifiManager.setWifiEnabled(false);
         Log.d(TAG, "[[ disabling wifi... ]]");
+    }
+
+    private boolean isConnected() {
+        WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+        String bssid = connectionInfo.getBSSID();
+        String ssid = (bssid == null ? null : connectionInfo.getSSID());
+        return ssid != null && !ssid.equals("0x");
     }
 }

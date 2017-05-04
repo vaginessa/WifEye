@@ -8,7 +8,7 @@ public class StateRouterArea extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.halt();
+        engine.haltWifiAct();
     }
 
     @Override

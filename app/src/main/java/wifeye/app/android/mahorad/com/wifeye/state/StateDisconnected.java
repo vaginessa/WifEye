@@ -9,7 +9,7 @@ public class StateDisconnected extends State {
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
-        engine.halt();
+        engine.haltWifiAct();
         engine.persist();
     }
 
@@ -19,7 +19,7 @@ public class StateDisconnected extends State {
     @Override
     public void onReceivedKnownTowerId() {
         engine.toKnownAreaState();
-        engine.standbyWifi();
+        engine.observeWifi();
     }
 
     @Override

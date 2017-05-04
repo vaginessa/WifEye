@@ -9,7 +9,7 @@ public class StateKnownArea extends State {
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
-        engine.halt();
+        engine.haltWifiAct();
         engine.persist();
     }
 
@@ -18,7 +18,7 @@ public class StateKnownArea extends State {
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.standbyWifi();
+        engine.observeWifi();
     }
 
     @Override

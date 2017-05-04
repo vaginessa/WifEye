@@ -19,7 +19,7 @@ public class StateInitial extends State {
     @Override
     public void onReceivedKnownTowerId() {
         engine.toKnownAreaState();
-        engine.standbyWifi();
+        engine.observeWifi();
     }
 
     @Override

@@ -113,14 +113,14 @@ public class Engine implements IStateMachine, IActuator {
     }
 
     @Override
-    public void standbyWifi() {
-        Log.i(TAG, "----> BEGIN WIFI OBSERVE...");
+    public void observeWifi() {
+        Log.i(TAG, "----> OBSERVING WIFI...");
         wifiDevice.observe();
     }
 
     @Override
-    public void halt() {
-        Log.i(TAG, "----> CANCELLING...");
+    public void haltWifiAct() {
+        Log.i(TAG, "----> HALTING WIFI ACTIONS...");
         wifiDevice.halt();
     }
 

@@ -4,9 +4,9 @@ interface IActuator {
 
     void disableWifi();
 
-    void standbyWifi();
+    void observeWifi();
 
-    void halt();
+    void haltWifiAct();
 
     void persist();
 }

@@ -17,8 +17,8 @@ public class WifiDevice {
     private static final String TAG = WifiDevice.class.getSimpleName();
 
     private static final int OBSERVE_REPEAT_COUNT = 10;
-    private static final int WIFI_ENABLE_TIMEOUT = 300;
-    private static final int WIFI_DISABLE_TIMEOUT = 60;
+    private static final int WIFI_ENABLE_TIMEOUT = 100;
+    private static final int WIFI_DISABLE_TIMEOUT = 30;
 
     private final IWifiHandler wifiHandler;
     private final OngoingActionPublisher publisher;
@@ -41,16 +41,18 @@ public class WifiDevice {
     }
 
     public void disable() {
-        if (!isEnabled())  return;
-        if (isDisabling()) return;
-        halt();
-        publisher.publish(DisablingMode);
-        disablingTimer = new UnaryCountdownBuilder()
-                .setEnacts(1)
-                .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
-                .setIntervalsAction(wifiHandler::disable)
-                .build();
-        disablingTimer.start();
+        synchronized (this) {
+            if (!isEnabled())  return;
+            if (isDisabling()) return;
+            halt();
+            publisher.publish(DisablingMode);
+            disablingTimer = new UnaryCountdownBuilder()
+                    .setEnacts(1)
+                    .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                    .setIntervalsAction(wifiHandler::disable)
+                    .build();
+            disablingTimer.start();
+        }
     }
 
     private boolean isDisabling() {
@@ -58,23 +60,25 @@ public class WifiDevice {
     }
 
     public void observe() {
-        if (isObserving()) return;
-        halt();
-        observingTimer = new BinaryCountdownBuilder()
-                .setEnacts(OBSERVE_REPEAT_COUNT)
-                .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
-                .setMoreDelayedAction(() ->  {
-                    wifiHandler.enable();
-                    publisher.publish(ObserveModeDisabling);
-                })
-                .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
-                .setLessDelayedAction(() -> {
-                    wifiHandler.disable();
-                    publisher.publish(ObserveModeEnabling);
-                })
-                .setCompletionAction(wifiHandler::disable)
-                .build();
-        observingTimer.start();
+        synchronized (this) {
+            if (isObserving()) return;
+            halt();
+            observingTimer = new BinaryCountdownBuilder()
+                    .setEnacts(OBSERVE_REPEAT_COUNT)
+                    .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
+                    .setMoreDelayedAction(() ->  {
+                        wifiHandler.enable();
+                        publisher.publish(ObserveModeDisabling);
+                    })
+                    .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                    .setLessDelayedAction(() -> {
+                        wifiHandler.disable();
+                        publisher.publish(ObserveModeEnabling);
+                    })
+                    .setCompletionAction(wifiHandler::disable)
+                    .build();
+            observingTimer.start();
+        }
     }
 
     private boolean isObserving() {
@@ -82,19 +86,23 @@ public class WifiDevice {
     }
 
     public void halt() {
-        publisher.publish(None);
-        stopObservingTimer();
-        stopDisablingTimer();
+        synchronized (this) {
+            publisher.publish(None);
+            stopObservingTimer();
+            stopDisablingTimer();
+        }
     }
 
     private void stopObservingTimer() {
-        if (observingTimer == null) return;
+        if (observingTimer == null)
+            return;
         observingTimer.stop();
         observingTimer = null;
     }
 
     private void stopDisablingTimer() {
-        if (disablingTimer == null) return;
+        if (disablingTimer == null)
+            return;
         disablingTimer.stop();
         disablingTimer = null;
     }

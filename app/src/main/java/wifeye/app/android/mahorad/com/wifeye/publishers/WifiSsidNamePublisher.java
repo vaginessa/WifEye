@@ -29,8 +29,6 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
     private final List<IWifiSsidNameConsumer> consumers;
 
     public WifiSsidNamePublisher(Context context) {
-        if (context == null)
-            throw new IllegalArgumentException();
         this.context = context;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         consumers = new ArrayList<>();
@@ -82,6 +80,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
         IntentFilter intentFilter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         context.registerReceiver(this, intentFilter);
     }
+
     public void stop() {
         context.unregisterReceiver(this);
     }
