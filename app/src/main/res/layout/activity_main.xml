@@ -97,7 +97,7 @@
                     <TextView
                         android:layout_width="128dp"
                         android:layout_height="wrap_content"
-                        android:text="Action"
+                        android:text="Last Action"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 

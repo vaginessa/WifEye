@@ -1,6 +1,9 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
+import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.BinaryCountdownBuilder;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
@@ -12,7 +15,7 @@ import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPubl
 import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeDisabling;
 import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeEnabling;
 
-public class WifiDevice {
+public class WifiDevice implements IWifiDeviceStateConsumer {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
@@ -21,7 +24,7 @@ public class WifiDevice {
     private static final int WIFI_DISABLE_TIMEOUT = 30;
 
     private final IWifiHandler wifiHandler;
-    private final OngoingActionPublisher publisher;
+    private final OngoingActionPublisher actionPublisher;
 
     private UnaryCountdown disablingTimer;
     private BinaryCountdown observingTimer;
@@ -31,9 +34,13 @@ public class WifiDevice {
      * @param wifiHandler Android wifi manager for controlling
      *                    wifi behaviours on the phone/tablet
      */
-    public WifiDevice(IWifiHandler wifiHandler, OngoingActionPublisher publisher) {
+    public WifiDevice(IWifiHandler wifiHandler,
+                      OngoingActionPublisher actionPublisher,
+                      WifiDeviceStatePublisher wifiPublisher) {
         this.wifiHandler = wifiHandler;
-        this.publisher = publisher;
+        this.actionPublisher = actionPublisher;
+        wifiPublisher.subscribe(this);
+
     }
 
     public boolean isEnabled() {
@@ -45,7 +52,7 @@ public class WifiDevice {
             if (!isEnabled())  return;
             if (isDisabling()) return;
             halt();
-            publisher.publish(DisablingMode);
+            actionPublisher.publish(DisablingMode);
             disablingTimer = new UnaryCountdownBuilder()
                     .setEnacts(1)
                     .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
@@ -68,15 +75,16 @@ public class WifiDevice {
                     .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                     .setMoreDelayedAction(() ->  {
                         wifiHandler.enable();
-                        publisher.publish(ObserveModeDisabling);
+                        actionPublisher.publish(ObserveModeDisabling);
                     })
                     .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
                     .setLessDelayedAction(() -> {
                         wifiHandler.disable();
-                        publisher.publish(ObserveModeEnabling);
+                        actionPublisher.publish(ObserveModeEnabling);
                     })
                     .setCompletionAction(wifiHandler::disable)
                     .build();
+            actionPublisher.publish(ObserveModeEnabling);
             observingTimer.start();
         }
     }
@@ -87,7 +95,6 @@ public class WifiDevice {
 
     public void halt() {
         synchronized (this) {
-            publisher.publish(None);
             stopObservingTimer();
             stopDisablingTimer();
         }
@@ -98,6 +105,7 @@ public class WifiDevice {
             return;
         observingTimer.stop();
         observingTimer = null;
+        actionPublisher.publish(None);
     }
 
     private void stopDisablingTimer() {
@@ -105,6 +113,15 @@ public class WifiDevice {
             return;
         disablingTimer.stop();
         disablingTimer = null;
+        actionPublisher.publish(None);
     }
 
+    @Override
+    public void onWifiStateChanged(WifiState state) {
+        switch (state) {
+            case Disabled:
+                stopDisablingTimer();
+                break;
+        }
+    }
 }

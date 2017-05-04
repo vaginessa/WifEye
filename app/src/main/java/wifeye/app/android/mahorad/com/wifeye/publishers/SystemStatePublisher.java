@@ -1,7 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.publishers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
@@ -12,10 +12,10 @@ public class SystemStatePublisher {
 
     private static String state;
     private static String date;
-    private final List<ISystemStateConsumer> consumers;
+    private final Set<ISystemStateConsumer> consumers;
 
     public SystemStatePublisher() {
-        consumers = new ArrayList<>();
+        consumers = new HashSet<>();
     }
 
     public void publish(final IState state) {

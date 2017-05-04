@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiDeviceStateConsumer;
@@ -17,12 +17,12 @@ import static wifeye.app.android.mahorad.com.wifeye.publishers.WifiState.Unknown
 public class WifiDeviceStatePublisher extends BroadcastReceiver {
 
     private final Context context;
-    private final List<IWifiDeviceStateConsumer> consumers;
+    private final Set<IWifiDeviceStateConsumer> consumers;
     private WifiState wifiState = Unknown;
 
     public WifiDeviceStatePublisher(Context context) {
         this.context = context;
-        consumers = new ArrayList<>();
+        consumers = new HashSet<>();
     }
 
     @Override
@@ -51,6 +51,7 @@ public class WifiDeviceStatePublisher extends BroadcastReceiver {
 
     public void stop() {
         context.unregisterReceiver(this);
+        consumers.clear();
     }
 
     public boolean subscribe(IWifiDeviceStateConsumer consumer) {

@@ -33,8 +33,10 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiDevice wifiDevice(IWifiHandler wifiHandler, OngoingActionPublisher publisher) {
-        return new WifiDevice(wifiHandler, publisher);
+    public WifiDevice wifiDevice(IWifiHandler wifiHandler,
+                                 OngoingActionPublisher actionPublisher,
+                                 WifiDeviceStatePublisher wifiPublisher) {
+        return new WifiDevice(wifiHandler, actionPublisher, wifiPublisher);
     }
 
     @Provides

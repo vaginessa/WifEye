@@ -1,17 +1,12 @@
 package wifeye.app.android.mahorad.com.wifeye.publishers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
-
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.DisablingMode;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.None;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeDisabling;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeEnabling;
 
 public class OngoingActionPublisher {
 
@@ -19,7 +14,7 @@ public class OngoingActionPublisher {
         None, DisablingMode, ObserveModeDisabling, ObserveModeEnabling
     }
 
-    private List<IOngoingActionConsumer> consumers = new ArrayList<>();
+    private Set<IOngoingActionConsumer> consumers = new HashSet<>();
     private static Action action = Action.None;
     private static String date;
 

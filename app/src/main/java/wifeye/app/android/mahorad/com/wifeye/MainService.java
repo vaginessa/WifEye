@@ -74,8 +74,6 @@ public class MainService extends Service {
     private void stop() {
         if (!started) return;
 
-        ctidPublisher.unsubscribe(consumer);
-        ssidPublisher.unsubscribe(consumer);
         wifiPublisher.stop();
         ctidPublisher.stop();
         ssidPublisher.stop();

@@ -6,7 +6,9 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
@@ -21,13 +23,13 @@ public class CellTowerIdPublisher extends PhoneStateListener {
 
     private static String ctid;
     private static String date;
-    private final List<ICellTowerIdConsumer> consumers;
+    private final Set<ICellTowerIdConsumer> consumers;
     private final Context context;
     private final IPersistence persistence;
 
     public CellTowerIdPublisher(Context context, IPersistence persistence) {
         this.context = context;
-        consumers = new ArrayList<>();
+        consumers = new HashSet<>();
         this.persistence = persistence;
     }
 
@@ -79,6 +81,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
     public void stop() {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
+        consumers.clear();
     }
 
     public boolean subscribe(ICellTowerIdConsumer consumer) {

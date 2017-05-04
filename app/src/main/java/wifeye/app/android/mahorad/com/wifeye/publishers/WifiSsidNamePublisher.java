@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
@@ -26,12 +26,12 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
     private static String date;
     private final WifiManager wifiManager;
     private final Context context;
-    private final List<IWifiSsidNameConsumer> consumers;
+    private final Set<IWifiSsidNameConsumer> consumers;
 
     public WifiSsidNamePublisher(Context context) {
         this.context = context;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        consumers = new ArrayList<>();
+        consumers = new HashSet<>();
     }
 
     @Override
@@ -83,6 +83,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
 
     public void stop() {
         context.unregisterReceiver(this);
+        consumers.clear();
     }
 
     public boolean subscribe(IWifiSsidNameConsumer consumer) {
