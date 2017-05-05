@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
-import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
 

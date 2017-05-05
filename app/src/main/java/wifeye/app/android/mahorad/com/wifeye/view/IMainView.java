@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.view;
 
-import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 
 public interface IMainView {

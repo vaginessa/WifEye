@@ -10,10 +10,7 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdownBuilder;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.DisablingMode;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.None;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeDisabling;
-import static wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action.ObserveModeEnabling;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.*;
 
 public class WifiDevice implements IWifiDeviceStateConsumer {
 

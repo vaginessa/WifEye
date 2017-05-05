@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.consumers;
 
-import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 
 public interface IOngoingActionConsumer {
 

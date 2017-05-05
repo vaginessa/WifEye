@@ -10,10 +10,6 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class OngoingActionPublisher {
 
-    public enum Action {
-        None, DisablingMode, ObserveModeDisabling, ObserveModeEnabling
-    }
-
     private Set<IOngoingActionConsumer> consumers = new HashSet<>();
     private static Action action = Action.None;
     private static String date;
