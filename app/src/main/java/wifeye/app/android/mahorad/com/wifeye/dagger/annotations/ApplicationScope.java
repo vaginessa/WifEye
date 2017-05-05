@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.dagger;
+package wifeye.app.android.mahorad.com.wifeye.dagger.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

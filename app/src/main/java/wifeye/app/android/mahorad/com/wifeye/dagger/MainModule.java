@@ -1,11 +1,12 @@
 package wifeye.app.android.mahorad.com.wifeye.dagger;
 
 import android.content.Context;
-import android.net.wifi.WifiManager;
 
 import dagger.Module;
 import dagger.Provides;
 import wifeye.app.android.mahorad.com.wifeye.consumers.SsidTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationScope;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.persist.MemoryPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
@@ -25,10 +26,27 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public IWifiHandler wifiHandler(Context context) {
-        Object systemService = context.getSystemService(Context.WIFI_SERVICE);
-        WifiManager wifiManager = (WifiManager) systemService;
-        return new AndroidWifiHandler(wifiManager);
+    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context) {
+        return new WifiSsidNamePublisher(context);
+    }
+
+    @Provides
+    @ApplicationScope
+    public WifiDeviceStatePublisher wifiPublisher(@ApplicationContext Context context) {
+        return new WifiDeviceStatePublisher(context);
+    }
+
+    @Provides
+    @ApplicationScope
+    public CellTowerIdPublisher towerIdPublisher(@ApplicationContext Context context,
+                                                 IPersistence persistence) {
+        return new CellTowerIdPublisher(context, persistence);
+    }
+
+    @Provides
+    @ApplicationScope
+    public IWifiHandler wifiHandler(@ApplicationContext Context context) {
+        return new AndroidWifiHandler(context);
     }
 
     @Provides
@@ -69,24 +87,6 @@ public class MainModule {
     @ApplicationScope
     public OngoingActionPublisher actionPublisher() {
         return new OngoingActionPublisher() ;
-    }
-
-    @Provides
-    @ApplicationScope
-    public WifiSsidNamePublisher bssidPublisher(Context context) {
-        return new WifiSsidNamePublisher(context);
-    }
-
-    @Provides
-    @ApplicationScope
-    public WifiDeviceStatePublisher wifiPublisher(Context context) {
-        return new WifiDeviceStatePublisher(context);
-    }
-
-    @Provides
-    @ApplicationScope
-    public CellTowerIdPublisher towerIdPublisher(Context context, IPersistence persistence) {
-        return new CellTowerIdPublisher(context, persistence);
     }
 
     @Provides

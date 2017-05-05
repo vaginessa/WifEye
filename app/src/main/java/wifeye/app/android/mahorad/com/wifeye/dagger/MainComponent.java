@@ -3,6 +3,7 @@ package wifeye.app.android.mahorad.com.wifeye.dagger;
 import dagger.Component;
 import wifeye.app.android.mahorad.com.wifeye.MainActivity;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationScope;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;

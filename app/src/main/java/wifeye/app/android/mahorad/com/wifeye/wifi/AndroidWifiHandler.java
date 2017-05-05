@@ -1,5 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.wifi;
 
+import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -10,10 +11,8 @@ public class AndroidWifiHandler implements IWifiHandler {
 
     private final WifiManager wifiManager;
 
-    public AndroidWifiHandler(WifiManager wifiManager) {
-        if (wifiManager == null)
-            throw new IllegalArgumentException();
-        this.wifiManager = wifiManager;
+    public AndroidWifiHandler(Context context) {
+        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
     @Override

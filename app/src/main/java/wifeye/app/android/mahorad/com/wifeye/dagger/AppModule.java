@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 
 import dagger.Module;
 import dagger.Provides;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationScope;
 
 @Module
 public class AppModule {
@@ -25,6 +27,7 @@ public class AppModule {
 
     @Provides
     @ApplicationScope
+    @ApplicationContext
     Context context(Application application) {
         return application.getApplicationContext();
     }
