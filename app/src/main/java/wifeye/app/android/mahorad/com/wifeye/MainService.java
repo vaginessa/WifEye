@@ -36,6 +36,14 @@ public class MainService extends Service {
     @Inject WifiSsidNamePublisher ssidPublisher;
     @Inject SsidTowerIdConsumer consumer;
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        MainApplication
+                .mainComponent()
+                .inject(this);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,10 +59,6 @@ public class MainService extends Service {
 
     private void start() {
         if (started) return;
-
-        MainApplication
-                .mainComponent()
-                .inject(this);
 
         ctidPublisher.subscribe(consumer);
         ssidPublisher.subscribe(consumer);
