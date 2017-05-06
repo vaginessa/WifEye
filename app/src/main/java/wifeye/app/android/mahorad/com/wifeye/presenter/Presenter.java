@@ -7,15 +7,16 @@ import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
-import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.MainService;
+import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IPersistenceConsumer;
+import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
-import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
@@ -40,6 +41,7 @@ public class Presenter implements
 
     private final IMainView view;
 
+    @Inject @ApplicationContext Context context;
     @Inject Utilities utils;
     @Inject WifiSsidNamePublisher ssidPublisher;
     @Inject OngoingActionPublisher actionPublisher;
@@ -84,9 +86,6 @@ public class Presenter implements
 
     @Override
     public void startMainService() {
-        Context context = MainApplication
-                .appComponent()
-                .context();
         Intent intent = new Intent(context, MainService.class);
         context.startService(intent);
         updateServiceState();
@@ -94,9 +93,6 @@ public class Presenter implements
 
     @Override
     public void stopMainService() {
-        Context context = MainApplication
-                .appComponent()
-                .context();
         Intent intent = new Intent(context, MainService.class);
         context.stopService(intent);
         updateServiceState();
@@ -104,36 +100,17 @@ public class Presenter implements
 
     @Override
     public void handlePermissions() {
-        handleCoarseLocationPermission();
-        handleDiskReadWritePermissions();
-    }
-
-    private void handleCoarseLocationPermission() {
-        String permission = PermissionUtils.Manifest_ACCESS_COARSE_LOCATION;
         final ActivityManagePermission activity = (ActivityManagePermission) this.view;
-        activity.askCompactPermission(permission, new PermissionResult() {
+        activity.askCompactPermissions(Constants.PERMISSIONS, new PermissionResult() {
             @Override
-            public void permissionGranted() { }
+            public void permissionGranted() { startMainService(); }
             @Override
             public void permissionDenied() { activity.finish(); }
             @Override
-            public void permissionForeverDenied() { }
-        });
-    }
-
-    private void handleDiskReadWritePermissions() {
-        String[] permissionRequests = {
-                PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE,
-                PermissionUtils.Manifest_READ_EXTERNAL_STORAGE
-        };
-        final ActivityManagePermission activity = (ActivityManagePermission) this.view;
-        activity.askCompactPermissions(permissionRequests, new PermissionResult() {
-            @Override
-            public void permissionGranted() { }
-            @Override
-            public void permissionDenied() { activity.finish(); }
-            @Override
-            public void permissionForeverDenied() { }
+            public void permissionForeverDenied() {
+                utils.openPermissions(activity);
+                view.toggleMainServiceDisable();
+            }
         });
     }
 

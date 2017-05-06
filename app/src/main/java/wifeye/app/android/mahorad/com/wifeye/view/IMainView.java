@@ -18,4 +18,6 @@ public interface IMainView {
     void updatePersistence(String repository);
 
     void updateWifiDeviceState(WifiState state);
+
+    void toggleMainServiceDisable();
 }

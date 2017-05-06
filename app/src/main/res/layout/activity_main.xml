@@ -303,19 +303,12 @@
             tools:layout_editor_absoluteY="8dp">
 
             <ToggleButton
-                android:id="@+id/toggleService"
+                android:id="@+id/serviceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="toggleService"
                 android:text="Service" />
-
-            <Button
-                android:id="@+id/permissions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="handlePermissions"
-                android:text="Request Permissions" />
 
         </LinearLayout>
 

@@ -32,6 +32,7 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     private TextView actionText;
     private TextView actionDate;
     private EditText persistence;
+    private ToggleButton service;
 
     @Inject
     SharedPreferences preferences;
@@ -75,17 +76,14 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
         actionDate = (TextView) findViewById(R.id.actionDate);
         wifiText = (TextView) findViewById(R.id.wifi);
         persistence = (EditText) findViewById(R.id.persistence);
-    }
-
-    public void handlePermissions(View view) {
-        presenter.handlePermissions();
+        service = (ToggleButton) findViewById(R.id.serviceButton);
     }
 
     public void toggleService(View view) {
         ToggleButton b = (ToggleButton) view;
-        if (b.isChecked())
-            presenter.startMainService();
-        else
+        if (b.isChecked()) {
+            presenter.handlePermissions();
+        } else
             presenter.stopMainService();
     }
 
@@ -111,6 +109,11 @@ public class MainActivity extends ActivityManagePermission implements IMainView 
     @Override
     public void updateWifiDeviceState(WifiState state) {
         runOnUiThread(() -> wifiText.setText(state.toString()));
+    }
+
+    @Override
+    public void toggleMainServiceDisable() {
+        runOnUiThread(() -> service.setChecked(false));
     }
 
     @Override
