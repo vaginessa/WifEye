@@ -11,6 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdownBuilder;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.*;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.WifiState.Disabled;
 
 public class WifiDevice implements IWifiDeviceStateConsumer {
 
@@ -102,7 +103,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             return;
         observingTimer.stop();
         observingTimer = null;
-        actionPublisher.publish(None);
+        actionPublisher.publish(Halt);
     }
 
     private void stopDisablingTimer() {
@@ -110,15 +111,13 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             return;
         disablingTimer.stop();
         disablingTimer = null;
-        actionPublisher.publish(None);
+        actionPublisher.publish(Halt);
     }
 
     @Override
     public void onWifiStateChanged(WifiState state) {
-        switch (state) {
-            case Disabled:
-                stopDisablingTimer();
-                break;
-        }
+        if (state != Disabled)
+            return;
+        stopDisablingTimer();
     }
 }

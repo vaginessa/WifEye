@@ -1,7 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.publishers;
 
 public enum Action {
-    None,
+    Halt,
     DisablingMode,
     ObserveModeDisabling,
     ObserveModeEnabling

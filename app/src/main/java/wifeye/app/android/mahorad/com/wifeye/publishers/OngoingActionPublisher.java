@@ -11,7 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 public class OngoingActionPublisher {
 
     private Set<IOngoingActionConsumer> consumers = new HashSet<>();
-    private static Action action = Action.None;
+    private static Action action = Action.Halt;
     private static String date;
 
     private Utilities utils =
