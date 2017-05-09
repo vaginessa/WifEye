@@ -20,7 +20,6 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
-            style="@style/AppTabLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
