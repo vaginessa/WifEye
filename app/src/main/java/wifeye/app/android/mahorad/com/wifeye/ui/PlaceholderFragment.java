@@ -37,7 +37,7 @@ public class PlaceholderFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_tab_template, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         int anInt = getArguments().getInt(ARG_SECTION_NUMBER);
         String message = getString(R.string.section_format, anInt);
