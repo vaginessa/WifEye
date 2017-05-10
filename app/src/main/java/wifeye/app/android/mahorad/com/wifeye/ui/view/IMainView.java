@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.view;
+package wifeye.app.android.mahorad.com.wifeye.ui.view;
 
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;

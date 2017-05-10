@@ -28,7 +28,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.view.IMainView;
+import wifeye.app.android.mahorad.com.wifeye.ui.view.IMainView;
 
 public class Presenter implements
         IPresenter,
