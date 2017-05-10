@@ -1,5 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,7 +8,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +21,7 @@ import android.widget.ToggleButton;
 import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
@@ -237,5 +238,10 @@ public class MainActivity extends ActivityManagePermission
                 .beginTransaction()
                 .replace(R.id.fragment_placeholder, fragment)
                 .commit();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

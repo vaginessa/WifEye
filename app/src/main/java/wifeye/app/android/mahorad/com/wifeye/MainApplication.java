@@ -2,6 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye;
 
 import android.app.Application;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import wifeye.app.android.mahorad.com.wifeye.dagger.*;
 
 public class MainApplication extends Application {
@@ -12,6 +13,7 @@ public class MainApplication extends Application {
     public static AppComponent appComponent() {
         return appComponent;
     }
+
     public static MainComponent mainComponent() {
         return mainComponent;
     }
@@ -19,6 +21,8 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        setApplicationFont();
+
         AppModule applicationModule = new AppModule(this);
 
         appComponent = DaggerAppComponent
@@ -31,5 +35,14 @@ public class MainApplication extends Application {
                 .appModule(applicationModule)
                 .mainModule(new MainModule())
                 .build();
+    }
+
+    private void setApplicationFont() {
+        CalligraphyConfig.initDefault(
+                new CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/HelveticaNeue-Light.otf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+        );
     }
 }

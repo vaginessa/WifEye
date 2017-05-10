@@ -41,5 +41,6 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.10'
     compile 'com.auron:permission-manage:1.1.6'
     compile group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
+    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     testCompile 'junit:junit:4.12'
 }
