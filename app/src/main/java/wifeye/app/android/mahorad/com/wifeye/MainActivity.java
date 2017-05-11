@@ -26,6 +26,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.ui.FragmentSummary;
 import wifeye.app.android.mahorad.com.wifeye.ui.view.IMainView;
+import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class MainActivity extends ActivityManagePermission
         implements OnNavigationItemSelectedListener, IMainView {
@@ -46,6 +47,8 @@ public class MainActivity extends ActivityManagePermission
 
     @Inject
     SharedPreferences preferences;
+    @Inject
+    Utilities utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,23 +57,14 @@ public class MainActivity extends ActivityManagePermission
         presenter.onCreate();
         MainApplication.mainComponent().inject(this);
 
-        setupToolbarView();
-        setupDrawerLayout();
-        setupNavigationView();
-        setupFloatingButton();
+        initUserInterface();
         selectFirstMenuItem();
-    }
-
-    private void selectFirstMenuItem() {
-        MenuItem firstItem = navigationView.getMenu().getItem(0);
-        firstItem.setChecked(true);
-        onNavigationItemSelected(firstItem);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        presenter.onResume();
+        presenter.onResume();
     }
 
     @Override
@@ -85,7 +79,14 @@ public class MainActivity extends ActivityManagePermission
         presenter.onDestroy();
     }
 
-    private void setupToolbarView() {
+    private void initUserInterface() {
+        setupAppToolbarView();
+        setupDrawerLayout();
+        setupNavigationView();
+        setupFloatingButton();
+    }
+
+    private void setupAppToolbarView() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -113,6 +114,12 @@ public class MainActivity extends ActivityManagePermission
         accent = new ColorStateList(
                 new int[][] { new int[0] },
                 new int[]   { ResourcesCompat.getColor(getResources(), R.color.colorAccent, null) });
+    }
+
+    private void selectFirstMenuItem() {
+        MenuItem firstItem = navigationView.getMenu().getItem(0);
+        firstItem.setChecked(true);
+        onNavigationItemSelected(firstItem);
     }
 
     @Override
@@ -154,36 +161,39 @@ public class MainActivity extends ActivityManagePermission
     }
 
     public void toggleService(View view) {
-        fab.setSelected(!fab.isSelected());
-        if (fab.isSelected()) {
-            startService(view);
+        if (utils.isRunning(MainService.class)) {
+            presenter.stopMainService();
+            showSnackbar("Service stopped.");
         } else {
-            stopService(view);
+            presenter.handlePermissions();
+            showSnackbar("Service is started.");
         }
     }
 
-    private void stopService(View view) {
+    private void showSnackbar(String message) {
         Snackbar
-                .make(view, "Service Stopped", Snackbar.LENGTH_LONG)
+                .make(fab, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-        fab.setImageResource(R.drawable.eye_off);
-        fab.setBackgroundTintList(accent);
-//            presenter.stopMainService();
     }
-
-    private void startService(View view) {
-        Snackbar
-                .make(view, "Service Started", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-        fab.setImageResource(R.drawable.eye);
-        fab.setBackgroundTintList(greens);
-//            presenter.handlePermissions();
-    }
-
 
     @Override
     public void updateServiceState(final boolean enabled, final String date) {
-//        runOnUiThread(() -> serviceText.setText(enabled ? "ENABLE" : "DISABLE"));
+        runOnUiThread(() -> {
+            if (enabled)
+                setFloatingButtonEnabled();
+            else
+                setFloatingButtonDisable();
+        });
+    }
+
+    private void setFloatingButtonEnabled() {
+        fab.setImageResource(R.drawable.eye);
+        fab.setBackgroundTintList(greens);
+    }
+
+    private void setFloatingButtonDisable() {
+        fab.setImageResource(R.drawable.eye_off);
+        fab.setBackgroundTintList(accent);
     }
 
     @Override
