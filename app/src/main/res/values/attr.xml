@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BoxView">
+        <attr name="panelColor" format="color" />
+        <attr name="borderRadius" format="float" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderThickness" format="integer" />
+        <attr name="headerColor" format="color" />
+        <attr name="headerSpacing" format="float" />
+        <attr name="FactColor" format="color" />
+        <attr name="DetailsColor" format="color" />
+    </declare-styleable>
+</resources>

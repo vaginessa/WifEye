@@ -1,6 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -107,6 +108,7 @@ public class BoxView extends LinearLayout {
      */
     public BoxView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initiate(attrs, context);
         initializeViews(context);
     }
 
@@ -116,11 +118,34 @@ public class BoxView extends LinearLayout {
      * @param attrs
      * @param defStyle
      */
-    public BoxView(Context context,
-                   AttributeSet attrs,
-                   int defStyle) {
+    public BoxView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        initiate(attrs, context);
         initializeViews(context);
+    }
+
+    private void initiate(AttributeSet attrs, Context context) {
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BoxView, 0, 0);
+        try {
+            backgroundColor = array.getColor(
+                    R.styleable.BoxView_panelColor, DEFAULT_BACKGROUND_COLOR);
+            borderRadius = array.getFloat(
+                    R.styleable.BoxView_borderRadius, DEFAULT_BORDER_RADIUS);
+            borderColor = array.getColor(
+                    R.styleable.BoxView_borderColor, DEFAULT_BORDER_COLOR);
+            borderWidth = array.getInteger(
+                    R.styleable.BoxView_borderThickness, DEFAULT_BORDER_WIDTH);
+            headerColor = array.getColor(
+                    R.styleable.BoxView_headerColor, DEFAULT_HEADER_COLOR);
+            headerSpacing = array.getFloat(
+                    R.styleable.BoxView_headerSpacing, DEFAULT_LETTER_SPACING);
+            factColor = array.getColor(
+                    R.styleable.BoxView_FactColor, DEFAULT_TEXT_COLOR);
+            detailsColor = array.getColor(
+                    R.styleable.BoxView_DetailsColor, DEFAULT_TEXT_COLOR);
+        } finally {
+            array.recycle();
+        }
     }
 
     private void initializeViews(Context context) {

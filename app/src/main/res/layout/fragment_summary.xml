@@ -2,13 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
 
     <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
         android:id="@+id/action"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:borderThickness="2"
         />
 
 </FrameLayout>
