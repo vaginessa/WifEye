@@ -5,4 +5,21 @@
     <color name="colorAccent">#0091ea</color>
     <color name="colorMainBackground">#2A2B36</color>
     <color name="colorGreen">#15D855</color>
+
+    <color name="boxTextColor">#c1c1c1</color>
+    <color name="boxPassive">#233E55</color>
+    <color name="boxBackground">#041727</color>
+
+    <color name="boxAccentBlue">#50e0ff</color>
+    <color name="boxStrokeBlue">#00889C</color>
+
+    <color name="boxAccentGreen">#D0FF00</color>
+    <color name="boxStrokeGreen">#81BF00</color>
+
+    <color name="boxAccentRed">#FF006E</color>
+    <color name="boxStrokeRed">#AE024E</color>
+
+    <color name="boxAccentYellow">#FFFF09</color>
+    <color name="boxStrokeYellow">#BCA31E</color>
+
 </resources>
