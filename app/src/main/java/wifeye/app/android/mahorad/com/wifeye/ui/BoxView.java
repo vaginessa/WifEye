@@ -171,7 +171,21 @@ public class BoxView extends LinearLayout {
         setupContents();
         setupFacts();
         setupCaption();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        height = getMeasuredHeight() / 3;
+        width = getMeasuredWidth() / 3;
         setupTextSizes();
+    }
+
+    private void setupTextSizes() {
+        int length = Math.min(width, height);
+        setHeaderSize(length * DEFAULT_HEADER_SIZE / 150);
+        setFactSize(length * DEFAULT_FACT_SIZE / 150);
+        setCaptionSize(length * DEFAULT_CAPTION_SIZE / 150);
     }
 
     private void setupBackground() {
@@ -205,17 +219,6 @@ public class BoxView extends LinearLayout {
         setCaptionColor(captionColor);
         setCaptionSize(captionSize);
         setHasCaption(hasCaption);
-    }
-
-    private void setupTextSizes() {
-        post(() -> {
-            height = getHeight() / 3;
-            width = getWidth() / 3;
-            int length = Math.min(width, height);
-            setHeaderSize(length * DEFAULT_HEADER_SIZE / 150);
-            setFactSize(length * DEFAULT_FACT_SIZE / 150);
-            setCaptionSize(length * DEFAULT_CAPTION_SIZE / 150);
-        });
     }
 
     /* BACKGROUND */
