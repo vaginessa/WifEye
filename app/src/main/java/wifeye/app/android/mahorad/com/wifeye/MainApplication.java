@@ -3,9 +3,14 @@ package wifeye.app.android.mahorad.com.wifeye;
 import android.app.Application;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import wifeye.app.android.mahorad.com.wifeye.dagger.*;
+import wifeye.app.android.mahorad.com.wifeye.dagger.AppComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.AppModule;
+import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerAppComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerMainComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.MainComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.MainModule;
 
-public class MainApplication extends Application {
+public class  MainApplication extends Application {
 
     private static AppComponent appComponent;
     private static MainComponent mainComponent;

@@ -21,6 +21,9 @@ import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerMainActivityComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityComponent;
+import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityModule;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
@@ -35,6 +38,13 @@ public class MainActivity extends ActivityManagePermission
 
     private ColorStateList greens;
     private ColorStateList accent;
+
+    private final MainActivityComponent component =
+            DaggerMainActivityComponent
+                    .builder()
+                    .mainActivityModule(new MainActivityModule(this))
+                    .appComponent(MainApplication.appComponent())
+                    .build();
 
     private final Presenter presenter = new Presenter(this);
 
