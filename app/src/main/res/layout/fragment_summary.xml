@@ -10,7 +10,10 @@
         android:id="@+id/action"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:borderThickness="2"
+        app:headerColor="@color/headerColor"
+        app:panelColor="@color/panelColor"
+        app:FactColor="@color/boxActiveTextColor"
+        app:borderThickness="0"
         />
 
 </FrameLayout>

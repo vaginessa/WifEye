@@ -6,6 +6,11 @@
     <color name="colorMainBackground">#2A2B36</color>
     <color name="colorGreen">#15D855</color>
 
+    <color name="panelColor">#44454F</color>
+    <color name="headerColor">#808297</color>
+
+
+
     <color name="boxPassiveTextColor">#233E55</color>
     <color name="boxInfoTextColor">#939292</color>
     <color name="boxActiveTextColor">#f1f1f1</color>
