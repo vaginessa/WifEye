@@ -34,7 +34,7 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 -     F A C T S      -
 -                    -
 ----------------------
--   D E T A I L S    -
+-   C A P T I O N    -
 ----------------------
 */
 public class BoxView extends LinearLayout {
@@ -53,7 +53,7 @@ public class BoxView extends LinearLayout {
 
     private static final float DEFAULT_FACT_SIZE = 23;
 
-    private static final float DEFAULT_DETAILS_SIZE = 12;
+    private static final float DEFAULT_CAPTION_SIZE = 12;
 
     /* GENERAL PROPERTIES */
     private LinearLayout box;
@@ -85,12 +85,12 @@ public class BoxView extends LinearLayout {
     private int factColor = DEFAULT_TEXT_COLOR;
     private float factSize = DEFAULT_FACT_SIZE;
 
-    /* DETAILS PROPERTIES */
-    private TextView details;
-    private boolean hasDetails;
-    private CharSequence detailsText = DEFAULT_EMPTY_STRING;
-    private int detailsColor = DEFAULT_TEXT_COLOR;
-    private float detailsSize = DEFAULT_DETAILS_SIZE;
+    /* CAPTION PROPERTIES */
+    private TextView caption;
+    private boolean hasCaption;
+    private CharSequence captionText = DEFAULT_EMPTY_STRING;
+    private int captionColor = DEFAULT_TEXT_COLOR;
+    private float captionSize = DEFAULT_CAPTION_SIZE;
 
     /**
      * constructor
@@ -140,9 +140,9 @@ public class BoxView extends LinearLayout {
             headerSpacing = array.getFloat(
                     R.styleable.BoxView_headerSpacing, DEFAULT_LETTER_SPACING);
             factColor = array.getColor(
-                    R.styleable.BoxView_FactColor, DEFAULT_TEXT_COLOR);
-            detailsColor = array.getColor(
-                    R.styleable.BoxView_DetailsColor, DEFAULT_TEXT_COLOR);
+                    R.styleable.BoxView_factColor, DEFAULT_TEXT_COLOR);
+            captionColor = array.getColor(
+                    R.styleable.BoxView_captionColor, DEFAULT_TEXT_COLOR);
         } finally {
             array.recycle();
         }
@@ -160,7 +160,7 @@ public class BoxView extends LinearLayout {
         stub = (ViewStub) findViewById(R.id.stub);
         header = (TextView) findViewById(R.id.header);
         fact = (TextView) findViewById(R.id.facts);
-        details = (TextView) findViewById(R.id.details);
+        caption = (TextView) findViewById(R.id.caption);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class BoxView extends LinearLayout {
         setupHeader();
         setupContents();
         setupFacts();
-        setupDetails();
+        setupCaption();
         setupTextSizes();
     }
 
@@ -201,10 +201,10 @@ public class BoxView extends LinearLayout {
         fact.setTypeface(null, Typeface.BOLD);
     }
 
-    private void setupDetails() {
-        setDetailsColor(detailsColor);
-        setDetailsSize(detailsSize);
-        setHasDetails(hasDetails);
+    private void setupCaption() {
+        setCaptionColor(captionColor);
+        setCaptionSize(captionSize);
+        setHasCaption(hasCaption);
     }
 
     private void setupTextSizes() {
@@ -214,7 +214,7 @@ public class BoxView extends LinearLayout {
             int length = Math.min(width, height);
             setHeaderSize(length * DEFAULT_HEADER_SIZE / 150);
             setFactSize(length * DEFAULT_FACT_SIZE / 150);
-            setDetailsSize(length * DEFAULT_DETAILS_SIZE / 150);
+            setCaptionSize(length * DEFAULT_CAPTION_SIZE / 150);
         });
     }
 
@@ -320,32 +320,32 @@ public class BoxView extends LinearLayout {
         fact.setTextSize(size);
     }
 
-    /* DETAILS */
-    public void setDetails(CharSequence text) {
+    /* CAPTION */
+    public void setCaption(CharSequence text) {
         if (text == null)
             return;
-        setHasDetails(true);
-        detailsText = text;
-        details.setText(detailsText);
+        setHasCaption(true);
+        captionText = text;
+        caption.setText(captionText);
     }
 
-    public void setHasDetails(boolean value) {
-        hasDetails = value;
-        details.setVisibility(hasDetails ? VISIBLE : GONE);
+    public void setHasCaption(boolean value) {
+        hasCaption = value;
+        caption.setVisibility(hasCaption ? VISIBLE : GONE);
         paddingBottom = value
                 ? DEFAULT_PADDING_SIZE
                 : DEFAULT_PADDING_SIZE * 2;
         updatePadding();
     }
 
-    public void setDetailsColor(int color) {
-        detailsColor = color;
-        details.setTextColor(detailsColor);
+    public void setCaptionColor(int color) {
+        captionColor = color;
+        caption.setTextColor(captionColor);
     }
 
-    public void setDetailsSize(float size) {
-        detailsSize = size;
-        details.setTextSize(detailsSize);
+    public void setCaptionSize(float size) {
+        captionSize = size;
+        caption.setTextSize(captionSize);
     }
 
 }

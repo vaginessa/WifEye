@@ -7,7 +7,7 @@
         <attr name="borderThickness" format="integer" />
         <attr name="headerColor" format="color" />
         <attr name="headerSpacing" format="float" />
-        <attr name="FactColor" format="color" />
-        <attr name="DetailsColor" format="color" />
+<!---->        <attr name="factColor" format="color" />
+        <attr name="captionColor" format="color" />
     </declare-styleable>
 </resources>

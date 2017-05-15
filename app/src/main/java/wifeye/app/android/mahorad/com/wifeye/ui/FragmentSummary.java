@@ -23,7 +23,7 @@ public class FragmentSummary extends Fragment {
         actionBox.setHeader("LAST ACTION");
 
         actionBox.setFact("12:35 Today");
-        actionBox.setDetails("Occurrence Date");
+        actionBox.setCaption("Occurrence Date");
 
         return frame;
     }

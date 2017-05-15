@@ -12,7 +12,7 @@
         android:layout_height="150dp"
         app:headerColor="@color/headerColor"
         app:panelColor="@color/panelColor"
-        app:FactColor="@color/boxActiveTextColor"
+        app:factColor="@color/boxActiveTextColor"
         app:borderThickness="0"
         />
 
