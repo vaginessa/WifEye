@@ -27,13 +27,13 @@ public class FragmentSummary extends Fragment {
         a.setFact("1,215 cals in");
         a.setCaption("460 cals left");
 
-//        BoxView b = (BoxView) frame.findViewById(R.id.b);
-//        b.setHeader("APPLICATIONS");
-//        ImageView info = new ImageView(container.getContext());
-//        info.setImageResource(R.drawable.info);
-//        b.setContents(info);
-//        b.setFact("15,966 steps");
-//        b.setCaption("1,300 steps to go");
+        BoxView b = (BoxView) frame.findViewById(R.id.b);
+        b.setHeader("APPLICATIONS");
+        ImageView info = new ImageView(container.getContext());
+        info.setImageResource(R.drawable.info);
+        b.setContents(info);
+        b.setFact("15,966 steps");
+        b.setCaption("1,300 steps to go");
 
         return frame;
     }

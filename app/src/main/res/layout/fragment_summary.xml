@@ -1,44 +1,83 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:rowCount="3"
+    android:columnCount="2"
+    android:orientation="horizontal"
     android:padding="5dp"
-    >
+    tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:gravity="center"
-            >
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/a"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
 
-                <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
-                    android:id="@+id/a"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    app:isSquare="true"
-                    app:headerColor="@color/headerColor"
-                    app:panelColor="@color/panelColor"
-                    app:factColor="@color/boxActiveTextColor"
-                    app:borderThickness="0"
-                    android:layout_margin="5dp"
-                    />
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/b"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/a"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
 
-                <!--<wifeye.app.android.mahorad.com.wifeye.ui.BoxView-->
-                    <!--android:id="@+id/b"-->
-                    <!--android:layout_width="150dp"-->
-                    <!--android:layout_height="150dp"-->
-                    <!--app:headerColor="@color/headerColor"-->
-                    <!--app:panelColor="@color/panelColor"-->
-                    <!--app:factColor="@color/boxActiveTextColor"-->
-                    <!--app:borderThickness="0"-->
-                    <!--android:layout_margin="5dp"-->
-                    <!--android:layout_toEndOf="@id/a"-->
-                    <!--/>-->
-        </RelativeLayout>
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/c"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/a"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
 
-</LinearLayout>
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/d"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/a"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
+
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/e"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/a"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
+
+    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+        android:id="@+id/f"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/a"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true"
+        app:panelColor="@color/panelColor" />
+
+</GridLayout>
