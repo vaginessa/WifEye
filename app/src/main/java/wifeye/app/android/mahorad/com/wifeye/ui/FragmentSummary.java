@@ -26,8 +26,9 @@ public class FragmentSummary extends Fragment {
         img.setImageResource(R.drawable.timer);
         actionBox.setContents(img);
 
-        actionBox.setFact("12:35 Today");
-        actionBox.setCaption("Occurrence Date");
+//        actionBox.setFact("15,966 steps");
+        actionBox.setFact("1,215 cals in");
+        actionBox.setCaption("460 cals left");
 
         return frame;
     }

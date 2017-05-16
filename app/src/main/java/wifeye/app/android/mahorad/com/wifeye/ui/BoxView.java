@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
@@ -37,7 +37,7 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 -   C A P T I O N    -
 ----------------------
 */
-public class BoxView extends LinearLayout {
+public class BoxView extends RelativeLayout {
 
     private static final CharSequence DEFAULT_EMPTY_STRING = "";
     private static final int DEFAULT_TEXT_COLOR = Color.parseColor("#C7C7C7");
@@ -45,18 +45,17 @@ public class BoxView extends LinearLayout {
     private static final int DEFAULT_BORDER_COLOR = Color.parseColor("#00889C");
     private static final float DEFAULT_BORDER_RADIUS = 0;
     private static final int DEFAULT_BORDER_WIDTH = 2;
-    private static final int DEFAULT_PADDING_SIZE = 5;
+    private static final int DEFAULT_PADDING_SIZE = 20;
 
     private static final float DEFAULT_LETTER_SPACING = 0.2f;
     private static final float DEFAULT_HEADER_SIZE = 11;
     private static final int DEFAULT_HEADER_COLOR = Color.parseColor("#233E55");
 
-    private static final float DEFAULT_FACT_SIZE = 23;
+    private static final float DEFAULT_FACT_SIZE = 21;
 
     private static final float DEFAULT_CAPTION_SIZE = 12;
 
     /* GENERAL PROPERTIES */
-    private LinearLayout box;
     private int paddingTop = DEFAULT_PADDING_SIZE;
     private int paddingBottom = DEFAULT_PADDING_SIZE;
     private int width;
@@ -156,7 +155,6 @@ public class BoxView extends LinearLayout {
     }
 
     private void setupBoxComponents() {
-        box = (LinearLayout) findViewById(R.id.box);
         stub = (ViewStub) findViewById(R.id.stub);
         header = (TextView) findViewById(R.id.header);
         fact = (TextView) findViewById(R.id.facts);
@@ -166,6 +164,7 @@ public class BoxView extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        updatePadding();
         setupBackground();
         setupHeader();
         setupContents();
@@ -262,18 +261,16 @@ public class BoxView extends LinearLayout {
     public void setHasHeader(boolean value) {
         hasHeader = value;
         header.setVisibility(hasHeader ? VISIBLE : GONE);
-        paddingTop = value
-                ? DEFAULT_PADDING_SIZE
-                : DEFAULT_PADDING_SIZE * 2;
-        updatePadding();
+        adjustStubPosition(value);
     }
 
-    private void updatePadding() {
-        box.setPadding(
-                DEFAULT_PADDING_SIZE,
-                paddingTop,
-                DEFAULT_PADDING_SIZE,
-                paddingBottom);
+    private void adjustStubPosition(boolean value) {
+        LayoutParams params =
+                (LayoutParams) stub.getLayoutParams();
+        if (value)
+            params.addRule(BELOW, R.id.header);
+        else
+            params.removeRule(BELOW);
     }
 
     public void setHeaderSize(float size) {
@@ -301,7 +298,7 @@ public class BoxView extends LinearLayout {
         factText = text;
         int start = text.toString().indexOf(" ");
         int stop = text.length();
-        Spannable span = toSpan(factText, start, stop, .5f);
+        Spannable span = toSpan(factText, start, stop, .6f);
         fact.setText(span);
     }
 
@@ -335,10 +332,24 @@ public class BoxView extends LinearLayout {
     public void setHasCaption(boolean value) {
         hasCaption = value;
         caption.setVisibility(hasCaption ? VISIBLE : GONE);
-        paddingBottom = value
-                ? DEFAULT_PADDING_SIZE
-                : DEFAULT_PADDING_SIZE * 2;
-        updatePadding();
+        adjustFactPosition(value);
+    }
+
+    private void adjustFactPosition(boolean value) {
+        LayoutParams params =
+                (LayoutParams) fact.getLayoutParams();
+        if (value)
+            params.removeRule(ALIGN_PARENT_BOTTOM);
+        else
+            params.addRule(ALIGN_PARENT_BOTTOM);
+    }
+
+    private void updatePadding() {
+        setPadding(
+                DEFAULT_PADDING_SIZE,
+                paddingTop,
+                DEFAULT_PADDING_SIZE,
+                paddingBottom);
     }
 
     public void setCaptionColor(int color) {
