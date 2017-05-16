@@ -6,14 +6,34 @@
     android:padding="10dp"
     tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
-        android:id="@+id/action"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:headerColor="@color/headerColor"
-        app:panelColor="@color/panelColor"
-        app:factColor="@color/boxActiveTextColor"
-        app:borderThickness="0"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="5dp"
+            >
+                <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+                    android:id="@+id/a"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    app:headerColor="@color/headerColor"
+                    app:panelColor="@color/panelColor"
+                    app:factColor="@color/boxActiveTextColor"
+                    app:borderThickness="0"
+                    android:layout_marginEnd="5dp"
+
+                    />
+        </RelativeLayout>
+
+    </LinearLayout>
+
 
 </FrameLayout>
