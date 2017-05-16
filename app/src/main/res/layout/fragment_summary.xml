@@ -1,11 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
-    tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
+    android:padding="5dp"
+    >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -13,19 +14,30 @@
             android:orientation="horizontal"
             android:layout_gravity="center"
             android:gravity="center"
-            android:padding="5dp"
             >
+
                 <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
                     android:id="@+id/a"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:headerColor="@color/headerColor"
                     app:panelColor="@color/panelColor"
                     app:factColor="@color/boxActiveTextColor"
                     app:borderThickness="0"
-                    android:layout_marginEnd="5dp"
-
+                    android:layout_margin="5dp"
                     />
+
+                <!--<wifeye.app.android.mahorad.com.wifeye.ui.BoxView-->
+                    <!--android:id="@+id/b"-->
+                    <!--android:layout_width="150dp"-->
+                    <!--android:layout_height="150dp"-->
+                    <!--app:headerColor="@color/headerColor"-->
+                    <!--app:panelColor="@color/panelColor"-->
+                    <!--app:factColor="@color/boxActiveTextColor"-->
+                    <!--app:borderThickness="0"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_toEndOf="@id/a"-->
+                    <!--/>-->
         </RelativeLayout>
 
 </LinearLayout>

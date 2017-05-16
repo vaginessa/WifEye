@@ -19,16 +19,21 @@ public class FragmentSummary extends Fragment {
         View frame = inflater.inflate(
                 R.layout.fragment_summary, container, false);
 
-        BoxView actionBox = (BoxView) frame.findViewById(R.id.a);
-        actionBox.setHeader("LAST ACTION");
+        BoxView a = (BoxView) frame.findViewById(R.id.a);
+        a.setHeader("LAST ACTION");
+        ImageView timer = new ImageView(container.getContext());
+        timer.setImageResource(R.drawable.timer);
+        a.setContents(timer);
+        a.setFact("1,215 cals in");
+        a.setCaption("460 cals left");
 
-        ImageView img = new ImageView(container.getContext());
-        img.setImageResource(R.drawable.timer);
-        actionBox.setContents(img);
-
-//        actionBox.setFact("15,966 steps");
-        actionBox.setFact("1,215 cals in");
-        actionBox.setCaption("460 cals left");
+//        BoxView b = (BoxView) frame.findViewById(R.id.b);
+//        b.setHeader("APPLICATIONS");
+//        ImageView info = new ImageView(container.getContext());
+//        info.setImageResource(R.drawable.info);
+//        b.setContents(info);
+//        b.setFact("15,966 steps");
+//        b.setCaption("1,300 steps to go");
 
         return frame;
     }

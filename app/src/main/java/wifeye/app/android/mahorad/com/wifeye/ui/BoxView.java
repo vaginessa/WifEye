@@ -46,6 +46,7 @@ public class BoxView extends RelativeLayout {
     private static final float DEFAULT_BORDER_RADIUS = 0;
     private static final int DEFAULT_BORDER_WIDTH = 2;
     private static final int DEFAULT_PADDING_SIZE = 20;
+    private static final int DEFAULT_SIDE_LENGTH = 150;
 
     private static final float DEFAULT_LETTER_SPACING = 0.2f;
     private static final float DEFAULT_HEADER_SIZE = 11;
@@ -60,6 +61,7 @@ public class BoxView extends RelativeLayout {
     private int paddingBottom = DEFAULT_PADDING_SIZE;
     private int width;
     private int height;
+    private int minSideLength;
     private final GradientDrawable background = new GradientDrawable();
     private int borderColor = DEFAULT_BORDER_COLOR;
     private int borderWidth = DEFAULT_BORDER_WIDTH;
@@ -164,7 +166,6 @@ public class BoxView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        updatePadding();
         setupBackground();
         setupHeader();
         setupContents();
@@ -177,14 +178,25 @@ public class BoxView extends RelativeLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         height = getMeasuredHeight() / 3;
         width = getMeasuredWidth() / 3;
-        setupTextSizes();
+        minSideLength = Math.min(width, height);
+        scaleTextSizes();
+        scaleBoxPadding();
     }
 
-    private void setupTextSizes() {
-        int length = Math.min(width, height);
-        setHeaderSize(length * DEFAULT_HEADER_SIZE / 150);
-        setFactSize(length * DEFAULT_FACT_SIZE / 150);
-        setCaptionSize(length * DEFAULT_CAPTION_SIZE / 150);
+    private void scaleTextSizes() {
+        setHeaderSize(minSideLength * DEFAULT_HEADER_SIZE / DEFAULT_SIDE_LENGTH);
+        setFactSize(minSideLength * DEFAULT_FACT_SIZE / DEFAULT_SIDE_LENGTH);
+        setCaptionSize(minSideLength * DEFAULT_CAPTION_SIZE / DEFAULT_SIDE_LENGTH);
+    }
+
+    private void scaleBoxPadding() {
+        paddingTop = (minSideLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
+        paddingBottom = (minSideLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
+        setPadding(
+                DEFAULT_PADDING_SIZE,
+                paddingTop,
+                DEFAULT_PADDING_SIZE,
+                paddingBottom);
     }
 
     private void setupBackground() {
@@ -342,14 +354,6 @@ public class BoxView extends RelativeLayout {
             params.removeRule(ALIGN_PARENT_BOTTOM);
         else
             params.addRule(ALIGN_PARENT_BOTTOM);
-    }
-
-    private void updatePadding() {
-        setPadding(
-                DEFAULT_PADDING_SIZE,
-                paddingTop,
-                DEFAULT_PADDING_SIZE,
-                paddingBottom);
     }
 
     public void setCaptionColor(int color) {
