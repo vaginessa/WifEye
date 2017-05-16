@@ -52,7 +52,7 @@ public class BoxView extends RelativeLayout {
     private static final float DEFAULT_HEADER_SIZE = 11;
     private static final int DEFAULT_HEADER_COLOR = Color.parseColor("#233E55");
 
-    private static final float DEFAULT_FACT_SIZE = 21;
+    private static final float DEFAULT_FACT_SIZE = 20;
 
     private static final float DEFAULT_CAPTION_SIZE = 12;
 
@@ -61,7 +61,8 @@ public class BoxView extends RelativeLayout {
     private int paddingBottom = DEFAULT_PADDING_SIZE;
     private int width;
     private int height;
-    private int minSideLength;
+    private int minLength;
+    private boolean isSquare;
     private final GradientDrawable background = new GradientDrawable();
     private int borderColor = DEFAULT_BORDER_COLOR;
     private int borderWidth = DEFAULT_BORDER_WIDTH;
@@ -128,6 +129,8 @@ public class BoxView extends RelativeLayout {
     private void initiate(AttributeSet attrs, Context context) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BoxView, 0, 0);
         try {
+            isSquare = array.getBoolean(
+                    R.styleable.BoxView_isSquare, false);
             backgroundColor = array.getColor(
                     R.styleable.BoxView_panelColor, DEFAULT_BACKGROUND_COLOR);
             borderRadius = array.getFloat(
@@ -178,25 +181,37 @@ public class BoxView extends RelativeLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         height = getMeasuredHeight() / 3;
         width = getMeasuredWidth() / 3;
-        minSideLength = Math.min(width, height);
+        minLength = Math.min(width, height);
         scaleTextSizes();
         scaleBoxPadding();
+
+        if (!isSquare) return;
+        int minMeasureSpec = getMinMeasureSpec(
+                widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(minMeasureSpec, minMeasureSpec);
     }
 
     private void scaleTextSizes() {
-        setHeaderSize(minSideLength * DEFAULT_HEADER_SIZE / DEFAULT_SIDE_LENGTH);
-        setFactSize(minSideLength * DEFAULT_FACT_SIZE / DEFAULT_SIDE_LENGTH);
-        setCaptionSize(minSideLength * DEFAULT_CAPTION_SIZE / DEFAULT_SIDE_LENGTH);
+        setHeaderSize(minLength * DEFAULT_HEADER_SIZE / DEFAULT_SIDE_LENGTH);
+        setFactSize(minLength * DEFAULT_FACT_SIZE / DEFAULT_SIDE_LENGTH);
+        setCaptionSize(minLength * DEFAULT_CAPTION_SIZE / DEFAULT_SIDE_LENGTH);
     }
 
     private void scaleBoxPadding() {
-        paddingTop = (minSideLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
-        paddingBottom = (minSideLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
+        paddingTop = (minLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
+        paddingBottom = (minLength * DEFAULT_PADDING_SIZE / DEFAULT_SIDE_LENGTH);
         setPadding(
                 DEFAULT_PADDING_SIZE,
                 paddingTop,
                 DEFAULT_PADDING_SIZE,
                 paddingBottom);
+    }
+
+    private int getMinMeasureSpec(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int minSize = Math.min(widthSize, heightSize);
+        return MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.EXACTLY);
     }
 
     private void setupBackground() {

@@ -18,8 +18,9 @@
 
                 <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
                     android:id="@+id/a"
-                    android:layout_width="match_parent"
+                    android:layout_width="150dp"
                     android:layout_height="match_parent"
+                    app:isSquare="true"
                     app:headerColor="@color/headerColor"
                     app:panelColor="@color/panelColor"
                     app:factColor="@color/boxActiveTextColor"

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="BoxView">
+        <attr name="isSquare" format="boolean" />
         <attr name="panelColor" format="color" />
         <attr name="borderRadius" format="float" />
         <attr name="borderColor" format="color" />
         <attr name="borderThickness" format="integer" />
         <attr name="headerColor" format="color" />
         <attr name="headerSpacing" format="float" />
-<!---->        <attr name="factColor" format="color" />
+        <attr name="factColor" format="color" />
         <attr name="captionColor" format="color" />
     </declare-styleable>
 </resources>
