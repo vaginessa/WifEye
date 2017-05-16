@@ -1,16 +1,11 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -33,7 +28,4 @@
                     />
         </RelativeLayout>
 
-    </LinearLayout>
-
-
-</FrameLayout>
+</LinearLayout>

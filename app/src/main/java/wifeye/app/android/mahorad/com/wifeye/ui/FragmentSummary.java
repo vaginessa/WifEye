@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
@@ -17,7 +16,7 @@ public class FragmentSummary extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        FrameLayout frame = (FrameLayout) inflater.inflate(
+        View frame = inflater.inflate(
                 R.layout.fragment_summary, container, false);
 
         BoxView actionBox = (BoxView) frame.findViewById(R.id.a);
