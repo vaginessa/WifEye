@@ -1,6 +1,9 @@
 package wifeye.app.android.mahorad.com.wifeye;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -20,25 +23,23 @@ import android.view.View;
 import javax.inject.Inject;
 
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
+import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerMainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityModule;
-import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
-import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
+import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.ui.FragmentSummary;
-import wifeye.app.android.mahorad.com.wifeye.ui.view.IMainView;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class MainActivity extends ActivityManagePermission
-        implements OnNavigationItemSelectedListener, IMainView {
+        implements OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ColorStateList greens;
-    private ColorStateList accent;
-
+    private final FragmentSummary summary = new FragmentSummary();
+    private final ServiceStateReceiver receiver = new ServiceStateReceiver();
     private final MainActivityComponent component =
             DaggerMainActivityComponent
                     .builder()
@@ -46,25 +47,34 @@ public class MainActivity extends ActivityManagePermission
                     .appComponent(MainApplication.appComponent())
                     .build();
 
-    private final Presenter presenter = new Presenter(this);
-
-    private final FragmentSummary summary = new FragmentSummary();
+    private ColorStateList greens;
+    private ColorStateList accent;
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private Toolbar toolbar;
     private FloatingActionButton fab;
 
-    @Inject
-    SharedPreferences preferences;
-    @Inject
-    Utilities utils;
+    @Inject SharedPreferences preferences;
+    @Inject Utilities utils;
+    @Inject @ApplicationContext Context context;
+
+    private class ServiceStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean enabled = intent
+                    .getExtras()
+                    .getBoolean(Constants.EXTRAS_SERVICE_STATE);
+            updateFloatingButton(enabled);
+            if (enabled)
+                showSnackbar("Service Enabled.");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        presenter.onCreate();
         MainApplication.mainComponent().inject(this);
 
         initUserInterface();
@@ -74,19 +84,16 @@ public class MainActivity extends ActivityManagePermission
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.onResume();
+        boolean enabled = utils.isRunning(MainService.class);
+        updateFloatingButton(enabled);
+        registerReceiver(receiver,
+                new IntentFilter(Constants.INTENT_SERVICE_STATE));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
+        unregisterReceiver(receiver);
     }
 
     private void initUserInterface() {
@@ -141,7 +148,6 @@ public class MainActivity extends ActivityManagePermission
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         setTitle(item.getTitle());
@@ -170,29 +176,14 @@ public class MainActivity extends ActivityManagePermission
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    public void toggleService(View view) {
-        if (utils.isRunning(MainService.class)) {
-            presenter.stopMainService();
-            showSnackbar("Service stopped.");
-        } else {
-            presenter.handlePermissions();
-            showSnackbar("Service is started.");
-        }
-    }
-
-    private void showSnackbar(String message) {
-        Snackbar
-                .make(fab, message, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
-    @Override
-    public void updateServiceState(final boolean enabled, final String date) {
+    public void updateFloatingButton(final boolean enabled) {
         runOnUiThread(() -> {
-            if (enabled)
+            if (enabled) {
                 setFloatingButtonEnabled();
-            else
+            } else {
                 setFloatingButtonDisable();
+                showSnackbar("Service Disabled.");
+            }
         });
     }
 
@@ -206,51 +197,40 @@ public class MainActivity extends ActivityManagePermission
         fab.setBackgroundTintList(accent);
     }
 
-    @Override
-    public void updateActionState(final Action action, final String date) {
-//        runOnUiThread(() -> {
-//            actionText.setText(action.toString());
-//            actionDate.setText(date);
-//        });
+    private void showSnackbar(String message) {
+        Snackbar
+                .make(fab, message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 
-    @Override
-    public void updatePersistence(String repository) {
-//        runOnUiThread(() -> persistence.setText(repository));
+    public void toggleService(View view) {
+        if (utils.isRunning(MainService.class)) {
+            stopMainService();
+        } else {
+            handlePermissions();
+        }
     }
 
-    @Override
-    public void updateWifiDeviceState(WifiState state) {
-//        runOnUiThread(() -> wifiText.setText(state.toString()));
+    public void handlePermissions() {
+        askCompactPermissions(Constants.PERMISSIONS, new PermissionResult() {
+            @Override
+            public void permissionGranted() { startMainService(); }
+            @Override
+            public void permissionDenied() { finish(); }
+            @Override
+            public void permissionForeverDenied() {
+                utils.openPermissions(context);
+            }
+        });
     }
 
-    @Override
-    public void toggleMainServiceDisable() {
-//        runOnUiThread(() -> service.setChecked(false));
+    public void startMainService() {
+        Intent intent = new Intent(context, MainService.class);
+        startService(intent);
     }
 
-    @Override
-    public void updateTowerIdState(final String ctid, final String date) {
-//        runOnUiThread(() -> {
-//            ctidText.setText(ctid);
-//            ctidDate.setText(date);
-//        });
+    public void stopMainService() {
+        Intent intent = new Intent(context, MainService.class);
+        context.stopService(intent);
     }
-
-    @Override
-    public void updateHotspotState(final String ssid, final String date) {
-//        runOnUiThread(() -> {
-//            ssidText.setText(ssid == null ? "" : ssid);
-//            ssidDate.setText(date);
-//        });
-    }
-
-    @Override
-    public void updateEngineState(final String state, String date) {
-//        runOnUiThread(() -> {
-//            stateText.setText(state);
-//            stateDate.setText(date);
-//        });
-    }
-
 }

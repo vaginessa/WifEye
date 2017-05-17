@@ -68,6 +68,13 @@ public class MainService extends Service {
 
         started = true;
         Log.v(TAG, "started main service");
+        broadcastStartup();
+    }
+
+    private void broadcastStartup() {
+        Intent intent = new Intent(Constants.INTENT_SERVICE_STATE);
+        intent.putExtra(Constants.EXTRAS_SERVICE_STATE, true);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -84,6 +91,13 @@ public class MainService extends Service {
 
         started = false;
         Log.v(TAG, "stopped main service");
+        broadcastShutdown();
+    }
+
+    private void broadcastShutdown() {
+        Intent intent = new Intent(Constants.INTENT_SERVICE_STATE);
+        intent.putExtra(Constants.EXTRAS_SERVICE_STATE, false);
+        sendBroadcast(intent);
     }
 
 }

@@ -10,9 +10,4 @@ public interface IPresenter {
 
     void onDestroy();
 
-    void startMainService();
-
-    void stopMainService();
-
-    void handlePermissions();
 }

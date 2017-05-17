@@ -12,8 +12,15 @@ import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
+import wifeye.app.android.mahorad.com.wifeye.presenter.IPresenter;
+import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
+import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
+import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
+import wifeye.app.android.mahorad.com.wifeye.ui.view.IViewSummary;
 
-public class FragmentSummary extends Fragment {
+public class FragmentSummary extends Fragment implements IViewSummary {
+
+    private final IPresenter presenter = new Presenter(this);
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -69,6 +76,61 @@ public class FragmentSummary extends Fragment {
         d.setCaption("Last Received Date");
 
         return frame;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
+    @Override
+    public void updateActionState(final Action action, final String date) {
+//        runOnUiThread(() -> {
+//            actionText.setText(action.toString());
+//            actionDate.setText(date);
+//        });
+    }
+
+    @Override
+    public void updateWifiDeviceState(WifiState state) {
+//        runOnUiThread(() -> wifiText.setText(state.toString()));
+    }
+
+    @Override
+    public void updateTowerIdState(final String ctid, final String date) {
+//        runOnUiThread(() -> {
+//            ctidText.setText(ctid);
+//            ctidDate.setText(date);
+//        });
+    }
+
+    @Override
+    public void updateHotspotState(final String ssid, final String date) {
+//        runOnUiThread(() -> {
+//            ssidText.setText(ssid == null ? "" : ssid);
+//            ssidDate.setText(date);
+//        });
+    }
+
+    @Override
+    public void updateEngineState(final String state, String date) {
+//        runOnUiThread(() -> {
+//            stateText.setText(state);
+//            stateDate.setText(date);
+//        });
     }
 
 }
