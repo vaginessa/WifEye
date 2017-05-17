@@ -2,10 +2,14 @@ package wifeye.app.android.mahorad.com.wifeye.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 
@@ -34,6 +38,23 @@ public class FragmentSummary extends Fragment {
         b.setContents(info);
         b.setFact("15,966 steps");
         b.setCaption("1,300 steps to go");
+
+        BoxView c = (BoxView) frame.findViewById(R.id.c);
+        c.setHeader("CONNECTION STATE");
+
+        ShimmerTextView stv = new ShimmerTextView(getContext());
+        stv.setText("Connecting");
+        stv.setTextColor(getResources().getColor(R.color.colorMainBackground));
+        stv.setReflectionColor(getResources().getColor(R.color.boxInfoTextColor));
+        stv.setTextSize(20);
+        stv.setGravity(Gravity.CENTER);
+        stv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        Shimmer shimmer = new Shimmer();
+        shimmer.start(stv);
+
+        c.setContents(stv);
+        c.setFact("12:18 Today");
+        c.setCaption("Last Occurrence");
 
         return frame;
     }

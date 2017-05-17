@@ -42,5 +42,6 @@ dependencies {
     compile 'com.auron:permission-manage:1.1.6'
     compile group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+    compile 'com.romainpiel.shimmer:library:1.4.0@aar'
     testCompile 'junit:junit:4.12'
 }
