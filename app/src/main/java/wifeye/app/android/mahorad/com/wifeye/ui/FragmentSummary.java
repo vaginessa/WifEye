@@ -23,6 +23,7 @@ public class FragmentSummary extends Fragment {
         View frame = inflater.inflate(
                 R.layout.fragment_summary, container, false);
 
+        /*************************/
         BoxView a = (BoxView) frame.findViewById(R.id.a);
         a.setHeader("LAST ACTION");
         ImageView timer = new ImageView(container.getContext());
@@ -31,6 +32,7 @@ public class FragmentSummary extends Fragment {
         a.setFact("1,215 cals in");
         a.setCaption("460 cals left");
 
+        /*************************/
         BoxView b = (BoxView) frame.findViewById(R.id.b);
         b.setHeader("APPLICATIONS");
         ImageView info = new ImageView(container.getContext());
@@ -39,6 +41,7 @@ public class FragmentSummary extends Fragment {
         b.setFact("15,966 steps");
         b.setCaption("1,300 steps to go");
 
+        /*************************/
         BoxView c = (BoxView) frame.findViewById(R.id.c);
         c.setHeader("CONNECTION STATE");
 
@@ -55,6 +58,15 @@ public class FragmentSummary extends Fragment {
         c.setContents(stv);
         c.setFact("12:18 Today");
         c.setCaption("Last Occurrence");
+
+        /*************************/
+        BoxView d = (BoxView) frame.findViewById(R.id.d);
+        d.setHeader("CELL TOWER SIGNAL");
+        ImageView hotspot = new ImageView(container.getContext());
+        hotspot.setImageResource(R.drawable.hotspots);
+        d.setContents(hotspot);
+        d.setFact("10:30pm Today");
+        d.setCaption("Last Received Date");
 
         return frame;
     }

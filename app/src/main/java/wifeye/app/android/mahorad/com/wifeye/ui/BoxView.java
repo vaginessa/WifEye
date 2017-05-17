@@ -132,7 +132,7 @@ public class BoxView extends RelativeLayout {
             isSquare = array.getBoolean(
                     R.styleable.BoxView_isSquare, false);
             backgroundColor = array.getColor(
-                    R.styleable.BoxView_panelColor, DEFAULT_BACKGROUND_COLOR);
+                    R.styleable.BoxView_backgroundColor, DEFAULT_BACKGROUND_COLOR);
             borderRadius = array.getFloat(
                     R.styleable.BoxView_borderRadius, DEFAULT_BORDER_RADIUS);
             borderColor = array.getColor(
