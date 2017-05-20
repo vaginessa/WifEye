@@ -70,7 +70,7 @@
         app:isSquare="true"
         app:backgroundColor="@color/panelColor" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.ui.view.ActionView
         android:id="@+id/f"
         android:layout_width="150dp"
         android:layout_height="match_parent"
@@ -79,6 +79,7 @@
         app:factColor="@color/boxActiveTextColor"
         app:headerColor="@color/headerColor"
         app:isSquare="true"
-        app:backgroundColor="@color/panelColor" />
+        app:backgroundColor="@color/panelColor"
+        />
 
 </GridLayout>
