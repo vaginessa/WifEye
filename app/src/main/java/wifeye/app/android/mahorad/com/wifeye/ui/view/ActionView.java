@@ -16,6 +16,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
@@ -29,18 +30,14 @@ import static android.widget.LinearLayout.VERTICAL;
 
 public class ActionView extends BoxView implements IOngoingActionConsumer {
 
+    private static final String HEADER = "A C T I O N";
+
     @Inject OngoingActionPublisher actionPublisher;
 
     private Action action;
     private Date date;
-
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
-//    private CircleProgressBar progressBar;
-    private static final String HEADER = "ACTIONS";
-    private static final String FACT = "fact";
-    private static final String CAPTION = "caption";
-
 
     public ActionView(Context context) {
         super(context);
@@ -57,70 +54,58 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        //        actionPublisher.subscribe(this);
-        setupProgressBar();
-        setupShimmerText();
+        actionPublisher = MainApplication
+                .mainComponent()
+                .actionPublisher();
+        actionPublisher.subscribe(this);
+        setHeader(HEADER);
         setupContents();
+        refresh();
     }
 
     private void setupContents() {
+        setupProgressBar();
+        setupShimmerText();
         LinearLayout layout = getContentLayout();
-//        layout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.boxAccentYellow));
         setContents(layout);
-
         layout.addView(progressBar);
-        progressBar.setLayoutParams(getProgressBarLayoutParams());
         layout.addView(shimmerText);
-        shimmerText.setLayoutParams(getShimmerTextLayoutParams());
-
-        setFact(FACT);
-    }
-
-    public void startShimmerText() {
-        Shimmer shimmer = new Shimmer();
-        shimmer.start(shimmerText);
-    }
-
-    public void startProgressBar() {
-        int animationDuration = 25000; // 2500ms = 2,5s
-        progressBar.setProgress(55);
-        progressBar.setProgressWithAnimation(100, animationDuration); // Default duration = 1500ms
     }
 
     private void setupProgressBar() {
-        if (progressBar != null) return;/**/
+        if (progressBar != null) return;
         progressBar = new CircularProgressBar(getContext(), null);
         progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxAccentBlue));
         progressBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
-        progressBar.setProgressBarWidth(getResources().getDimension(R.dimen.progressBarWidth));
-        progressBar.setBackgroundProgressBarWidth(getResources().getDimension(R.dimen.backgroundProgressBarWidth));
-        progressBar.setProgressWithAnimation(100, 10000); // Default duration = 1500ms
-
+        float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
+        progressBar.setProgressBarWidth(progressBarWidth);
+        float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
+        progressBar.setBackgroundProgressBarWidth(backgroundWidth);
+        progressBar.setLayoutParams(getProgressBarLayoutParams());
     }
 
     private void setupShimmerText() {
         if (shimmerText != null) return;
         shimmerText = new ShimmerTextView(getContext());
-        shimmerText.setText(shimmerText.getTextSize() + " dp");
         shimmerText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         shimmerText.setReflectionColor(ContextCompat.getColor(getContext(), R.color.boxInfoTextColor));
         shimmerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//        shimmerText.setGravity(Gravity.CENTER);
+        shimmerText.setTextSize(20);
+        shimmerText.setLayoutParams(getShimmerTextLayoutParams());
     }
 
     @NonNull
     private LinearLayout getContentLayout() {
         LinearLayout layout = new LinearLayout(getContext(), null);
         layout.setOrientation(VERTICAL);
-        LayoutParams params = new LayoutParams(MATCH_PARENT, MATCH_PARENT);
-//        layout.setGravity(Gravity.CENTER);
-        layout.setLayoutParams(params);
+        layout.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
         return layout;
     }
 
     @NonNull
     private LinearLayout.LayoutParams getProgressBarLayoutParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
         params.gravity = CENTER;
         params.weight = 1;
         return params;
@@ -128,7 +113,8 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
 
     @NonNull
     private LinearLayout.LayoutParams getShimmerTextLayoutParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         params.gravity = CENTER;
         return params;
     }
@@ -147,7 +133,21 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     private void updateView() {
-
+        shimmerText.setText(action.toString());
+        setFact("15:33 Today");
+//        setCaption("occurrence date");
     }
+
+    public void startShimmerText() {
+        Shimmer shimmer = new Shimmer();
+        shimmer.start(shimmerText);
+    }
+
+    public void startProgressBar() {
+        int animationDuration = 25000;
+        progressBar.setProgress(55);
+        progressBar.setProgressWithAnimation(100, animationDuration); // Default duration = 1500ms
+    }
+
 
 }
