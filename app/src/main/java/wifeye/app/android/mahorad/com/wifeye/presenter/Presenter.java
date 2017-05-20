@@ -26,7 +26,6 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 public class Presenter implements
         IPresenter,
         ICellTowerIdConsumer,
-        IOngoingActionConsumer,
         ISystemStateConsumer,
         IWifiDeviceStateConsumer,
         IWifiSsidNameConsumer {
@@ -36,7 +35,6 @@ public class Presenter implements
     @Inject @ApplicationContext Context context;
     @Inject Utilities utils;
     @Inject WifiSsidNamePublisher ssidPublisher;
-    @Inject OngoingActionPublisher actionPublisher;
     @Inject CellTowerIdPublisher ctidPublisher;
     @Inject SystemStatePublisher statePublisher;
     @Inject WifiDeviceStatePublisher wifiPublisher;
@@ -58,7 +56,6 @@ public class Presenter implements
         ssidPublisher.subscribe(this);
         ctidPublisher.subscribe(this);
         statePublisher.subscribe(this);
-        actionPublisher.subscribe(this);
         wifiPublisher.subscribe(this);
     }
 
@@ -77,15 +74,8 @@ public class Presenter implements
     private void updateViewStates() {
         updateHotspotState();
         updateTowerIdState();
-        updateActionState();
         updateEngineState();
         updateWifiDeviceState();
-    }
-
-    private void updateActionState() {
-        Action action = actionPublisher.action();
-        String date = actionPublisher.date();
-        view.updateActionState(action, date);
     }
 
     private void updateHotspotState() {
@@ -139,11 +129,6 @@ public class Presenter implements
     @Override
     public void onStateChanged(IState state) {
         view.updateEngineState(state.toString(), utils.simpleDate());
-    }
-
-    @Override
-    public void onActionChanged(Action action) {
-        view.updateActionState(action, utils.simpleDate());
     }
 
 }
