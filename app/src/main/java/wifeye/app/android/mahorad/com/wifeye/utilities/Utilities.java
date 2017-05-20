@@ -53,6 +53,14 @@ public class Utilities {
                 + "/" + res.getResourceEntryName(id));
     }
 
+    public int dip2px(float dpValue, Context context) {
+        float scale = context
+                .getResources()
+                .getDisplayMetrics()
+                .density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
     public void openPermissions(Context context) {
         Intent intent = new Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
