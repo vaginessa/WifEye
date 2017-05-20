@@ -320,13 +320,15 @@ public class BoxView extends RelativeLayout {
 
     /* FACT */
     public void setFact(CharSequence text) {
-        if (text == null)
+        if (text == null || text == "")
             return;
         factText = text;
         int start = text.toString().indexOf(" ");
         int stop = text.length();
-        Spannable span = toSpan(factText, start, stop, .6f);
-        fact.setText(span);
+        Spannable span = null;
+        if (start > 0)
+            span = toSpan(factText, start, stop, .6f);
+        fact.setText(span == null ? text : span);
     }
 
     private Spannable toSpan(CharSequence text, int start, int stop, float ratio) {
