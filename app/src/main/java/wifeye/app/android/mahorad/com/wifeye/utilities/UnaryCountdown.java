@@ -28,7 +28,7 @@ public class UnaryCountdown {
     public UnaryCountdown(UnaryCountdownBuilder builder) {
         if (builder == null)
             throw new IllegalArgumentException();
-        enacts = builder.resetCount();
+        enacts = builder.runTimes();
         length = builder.duration();
         unit = builder.timeUnit();
 

@@ -17,7 +17,7 @@ public class UnaryCountdownTest {
     public void singleEnact_OneSecond_NoException_NoCompletion() {
         UnaryCountdown timer = new UnaryCountdownBuilder()
                 .setDuration(1, SECONDS)
-                .setResetCount(1)
+                .setRunTimes(1)
                 .setIntervalsAction(() -> interval++)
                 .build();
 
@@ -33,7 +33,7 @@ public class UnaryCountdownTest {
     public void singleEnact_HasException_NoCompletion() {
         UnaryCountdown timer = new UnaryCountdownBuilder()
                 .setDuration(1, SECONDS)
-                .setResetCount(1)
+                .setRunTimes(1)
                 .setIntervalsAction(() -> interval = interval/0)
                 .setExceptionAction(() -> exception++)
                 .build();
@@ -50,7 +50,7 @@ public class UnaryCountdownTest {
     public void singleEnact_NoException_HasCompletion() {
         UnaryCountdown timer = new UnaryCountdownBuilder()
                 .setDuration(1, SECONDS)
-                .setResetCount(1)
+                .setRunTimes(1)
                 .setIntervalsAction(() -> interval++)
                 .setCompletionAction(() -> completed++)
                 .build();
@@ -70,7 +70,7 @@ public class UnaryCountdownTest {
     public void manyEnacts_NoException_NoCompletion() {
         UnaryCountdown timer = new UnaryCountdownBuilder()
                 .setDuration(1, SECONDS)
-                .setResetCount(3)
+                .setRunTimes(3)
                 .setIntervalsAction(() -> interval++)
                 .build();
 
