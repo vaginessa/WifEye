@@ -10,16 +10,15 @@ import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.utilities.UnaryCountdownBuilder;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static wifeye.app.android.mahorad.com.wifeye.constants.Constants.OBSERVE_REPEAT_COUNT;
+import static wifeye.app.android.mahorad.com.wifeye.constants.Constants.WIFI_DISABLE_TIMEOUT;
+import static wifeye.app.android.mahorad.com.wifeye.constants.Constants.WIFI_ENABLE_TIMEOUT;
 import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.*;
 import static wifeye.app.android.mahorad.com.wifeye.publishers.WifiState.Disabled;
 
 public class WifiDevice implements IWifiDeviceStateConsumer {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
-
-    private static final int OBSERVE_REPEAT_COUNT = 10;
-    private static final int WIFI_ENABLE_TIMEOUT = 100;
-    private static final int WIFI_DISABLE_TIMEOUT = 30;
 
     private final IWifiHandler wifiHandler;
     private final OngoingActionPublisher actionPublisher;

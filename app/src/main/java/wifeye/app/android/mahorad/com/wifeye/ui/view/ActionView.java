@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.R;
+import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
@@ -27,6 +28,10 @@ import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.LinearLayout.VERTICAL;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.Halt;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.publishers.Action.ObserveModeEnabling;
 
 public class ActionView extends BoxView implements IOngoingActionConsumer {
 
@@ -36,8 +41,10 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
 
     private Action action;
     private Date date;
+    private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
+    private int progress;
 
     public ActionView(Context context) {
         super(context);
@@ -87,8 +94,8 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     private void setupShimmerText() {
         if (shimmerText != null) return;
         shimmerText = new ShimmerTextView(getContext());
-        shimmerText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
-        shimmerText.setReflectionColor(ContextCompat.getColor(getContext(), R.color.boxInfoTextColor));
+        int reflectColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
+        shimmerText.setReflectionColor(reflectColor);
         shimmerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         shimmerText.setTextSize(20);
         shimmerText.setLayoutParams(getShimmerTextLayoutParams());
@@ -133,21 +140,49 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     private void updateView() {
-        shimmerText.setText(action.toString());
-        setFact("15:33 Today");
+//        setFact("15:33 Today");
 //        setCaption("occurrence date");
+        if (action == Halt) {
+            shimmerStop();
+        } else {
+            shimmerStart();
+        }
     }
 
-    public void startShimmerText() {
-        Shimmer shimmer = new Shimmer();
+    private void shimmerStop() {
+        shimmerText.setText("Stopped");
+        shimmer.cancel();
+        int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
+        shimmerText.setTextColor(textColor);
+    }
+
+    public void shimmerStart() {
+        shimmerText.setText(action.toString());
         shimmer.start(shimmerText);
+        int boxBackground = ContextCompat.getColor(getContext(), R.color.boxBackground);
+        shimmerText.setTextColor(boxBackground);
     }
 
-    public void startProgressBar() {
-        int animationDuration = 25000;
-        progressBar.setProgress(55);
-        progressBar.setProgressWithAnimation(100, animationDuration); // Default duration = 1500ms
+    public void progressStart() {
+        int progress = getProgressSeconds();
+        int total = getTotalDuration();
+        int remained = total - progress;
+        int percent = (100 * progress) / total;
+        progressBar.setProgress(percent);
+        progressBar.setProgressWithAnimation(100, remained);
     }
 
+    private int getTotalDuration() {
+        if (action == DisablingMode
+                || action == ObserveModeDisabling)
+            return Constants.WIFI_DISABLE_TIMEOUT;
+        if (action == ObserveModeEnabling)
+            return Constants.WIFI_ENABLE_TIMEOUT;
+        return 1;
+    }
 
+    public int getProgressSeconds() {
+        // todo how much timer counted in seconds
+        return 0;
+    }
 }

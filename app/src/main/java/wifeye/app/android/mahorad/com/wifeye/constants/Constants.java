@@ -4,6 +4,10 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 
 public class Constants {
 
+    public static final int OBSERVE_REPEAT_COUNT = 10;
+    public static final int WIFI_ENABLE_TIMEOUT = 100;
+    public static final int WIFI_DISABLE_TIMEOUT = 30;
+
     public static final String INTENT_SERVICE_STATE = "wifeye.intent.service.state";
     public static final String EXTRAS_SERVICE_STATE = "wifeye.intent.param.service.state";
 
