@@ -28,8 +28,8 @@ public class UnaryCountdown {
     public UnaryCountdown(UnaryCountdownBuilder builder) {
         if (builder == null)
             throw new IllegalArgumentException();
-        enacts = builder.enacts();
-        length = builder.length();
+        enacts = builder.resetCount();
+        length = builder.duration();
         unit = builder.timeUnit();
 
         intervalsAction = builder.intervalsAction();

@@ -53,8 +53,8 @@ public class BinaryCountdown {
 
     private UnaryCountdown createMoreDelayedTimer() {
         return new UnaryCountdownBuilder()
-                .setEnacts(1)
-                .setLength(moreDelayedLength, moreDelayedUnit)
+                .setResetCount(1)
+                .setDuration(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
                 .setExceptionAction(exceptionAction)
                 .setCompletionAction(this::startLessDelayedAction)
@@ -63,8 +63,8 @@ public class BinaryCountdown {
 
     private UnaryCountdown createLessDelayedTimer() {
         return new UnaryCountdownBuilder()
-                .setEnacts(1)
-                .setLength(lessDelayedLength, lessDelayedUnit)
+                .setResetCount(1)
+                .setDuration(lessDelayedLength, lessDelayedUnit)
                 .setIntervalsAction(lessDelayedAction)
                 .setExceptionAction(exceptionAction)
                 .setCompletionAction(this::startMoreDelayedAction)
@@ -73,8 +73,8 @@ public class BinaryCountdown {
 
     private void startMoreDelayedAction() {
         new UnaryCountdownBuilder()
-                .setEnacts(1)
-                .setLength(moreDelayedLength, moreDelayedUnit)
+                .setResetCount(1)
+                .setDuration(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
                 .setExceptionAction(exceptionAction)
                 .setCompletionAction(this::cycleIntervalAction)
@@ -84,8 +84,8 @@ public class BinaryCountdown {
 
     private void startLessDelayedAction() {
         new UnaryCountdownBuilder()
-                .setEnacts(1)
-                .setLength(lessDelayedLength, lessDelayedUnit)
+                .setResetCount(1)
+                .setDuration(lessDelayedLength, lessDelayedUnit)
                 .setIntervalsAction(lessDelayedAction)
                 .setExceptionAction(exceptionAction)
                 .setCompletionAction(this::cycleIntervalAction)

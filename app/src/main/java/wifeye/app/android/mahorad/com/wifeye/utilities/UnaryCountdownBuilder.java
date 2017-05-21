@@ -5,24 +5,24 @@ import java.util.concurrent.TimeUnit;
 public class UnaryCountdownBuilder {
 
     private static final int MINIMUM_PERIOD = 1;
-    private static final int MINIMUM_ENACTS = 1;
+    private static final int MINIMUM_RESET_COUNT = 1;
     private static final Runnable NONE = () -> {};
 
-    private int enacts = MINIMUM_ENACTS;
-    private int length = MINIMUM_PERIOD;
+    private int resetCount = MINIMUM_RESET_COUNT;
+    private int duration = MINIMUM_PERIOD;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
 
     private Runnable intervalsAction = NONE;
     private Runnable exceptionAction = NONE;
     private Runnable completedAction = NONE;
 
-    public UnaryCountdownBuilder setEnacts(int times) {
-        enacts = Math.max(times, MINIMUM_ENACTS);
+    public UnaryCountdownBuilder setResetCount(int times) {
+        resetCount = Math.max(times, MINIMUM_RESET_COUNT);
         return this;
     }
 
-    public UnaryCountdownBuilder setLength(int length, TimeUnit unit) {
-        this.length = Math.max(length, MINIMUM_PERIOD);
+    public UnaryCountdownBuilder setDuration(int length, TimeUnit unit) {
+        this.duration = Math.max(length, MINIMUM_PERIOD);
         if (unit == null)
             return this;
         timeUnit = unit;
@@ -66,12 +66,12 @@ public class UnaryCountdownBuilder {
         return completedAction;
     }
 
-    public int enacts() {
-        return enacts;
+    public int resetCount() {
+        return resetCount;
     }
 
-    public int length() {
-        return length;
+    public int duration() {
+        return duration;
     }
 
     public TimeUnit timeUnit() {

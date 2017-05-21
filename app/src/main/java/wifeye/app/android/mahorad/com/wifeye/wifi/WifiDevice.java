@@ -51,8 +51,8 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             halt();
             actionPublisher.publish(DisablingMode);
             disablingTimer = new UnaryCountdownBuilder()
-                    .setEnacts(1)
-                    .setLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                    .setResetCount(1)
+                    .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
                     .setIntervalsAction(wifiHandler::disable)
                     .build();
             disablingTimer.start();
