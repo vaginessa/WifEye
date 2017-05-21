@@ -17,19 +17,22 @@ public class UnaryCountdown {
     private Runnable completedAction;
     private Runnable exceptionAction;
 
-    private Disposable timer;
+    private Observable<Long> observable;
+    private Disposable disposable;
     private Scheduler scheduler;
 
-    private int enacts;
-    private int length;
+    private int runTimes;
+    private int duration;
     private TimeUnit unit;
     private boolean isActive;
+
+    private long progress;
 
     public UnaryCountdown(UnaryCountdownBuilder builder) {
         if (builder == null)
             throw new IllegalArgumentException();
-        enacts = builder.runTimes();
-        length = builder.duration();
+        runTimes = builder.runTimes();
+        duration = builder.duration();
         unit = builder.timeUnit();
 
         intervalsAction = builder.intervalsAction();
@@ -41,19 +44,32 @@ public class UnaryCountdown {
         if (isActive) return;
         isActive = true;
         scheduler = Schedulers.newThread();
-        timer = Observable
-                .interval(length, unit, scheduler)
+        observable = Observable
+                .interval(duration, unit, scheduler)
                 .doOnNext(n -> intervalsAction.run())
-                .takeWhile(n -> isActive && ++n < enacts)
-                .doOnError(t -> { exceptionAction.run(); stop(); })
-                .doOnComplete(() -> { completedAction.run(); stop(); })
-                .subscribe();
+                .takeWhile(n -> isActive && ++n < runTimes)
+                .doOnError(t -> {
+                    exceptionAction.run();
+                    stop();
+                })
+                .doOnComplete(() -> {
+                    completedAction.run();
+                    stop();
+                });
+        disposable = observable.subscribe(
+                aLong -> progress = aLong
+        );
+    }
+
+    public long progress() {
+        return progress;
     }
 
     public void stop() {
         if (!isActive) return;
         isActive = false;
-        timer.dispose();
+        progress = 0;
+        disposable.dispose();
         scheduler.shutdown();
     }
 
