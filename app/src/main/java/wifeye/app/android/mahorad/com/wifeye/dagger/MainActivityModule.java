@@ -16,7 +16,8 @@ public class MainActivityModule {
 
     @Provides
     @MainActivityScope
-    public String provideSomething() {
-        return "";
+    public MainActivity mainActivity() {
+        return activity;
     }
-}
+
+ }
