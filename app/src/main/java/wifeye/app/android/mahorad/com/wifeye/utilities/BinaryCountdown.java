@@ -7,8 +7,8 @@ public class BinaryCountdown {
 
     private UnaryCountdown unaryTimer;
 
+    private int ranTimes;
     private int runTimes;
-    private int enacts;
 
     private boolean startsWithMoreDelayedAction;
     private int lessDelayedLength;
@@ -23,7 +23,7 @@ public class BinaryCountdown {
     private Runnable completionAction;
 
     public BinaryCountdown(BinaryCountdownBuilder builder) {
-        enacts = builder.enacts();
+        runTimes = builder.runTimes();
         startsWithMoreDelayedAction = builder.isStartingWithMoreDelayedAction();
 
         lessDelayedLength = builder.lessDelayedLength();
@@ -94,7 +94,7 @@ public class BinaryCountdown {
     }
 
     private void cycleIntervalAction() {
-        if (++runTimes >= enacts) {
+        if (++ranTimes >= runTimes) {
             runCompletionAction();
             stop();
         } else {
@@ -110,13 +110,17 @@ public class BinaryCountdown {
 
     public void stop() {
         unaryTimer.stop();
-        runTimes = 0;
+        ranTimes = 0;
     }
 
     public boolean isActive() {
         if (unaryTimer == null)
             return false;
         return unaryTimer.isActive();
+    }
+
+    public long elapsed() {
+        return unaryTimer.elapsed();
     }
 
 }
