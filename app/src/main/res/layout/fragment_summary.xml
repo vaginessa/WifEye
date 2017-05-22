@@ -8,9 +8,9 @@
     android:layout_gravity="center_horizontal"
     android:columnCount="2"
     android:orientation="horizontal"
-    tools:context="wifeye.app.android.mahorad.com.wifeye.ui.view.FragmentSummary">
+    tools:context="wifeye.app.android.mahorad.com.wifeye.screens.view.FragmentSummary">
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.screens.BoxView
         android:id="@+id/a"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -21,7 +21,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.screens.BoxView
         android:id="@+id/b"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -32,7 +32,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.screens.BoxView
         android:id="@+id/c"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -43,7 +43,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.screens.BoxView
         android:id="@+id/d"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -54,7 +54,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.screens.BoxView
         android:id="@+id/e"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -65,7 +65,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.ui.view.ActionView
+    <wifeye.app.android.mahorad.com.wifeye.screens.view.ActionView
         android:id="@+id/f"
         android:layout_width="150dp"
         android:layout_height="150dp"

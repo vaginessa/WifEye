@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.ui;
+package wifeye.app.android.mahorad.com.wifeye.screens;
 
 import android.content.Context;
 import android.content.res.TypedArray;

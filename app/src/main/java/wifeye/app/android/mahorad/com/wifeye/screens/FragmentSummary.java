@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.ui;
+package wifeye.app.android.mahorad.com.wifeye.screens;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +16,7 @@ import wifeye.app.android.mahorad.com.wifeye.presenter.IPresenter;
 import wifeye.app.android.mahorad.com.wifeye.presenter.Presenter;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
-import wifeye.app.android.mahorad.com.wifeye.ui.view.IViewSummary;
+import wifeye.app.android.mahorad.com.wifeye.screens.view.IViewSummary;
 
 public class FragmentSummary extends Fragment implements IViewSummary {
 

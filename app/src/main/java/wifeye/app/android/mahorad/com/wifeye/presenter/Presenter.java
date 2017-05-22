@@ -6,21 +6,18 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ICellTowerIdConsumer;
-import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.CellTowerIdPublisher;
-import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
-import wifeye.app.android.mahorad.com.wifeye.ui.view.IViewSummary;
+import wifeye.app.android.mahorad.com.wifeye.screens.view.IViewSummary;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class Presenter implements

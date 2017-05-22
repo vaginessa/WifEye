@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.ui.view;
+package wifeye.app.android.mahorad.com.wifeye.screens.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,7 +22,7 @@ import wifeye.app.android.mahorad.com.wifeye.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.OngoingActionPublisher;
-import wifeye.app.android.mahorad.com.wifeye.ui.BoxView;
+import wifeye.app.android.mahorad.com.wifeye.screens.BoxView;
 
 import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
