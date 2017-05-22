@@ -1,9 +1,9 @@
-package wifeye.app.android.mahorad.com.wifeye.screens.view;
+package wifeye.app.android.mahorad.com.wifeye.screens.summary;
 
 import wifeye.app.android.mahorad.com.wifeye.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 
-public interface IViewSummary {
+public interface ISummaryView {
 
     void updateHotspotState(String ssid, String date);
 

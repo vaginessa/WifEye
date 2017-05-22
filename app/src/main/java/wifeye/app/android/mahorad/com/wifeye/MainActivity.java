@@ -30,7 +30,7 @@ import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerMainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityModule;
 import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
-import wifeye.app.android.mahorad.com.wifeye.screens.FragmentSummary;
+import wifeye.app.android.mahorad.com.wifeye.screens.summary.SummaryFragment;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class MainActivity extends ActivityManagePermission
@@ -38,7 +38,7 @@ public class MainActivity extends ActivityManagePermission
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private final FragmentSummary summary = new FragmentSummary();
+    private final SummaryFragment summary = new SummaryFragment();
     private final ServiceStateReceiver receiver = new ServiceStateReceiver();
     private final MainActivityComponent component =
             DaggerMainActivityComponent

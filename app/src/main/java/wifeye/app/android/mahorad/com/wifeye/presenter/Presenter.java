@@ -17,7 +17,7 @@ import wifeye.app.android.mahorad.com.wifeye.publishers.WifiDeviceStatePublisher
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.state.IState;
-import wifeye.app.android.mahorad.com.wifeye.screens.view.IViewSummary;
+import wifeye.app.android.mahorad.com.wifeye.screens.summary.ISummaryView;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class Presenter implements
@@ -27,7 +27,7 @@ public class Presenter implements
         IWifiDeviceStateConsumer,
         IWifiSsidNameConsumer {
 
-    private final IViewSummary view;
+    private final ISummaryView view;
 
     @Inject @ApplicationContext Context context;
     @Inject Utilities utils;
@@ -41,7 +41,7 @@ public class Presenter implements
      *
      * @param view
      */
-    public Presenter(IViewSummary view) {
+    public Presenter(ISummaryView view) {
         this.view = view;
         MainApplication
                 .mainComponent()

@@ -1,6 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.dagger;
 
 import dagger.Component;
+import wifeye.app.android.mahorad.com.wifeye.MainActivity;
 import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.MainActivityScope;
 
 @MainActivityScope
@@ -11,5 +12,5 @@ import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.MainActivityScop
         )
 public interface MainActivityComponent {
 
-//    String something();
+        MainActivity mainActivity();
 }
