@@ -6,10 +6,10 @@ public class BinaryCountdownBuilder {
 
     private static final int MINIMUM_LESS_DELAYED_LENGTH = 1;
     private static final int MINIMUM_MORE_DELAYED_LENGTH = 2;
-    private static final int MINIMUM_ENACTS = 1;
+    private static final int MINIMUM_RUN_TIMES = 1;
     private static final Runnable NONE = () -> {};
 
-    private int enacts = MINIMUM_ENACTS;
+    private int runTimes = MINIMUM_RUN_TIMES;
     private boolean startsWithMoreDelayedAction;
 
     private int lessDelayedLength = MINIMUM_LESS_DELAYED_LENGTH;
@@ -23,8 +23,8 @@ public class BinaryCountdownBuilder {
     private Runnable exceptionAction = NONE;
     private Runnable completionAction = NONE;
 
-    public BinaryCountdownBuilder setEnacts(int times) {
-        enacts = Math.max(times, MINIMUM_ENACTS);
+    public BinaryCountdownBuilder setRunTimes(int times) {
+        runTimes = Math.max(times, MINIMUM_RUN_TIMES);
         return this;
     }
 
@@ -82,8 +82,8 @@ public class BinaryCountdownBuilder {
         return this;
     }
 
-    public int enacts() {
-        return enacts;
+    public int runTimes() {
+        return runTimes;
     }
 
     public int lessDelayedLength() {
