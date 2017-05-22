@@ -44,6 +44,10 @@ dependencies {
     compile 'com.google.dagger:dagger:2.10'
     apt 'com.google.dagger:dagger-compiler:2.10'
 
+    // butterknife
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+
     // permission management
     compile 'com.auron:permission-manage:1.1.6'
 

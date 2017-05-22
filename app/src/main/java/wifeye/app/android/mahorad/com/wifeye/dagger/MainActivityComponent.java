@@ -11,5 +11,5 @@ import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.MainActivityScop
         )
 public interface MainActivityComponent {
 
-    String something();
+//    String something();
 }
