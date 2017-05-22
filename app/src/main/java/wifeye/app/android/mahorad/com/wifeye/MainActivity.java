@@ -30,7 +30,7 @@ import wifeye.app.android.mahorad.com.wifeye.dagger.DaggerMainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityComponent;
 import wifeye.app.android.mahorad.com.wifeye.dagger.MainActivityModule;
 import wifeye.app.android.mahorad.com.wifeye.dagger.annotations.ApplicationContext;
-import wifeye.app.android.mahorad.com.wifeye.screens.summary.SummaryFragment;
+import wifeye.app.android.mahorad.com.wifeye.gui.summary.SummaryFragment;
 import wifeye.app.android.mahorad.com.wifeye.utilities.Utilities;
 
 public class MainActivity extends ActivityManagePermission
