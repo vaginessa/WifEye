@@ -68,7 +68,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             if (isObserving()) return;
             halt();
             observingTimer = new BinaryCountdownBuilder()
-                    .setEnacts(OBSERVE_REPEAT_COUNT)
+                    .setRunTimes(OBSERVE_REPEAT_COUNT)
                     .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                     .setMoreDelayedAction(() ->  {
                         wifiHandler.enable();
@@ -95,6 +95,14 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             stopObservingTimer();
             stopDisablingTimer();
         }
+    }
+
+    public long elapsed() {
+        if (isDisabling())
+            return disablingTimer.elapsed();
+        if (isObserving())
+            return observingTimer.elapsed();
+        return -1;
     }
 
     private void stopObservingTimer() {

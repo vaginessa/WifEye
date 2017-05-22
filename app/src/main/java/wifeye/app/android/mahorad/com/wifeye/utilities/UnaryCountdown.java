@@ -26,7 +26,7 @@ public class UnaryCountdown {
     private TimeUnit unit;
     private boolean isActive;
 
-    private long progress;
+    private long elapsed;
 
     public UnaryCountdown(UnaryCountdownBuilder builder) {
         if (builder == null)
@@ -57,20 +57,23 @@ public class UnaryCountdown {
                     stop();
                 });
         disposable = observable.subscribe(
-                aLong -> progress = aLong
+                aLong -> elapsed = aLong
         );
     }
 
-    public long progress() {
-        return progress;
+    public long elapsed() {
+        return elapsed;
     }
 
     public void stop() {
         if (!isActive) return;
         isActive = false;
-        progress = 0;
+        elapsed = 0;
         disposable.dispose();
         scheduler.shutdown();
+        observable = null;
+        disposable = null;
+        scheduler = null;
     }
 
     public boolean isActive() {
