@@ -17,7 +17,7 @@ public class BinaryCountdownTest {
     @Test
     public void singleEnact_NoException_Completes() {
         BinaryCountdown timer = new BinaryCountdownBuilder()
-                .setEnacts(1)
+                .setRunTimes(1)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
                 .setMoreDelayedLength(2, SECONDS)
@@ -38,7 +38,7 @@ public class BinaryCountdownTest {
     @Test
     public void singleEnact_HasException_NoCompletion() {
         BinaryCountdown timer = new BinaryCountdownBuilder()
-                .setEnacts(1)
+                .setRunTimes(1)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
                 .setMoreDelayedLength(2, SECONDS)
@@ -60,7 +60,7 @@ public class BinaryCountdownTest {
     @Test
     public void manyEnacts_NoException_Completes() {
         BinaryCountdown timer = new BinaryCountdownBuilder()
-                .setEnacts(2)
+                .setRunTimes(2)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
                 .setMoreDelayedLength(2, SECONDS)
