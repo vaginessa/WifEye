@@ -1,0 +1,13 @@
+package wifeye.app.android.mahorad.com.wifeye.app.persist;
+
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
+
+public abstract class Persistence implements IPersistence {
+
+    protected final PersistencePublisher publisher;
+
+    public Persistence(PersistencePublisher publisher) {
+        this.publisher = publisher;
+    }
+
+}

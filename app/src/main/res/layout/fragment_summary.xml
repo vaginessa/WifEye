@@ -10,7 +10,7 @@
     android:orientation="horizontal"
     tools:context="wifeye.app.android.mahorad.com.wifeye.gui.view.FragmentSummary">
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
         android:id="@+id/a"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -21,7 +21,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
         android:id="@+id/b"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -32,7 +32,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
         android:id="@+id/c"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -43,7 +43,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
         android:id="@+id/d"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -54,7 +54,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
         android:id="@+id/e"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -65,7 +65,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.view.ActionView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView
         android:id="@+id/f"
         android:layout_width="150dp"
         android:layout_height="150dp"
