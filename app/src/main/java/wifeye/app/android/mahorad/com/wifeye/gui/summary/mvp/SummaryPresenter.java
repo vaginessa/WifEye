@@ -19,7 +19,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class Presenter implements
+public class SummaryPresenter implements
         IPresenter,
         ICellTowerIdConsumer,
         ISystemStateConsumer,
@@ -40,7 +40,7 @@ public class Presenter implements
      *
      * @param view
      */
-    public Presenter(ISummaryView view) {
+    public SummaryPresenter(ISummaryView view) {
         this.view = view;
         MainApplication
                 .mainComponent()

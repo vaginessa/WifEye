@@ -10,11 +10,13 @@ import wifeye.app.android.mahorad.com.wifeye.app.dagger.DaggerApplicationCompone
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.DaggerMainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainModule;
+import wifeye.app.android.mahorad.com.wifeye.gui.dagger.HomeComponent;
 
 public class  MainApplication extends Application {
 
     private static ApplicationComponent appComponent;
     private static MainComponent mainComponent;
+    private static HomeComponent homeComponent;
 
     public static ApplicationComponent appComponent() {
         return appComponent;
@@ -22,6 +24,14 @@ public class  MainApplication extends Application {
 
     public static MainComponent mainComponent() {
         return mainComponent;
+    }
+
+    public static HomeComponent homeComponent() {
+        return homeComponent;
+    }
+
+    public static void setHomeComponent(HomeComponent component) {
+        homeComponent = component;
     }
 
     @Override

@@ -14,14 +14,14 @@ import com.romainpiel.shimmer.ShimmerTextView;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.IPresenter;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.ISummaryView;
-import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.Presenter;
+import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.SummaryPresenter;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView;
 
 public class SummaryFragment extends Fragment implements ISummaryView {
 
-    private final IPresenter presenter = new Presenter(this);
+    private final IPresenter presenter = new SummaryPresenter(this);
 
     @Override
     public View onCreateView(LayoutInflater inflater,
