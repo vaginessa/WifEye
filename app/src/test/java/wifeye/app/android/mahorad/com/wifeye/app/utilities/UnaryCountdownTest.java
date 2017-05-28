@@ -27,7 +27,6 @@ public class UnaryCountdownTest {
         await().atMost(2, SECONDS)
                .until(() -> interval == 1);
         assertFalse(timer.isActive());
-
     }
 
     @Test
@@ -45,7 +44,6 @@ public class UnaryCountdownTest {
         await()
                 .atMost(2, SECONDS)
                 .until(() -> exception == 1);
-
     }
 
     @Test
@@ -66,7 +64,6 @@ public class UnaryCountdownTest {
 
         assertEquals(1, completed);
         assertFalse(timer.isActive());
-
     }
 
     @Test
@@ -83,7 +80,6 @@ public class UnaryCountdownTest {
         await()
                 .atMost(4, SECONDS)
                 .until(() -> interval == 3);
-
     }
 
 }

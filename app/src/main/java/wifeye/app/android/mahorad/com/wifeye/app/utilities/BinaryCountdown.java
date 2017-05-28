@@ -41,14 +41,7 @@ public class BinaryCountdown {
     public void start() {
         if (isActive())
             return;
-        createUnaryTimer();
-        unaryTimer.start();
-    }
-
-    private void createUnaryTimer() {
-        unaryTimer = startsWithMoreDelayedAction
-                ? createMoreDelayedTimer()
-                : createLessDelayedTimer();
+        reset();
     }
 
     private UnaryCountdown createMoreDelayedTimer() {
@@ -58,7 +51,7 @@ public class BinaryCountdown {
                 .setDuration(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
                 .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::startLessDelayedAction)
+                .setCompletionAction(this::reset)
                 .build();
     }
 
@@ -69,41 +62,45 @@ public class BinaryCountdown {
                 .setDuration(lessDelayedLength, lessDelayedUnit)
                 .setIntervalsAction(lessDelayedAction)
                 .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::startMoreDelayedAction)
+                .setCompletionAction(this::reset)
                 .build();
     }
 
-    private void startMoreDelayedAction() {
-        UnaryCountdown
-                .builder()
-                .setRunTimes(1)
-                .setDuration(moreDelayedLength, moreDelayedUnit)
-                .setIntervalsAction(moreDelayedAction)
-                .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::cycleIntervalAction)
-                .build()
-                .start();
+    private void reset() {
+        Executors.newSingleThreadExecutor()
+                .submit(this::verifyCompletion);
     }
 
-    private void startLessDelayedAction() {
-        UnaryCountdown
-                .builder()
-                .setRunTimes(1)
-                .setDuration(lessDelayedLength, lessDelayedUnit)
-                .setIntervalsAction(lessDelayedAction)
-                .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::cycleIntervalAction)
-                .build()
-                .start();
-    }
-
-    private void cycleIntervalAction() {
-        if (++ranTimes >= runTimes) {
+    private void verifyCompletion() {
+        if (ranTimes++ >= 2 * runTimes) {
             runCompletionAction();
             stop();
         } else {
-            start();
+            createUnaryTimer();
+            unaryTimer.start();
         }
+    }
+
+    private void createUnaryTimer() {
+        if (unaryTimer != null) {
+            unaryTimer = isLessDelayedAction()
+                    ? createMoreDelayedTimer()
+                    : createLessDelayedTimer();
+        } else {
+            unaryTimer = startsWithMoreDelayedAction
+                    ? createMoreDelayedTimer()
+                    : createLessDelayedTimer();
+        }
+    }
+
+    private boolean isLessDelayedAction() {
+        boolean sameDurationTime =
+                unaryTimer.durationTime() == lessDelayedLength;
+        if (!sameDurationTime)
+            return false;
+        boolean sameDurationUnit =
+                unaryTimer.durationUnit() == lessDelayedUnit;
+        return sameDurationUnit;
     }
 
     private void runCompletionAction() {
@@ -114,7 +111,7 @@ public class BinaryCountdown {
 
     public void stop() {
         unaryTimer.stop();
-        ranTimes = 0;
+        unaryTimer = null;
     }
 
     public boolean isActive() {
@@ -124,6 +121,8 @@ public class BinaryCountdown {
     }
 
     public long elapsed() {
+        if (unaryTimer == null)
+            return 0;
         return unaryTimer.elapsed();
     }
 

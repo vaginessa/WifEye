@@ -80,6 +80,14 @@ public class UnaryCountdown {
         return isActive;
     }
 
+    public int durationTime() {
+        return duration;
+    }
+
+    public TimeUnit durationUnit() {
+        return unit;
+    }
+
     public static UnaryCountdownBuilder builder() {
         return new UnaryCountdownBuilder();
     }

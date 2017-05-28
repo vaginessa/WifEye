@@ -19,16 +19,20 @@ public class BinaryCountdownTest {
         BinaryCountdown timer = BinaryCountdown
                 .builder()
                 .setRunTimes(1)
-                .setLessDelayedLength(1, SECONDS)
-                .setLessDelayedAction(() -> lessDelayedNumber++)
-                .setMoreDelayedLength(2, SECONDS)
-                .setMoreDelayedAction(() -> moreDelayedNumber++)
+                .setLessDelayedLength(2, SECONDS)
+                .setLessDelayedAction(() -> {
+                    lessDelayedNumber++;
+                })
+                .setMoreDelayedLength(4, SECONDS)
+                .setMoreDelayedAction(() -> {
+                    moreDelayedNumber++;
+                })
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
         timer.start();
 
-        await().atMost(3, SECONDS)
+        await().atMost(300, SECONDS)
                .until(() -> isCompleted);
 
         assertEquals(1, lessDelayedNumber);
