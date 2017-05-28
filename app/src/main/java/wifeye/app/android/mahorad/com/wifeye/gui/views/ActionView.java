@@ -48,7 +48,6 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
-    private int progress;
 
     public ActionView(Context context) {
         super(context);
@@ -145,14 +144,14 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     public void refresh() {
         action = actionPublisher.action();
         date = actionPublisher.date();
-        updateView();
+        post(this::updateView);
     }
 
     @Override
     public void onActionChanged(Action action) {
         this.action = action;
         date = Calendar.getInstance().getTime();
-        updateView();
+        post(this::updateView);
     }
 
     private void updateView() {

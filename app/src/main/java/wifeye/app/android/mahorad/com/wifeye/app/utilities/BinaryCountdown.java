@@ -52,7 +52,8 @@ public class BinaryCountdown {
     }
 
     private UnaryCountdown createMoreDelayedTimer() {
-        return new UnaryCountdownBuilder()
+        return UnaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setDuration(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
@@ -62,7 +63,8 @@ public class BinaryCountdown {
     }
 
     private UnaryCountdown createLessDelayedTimer() {
-        return new UnaryCountdownBuilder()
+        return UnaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setDuration(lessDelayedLength, lessDelayedUnit)
                 .setIntervalsAction(lessDelayedAction)
@@ -72,7 +74,8 @@ public class BinaryCountdown {
     }
 
     private void startMoreDelayedAction() {
-        new UnaryCountdownBuilder()
+        UnaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setDuration(moreDelayedLength, moreDelayedUnit)
                 .setIntervalsAction(moreDelayedAction)
@@ -83,7 +86,8 @@ public class BinaryCountdown {
     }
 
     private void startLessDelayedAction() {
-        new UnaryCountdownBuilder()
+        UnaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setDuration(lessDelayedLength, lessDelayedUnit)
                 .setIntervalsAction(lessDelayedAction)
@@ -123,4 +127,7 @@ public class BinaryCountdown {
         return unaryTimer.elapsed();
     }
 
+    public static BinaryCountdownBuilder builder() {
+        return new BinaryCountdownBuilder();
+    }
 }

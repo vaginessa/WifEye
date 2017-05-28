@@ -14,8 +14,9 @@ public class UnaryCountdownTest {
     private int completed = 0;
 
     @Test
-    public void singleEnact_OneSecond_NoException_NoCompletion() {
-        UnaryCountdown timer = new UnaryCountdownBuilder()
+    public void singleRunTime_OneSecond_NoException_NoCompletion() {
+        UnaryCountdown timer = UnaryCountdown
+                .builder()
                 .setDuration(1, SECONDS)
                 .setRunTimes(1)
                 .setIntervalsAction(() -> interval++)
@@ -30,8 +31,9 @@ public class UnaryCountdownTest {
     }
 
     @Test
-    public void singleEnact_HasException_NoCompletion() {
-        UnaryCountdown timer = new UnaryCountdownBuilder()
+    public void singleRunTime_HasException_NoCompletion() {
+        UnaryCountdown timer = UnaryCountdown
+                .builder()
                 .setDuration(1, SECONDS)
                 .setRunTimes(1)
                 .setIntervalsAction(() -> interval = interval/0)
@@ -47,8 +49,9 @@ public class UnaryCountdownTest {
     }
 
     @Test
-    public void singleEnact_NoException_HasCompletion() {
-        UnaryCountdown timer = new UnaryCountdownBuilder()
+    public void singleRunTime_NoException_HasCompletion() {
+        UnaryCountdown timer = UnaryCountdown
+                .builder()
                 .setDuration(1, SECONDS)
                 .setRunTimes(1)
                 .setIntervalsAction(() -> interval++)
@@ -67,8 +70,9 @@ public class UnaryCountdownTest {
     }
 
     @Test
-    public void manyEnacts_NoException_NoCompletion() {
-        UnaryCountdown timer = new UnaryCountdownBuilder()
+    public void manyRunTimes_NoException_NoCompletion() {
+        UnaryCountdown timer = UnaryCountdown
+                .builder()
                 .setDuration(1, SECONDS)
                 .setRunTimes(3)
                 .setIntervalsAction(() -> interval++)

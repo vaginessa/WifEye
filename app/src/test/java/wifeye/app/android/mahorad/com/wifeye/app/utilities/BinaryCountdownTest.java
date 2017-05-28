@@ -15,8 +15,9 @@ public class BinaryCountdownTest {
     boolean isCompleted = false;
 
     @Test
-    public void singleEnact_NoException_Completes() {
-        BinaryCountdown timer = new BinaryCountdownBuilder()
+    public void singleRunTime_NoException_Completes() {
+        BinaryCountdown timer = BinaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
@@ -36,8 +37,9 @@ public class BinaryCountdownTest {
     }
 
     @Test
-    public void singleEnact_HasException_NoCompletion() {
-        BinaryCountdown timer = new BinaryCountdownBuilder()
+    public void singleRunTime_HasException_NoCompletion() {
+        BinaryCountdown timer = BinaryCountdown
+                .builder()
                 .setRunTimes(1)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
@@ -58,8 +60,9 @@ public class BinaryCountdownTest {
     }
 
     @Test
-    public void manyEnacts_NoException_Completes() {
-        BinaryCountdown timer = new BinaryCountdownBuilder()
+    public void manyRunTime_NoException_Completes() {
+        BinaryCountdown timer = BinaryCountdown
+                .builder()
                 .setRunTimes(2)
                 .setLessDelayedLength(1, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
@@ -69,6 +72,7 @@ public class BinaryCountdownTest {
                 .setExceptionAction(() -> exceptionNumber++)
                 .startWithMoreDelayedAction()
                 .build();
+
         timer.start();
 
         await().atMost(7, SECONDS)

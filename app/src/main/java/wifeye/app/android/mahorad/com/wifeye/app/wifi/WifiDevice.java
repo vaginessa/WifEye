@@ -50,7 +50,8 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             if (isDisabling()) return;
             halt();
             actionPublisher.publish(DisablingMode);
-            disablingTimer = new UnaryCountdownBuilder()
+            disablingTimer = UnaryCountdown
+                    .builder()
                     .setRunTimes(1)
                     .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
                     .setIntervalsAction(wifiHandler::disable)
@@ -67,7 +68,8 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
         synchronized (this) {
             if (isObserving()) return;
             halt();
-            observingTimer = new BinaryCountdownBuilder()
+            observingTimer = BinaryCountdown
+                    .builder()
                     .setRunTimes(OBSERVE_REPEAT_COUNT)
                     .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                     .setMoreDelayedAction(() ->  {

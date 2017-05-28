@@ -80,4 +80,7 @@ public class UnaryCountdown {
         return isActive;
     }
 
+    public static UnaryCountdownBuilder builder() {
+        return new UnaryCountdownBuilder();
+    }
 }
