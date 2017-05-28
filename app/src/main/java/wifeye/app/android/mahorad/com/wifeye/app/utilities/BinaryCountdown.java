@@ -94,13 +94,9 @@ public class BinaryCountdown {
     }
 
     private boolean isLessDelayedAction() {
-        boolean sameDurationTime =
-                unaryTimer.durationTime() == lessDelayedLength;
-        if (!sameDurationTime)
-            return false;
-        boolean sameDurationUnit =
-                unaryTimer.durationUnit() == lessDelayedUnit;
-        return sameDurationUnit;
+        return
+                unaryTimer.durationTime() == lessDelayedLength &&
+                lessDelayedUnit.equals(unaryTimer.durationUnit());
     }
 
     private void runCompletionAction() {
