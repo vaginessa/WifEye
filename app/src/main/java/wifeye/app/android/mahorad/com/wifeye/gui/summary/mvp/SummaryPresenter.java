@@ -99,22 +99,22 @@ public class SummaryPresenter implements
 
     @Override
     public void onInternetConnected(String ssid) {
-        view.updateHotspotState(ssid, utils.simpleDate());
+        view.updateHotspotState(ssid, utils.formatDateNow());
     }
 
     @Override
     public void onInternetDisconnected() {
-        view.updateHotspotState(null, utils.simpleDate());
+        view.updateHotspotState(null, utils.formatDateNow());
     }
 
     @Override
     public void onReceivedKnownTowerId(String ctid) {
-        view.updateTowerIdState(ctid, utils.simpleDate());
+        view.updateTowerIdState(ctid, utils.formatDateNow());
     }
 
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
-        view.updateTowerIdState(ctid, utils.simpleDate());
+        view.updateTowerIdState(ctid, utils.formatDateNow());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class SummaryPresenter implements
 
     @Override
     public void onStateChanged(IState state) {
-        view.updateEngineState(state.toString(), utils.simpleDate());
+        view.updateEngineState(state.toString(), utils.formatDateNow());
     }
 
 }

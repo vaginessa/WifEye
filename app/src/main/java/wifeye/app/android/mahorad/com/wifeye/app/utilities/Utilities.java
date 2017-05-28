@@ -7,11 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 
@@ -40,9 +45,26 @@ public class Utilities {
                     .getSystemService(Context.ACTIVITY_SERVICE);
     }
 
-    public String simpleDate() {
+    public String formatDateNow() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(Calendar.getInstance().getTime());
+    }
+
+    public String toAgo(final Date date, Context context){
+        return new PrettyTime(getLocale(context)).format(date);
+    }
+
+    public Locale getLocale(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            return context
+                    .getResources()
+                    .getConfiguration()
+                    .getLocales()
+                    .get(0);
+        return context
+                .getResources()
+                .getConfiguration()
+                .locale;
     }
 
     public Uri getResourceUri(int id, Context context) {

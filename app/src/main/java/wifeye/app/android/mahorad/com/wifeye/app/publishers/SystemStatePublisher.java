@@ -23,7 +23,7 @@ public class SystemStatePublisher {
         date = MainApplication
                 .mainComponent()
                 .utilities()
-                .simpleDate();
+                .formatDateNow();
         for (final ISystemStateConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()

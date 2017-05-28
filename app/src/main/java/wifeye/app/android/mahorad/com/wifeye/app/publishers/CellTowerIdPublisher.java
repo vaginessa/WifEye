@@ -41,7 +41,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
             date = MainApplication
                     .mainComponent()
                     .utilities()
-                    .simpleDate();
+                    .formatDateNow();
             if (persistence.exist(ctid))
                 publishReceivedKnownTowerId();
             else

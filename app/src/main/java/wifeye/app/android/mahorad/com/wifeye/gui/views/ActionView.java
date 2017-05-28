@@ -22,6 +22,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -36,7 +37,11 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
 
     private static final String HEADER = "A C T I O N";
 
-    @Inject OngoingActionPublisher actionPublisher;
+    @Inject
+    OngoingActionPublisher actionPublisher;
+
+    @Inject
+    Utilities utils;
 
     private Action action;
     private Date date;
@@ -60,13 +65,25 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
         actionPublisher = MainApplication
                 .mainComponent()
                 .actionPublisher();
+
+        utils = MainApplication
+                .mainComponent()
+                .utilities();
+
         actionPublisher.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        actionPublisher.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -139,20 +156,16 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     private void updateView() {
-//        setFact("15:33 Today");
-//        setCaption("occurrence date");
+        String ago = utils
+                .toAgo(date, getContext());
+        setCaption(ago);
         if (action == Halt) {
             shimmerStop();
+            progressStop();
         } else {
             shimmerStart();
+            progressStart();
         }
-    }
-
-    private void shimmerStop() {
-        shimmerText.setText("Stopped");
-        shimmer.cancel();
-        int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
-        shimmerText.setTextColor(textColor);
     }
 
     public void shimmerStart() {
@@ -162,6 +175,13 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
         shimmerText.setTextColor(boxBackground);
     }
 
+    private void shimmerStop() {
+        shimmerText.setText("Stopped");
+        shimmer.cancel();
+        int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
+        shimmerText.setTextColor(textColor);
+    }
+
     public void progressStart() {
         int progress = getProgressSeconds();
         int total = getTotalDuration();
@@ -169,6 +189,10 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
         int percent = (100 * progress) / total;
         progressBar.setProgress(percent);
         progressBar.setProgressWithAnimation(100, remained);
+    }
+
+    public void progressStop() {
+        progressBar.setProgress(0);
     }
 
     private int getTotalDuration() {

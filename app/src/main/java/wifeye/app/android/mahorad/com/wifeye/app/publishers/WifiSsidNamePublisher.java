@@ -46,7 +46,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
             date = MainApplication
                     .mainComponent()
                     .utilities()
-                    .simpleDate();
+                    .formatDateNow();
             if (hotSpot == null)
                 notifyInternetDisconnected();
             else

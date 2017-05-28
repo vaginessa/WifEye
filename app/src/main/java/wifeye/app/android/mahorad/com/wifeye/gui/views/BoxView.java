@@ -83,6 +83,7 @@ public class BoxView extends RelativeLayout {
 
     /* FACTS PROPERTIES */
     private TextView fact;
+    private boolean hasFact;
     private CharSequence factText = DEFAULT_EMPTY_STRING;
     private int factColor = DEFAULT_TEXT_COLOR;
     private float factSize = DEFAULT_FACT_SIZE;
@@ -238,6 +239,7 @@ public class BoxView extends RelativeLayout {
     private void setupFacts() {
         setFactColor(factColor);
         setFactSize(factSize);
+        setHasFact(hasFact);
         fact.setTypeface(null, Typeface.BOLD);
     }
 
@@ -272,8 +274,10 @@ public class BoxView extends RelativeLayout {
 
     /* HEADER */
     public void setHeader(CharSequence text) {
-        if (text == null)
+        if (text == null || text == "") {
+            setHasHeader(false);
             return;
+        }
         setHasHeader(true);
         headerText = text;
         header.setText(headerText);
@@ -319,9 +323,18 @@ public class BoxView extends RelativeLayout {
     }
 
     /* FACT */
+
+    public void setHasFact(boolean value) {
+        hasFact = value;
+        fact.setVisibility(hasFact ? VISIBLE : GONE);
+    }
+
     public void setFact(CharSequence text) {
-        if (text == null || text == "")
+        if (text == null || text == "") {
+            setHasFact(false);
             return;
+        }
+        setHasFact(true);
         factText = text;
         int start = text.toString().indexOf(" ");
         int stop = text.length();
@@ -351,8 +364,10 @@ public class BoxView extends RelativeLayout {
 
     /* CAPTION */
     public void setCaption(CharSequence text) {
-        if (text == null)
+        if (text == null || text == "") {
+            setHasCaption(false);
             return;
+        }
         setHasCaption(true);
         captionText = text;
         caption.setText(captionText);
