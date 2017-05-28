@@ -56,9 +56,10 @@ dependencies {
     compile 'com.auron:permission-manage:1.1.6'
 
     // user interface
+        // single font
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+        // shimmer text
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
-    compile 'com.mikhaellopez:circularprogressbar:1.1.1'
 
     // pretty time
     compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'

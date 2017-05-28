@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
@@ -16,13 +15,14 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.R;
+import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IOngoingActionConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
+import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
 
 import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -42,6 +42,9 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
 
     @Inject
     Utilities utils;
+
+    @Inject
+    WifiDevice wifiDevice;
 
     private Action action;
     private Date date;
@@ -65,13 +68,9 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        actionPublisher = MainApplication
+        MainApplication
                 .mainComponent()
-                .actionPublisher();
-
-        utils = MainApplication
-                .mainComponent()
-                .utilities();
+                .inject(this);
 
         actionPublisher.subscribe(this);
         setHeader(HEADER);
@@ -168,29 +167,30 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     public void shimmerStart() {
-        shimmerText.setText(action.toString());
+        shimmerText.setText(action.title());
         shimmer.start(shimmerText);
         int boxBackground = ContextCompat.getColor(getContext(), R.color.boxBackground);
         shimmerText.setTextColor(boxBackground);
     }
 
     private void shimmerStop() {
-        shimmerText.setText("Stopped");
+        shimmerText.setText(Action.Halt.title());
         shimmer.cancel();
         int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
         shimmerText.setTextColor(textColor);
     }
 
     public void progressStart() {
-        int progress = getProgressSeconds();
+        int progress = (int) wifiDevice.elapsed();
         int total = getTotalDuration();
-        int remained = total - progress;
+        int remained = (total - progress) * 2000;
         int percent = (100 * progress) / total;
         progressBar.setProgress(percent);
         progressBar.setProgressWithAnimation(100, remained);
     }
 
     public void progressStop() {
+        progressBar.stop();
         progressBar.setProgress(0);
     }
 
@@ -203,8 +203,4 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
         return 1;
     }
 
-    public int getProgressSeconds() {
-        // todo how much timer counted in seconds
-        return 0;
-    }
 }

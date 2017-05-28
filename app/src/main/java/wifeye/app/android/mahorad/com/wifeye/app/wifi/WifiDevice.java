@@ -104,7 +104,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
             return disablingTimer.elapsed();
         if (isObserving())
             return observingTimer.elapsed();
-        return -1;
+        return 0;
     }
 
     private void stopObservingTimer() {

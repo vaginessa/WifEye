@@ -11,6 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
+import wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView;
 
 @ApplicationScope
 @Component(modules = MainModule.class)
@@ -19,6 +20,8 @@ public interface MainComponent {
     void inject(SummaryPresenter presenter);
 
     void inject(MainService mainService);
+
+    void inject(ActionView actionView);
 
     OngoingActionPublisher actionPublisher();
 
