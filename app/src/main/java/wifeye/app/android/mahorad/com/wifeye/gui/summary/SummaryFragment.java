@@ -12,11 +12,11 @@ import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.IPresenter;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.ISummaryView;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.SummaryPresenter;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView;
 
 public class SummaryFragment extends Fragment implements ISummaryView {
@@ -68,13 +68,13 @@ public class SummaryFragment extends Fragment implements ISummaryView {
         c.setCaption("Last Occurrence");
 
         /*************************/
-        BoxView d = (BoxView) frame.findViewById(R.id.d);
-        d.setHeader("CELL TOWER SIGNAL");
-        ImageView hotspot = new ImageView(container.getContext());
-        hotspot.setImageResource(R.drawable.hotspots);
-        d.setContents(hotspot);
-        d.setFact("10:30pm Today");
-        d.setCaption("Last Received Date");
+//        BoxView d = (BoxView) frame.findViewById(R.id.d);
+//        d.setHeader("CELL TOWER SIGNAL");
+//        ImageView hotspot = new ImageView(container.getContext());
+//        hotspot.setImageResource(R.drawable.hotspots);
+//        d.setContents(hotspot);
+//        d.setFact("10:30pm Today");
+//        d.setCaption("Last Received Date");
 
         return frame;
     }

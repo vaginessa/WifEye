@@ -111,7 +111,7 @@ public class BoxView extends RelativeLayout {
      */
     public BoxView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initiate(attrs, context);
+        attrs(attrs, context);
         initializeViews(context);
     }
 
@@ -123,11 +123,11 @@ public class BoxView extends RelativeLayout {
      */
     public BoxView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initiate(attrs, context);
+        attrs(attrs, context);
         initializeViews(context);
     }
 
-    private void initiate(AttributeSet attrs, Context context) {
+    private void attrs(AttributeSet attrs, Context context) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BoxView, 0, 0);
         try {
             isSquare = array.getBoolean(

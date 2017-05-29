@@ -54,8 +54,21 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
-        android:id="@+id/e"
+    <!--<wifeye.app.android.mahorad.com.wifeye.gui.views.RippleBackground-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/content"-->
+        <!--app:rb_color="#0099CC"-->
+        <!--app:rb_radius="32dp"-->
+        <!--app:rb_rippleAmount="4"-->
+        <!--app:rb_duration="3000"-->
+        <!--app:rb_scale="6">-->
+    <!--</wifeye.app.android.mahorad.com.wifeye.gui.views.RippleBackground>-->
+
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.SignalView
+        android:id="@+id/signalBox"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="5dp"
@@ -66,7 +79,7 @@
         app:isSquare="true" />
 
     <wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView
-        android:id="@+id/f"
+        android:id="@+id/actionBox"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="5dp"

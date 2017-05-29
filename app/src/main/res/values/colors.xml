@@ -31,4 +31,5 @@
     <color name="boxAccentYellow">#FFFF09</color>
     <color name="boxStrokeYellow">#BCA31E</color>
 
+    <color name="rippleColor">#0099CC</color>
 </resources>

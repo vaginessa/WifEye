@@ -10,4 +10,7 @@
 
     <dimen name="default_stroke_width">7dp</dimen>
     <dimen name="default_background_stroke_width">3dp</dimen>
+
+    <dimen name="rippleStrokeWidth">2dp</dimen>
+    <dimen name="rippleRadius">64dp</dimen>
 </resources>
