@@ -65,6 +65,7 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
 //        LinearLayout layout = getContentLayout();
         setContents(ripple);
 //        layout.addView(ripple);
+        setFact("Tower identifier");
         setCaption("Cell Tower ID");
     }
 
@@ -72,11 +73,13 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         if (ripple != null) return;
         ripple = new RippleBackground(getContext());
         ripple.setStrokeColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
+        ripple.setImage(R.drawable.tower);
         ripple.setCount(3);
-        ripple.setInitialRadius(50f);
-        ripple.setScale(5.0f);
+        ripple.setInitialRadius(20f);
+        ripple.setScale(10.0f);
         ripple.setDuration(2000);
-        ripple.setType(0);
+        ripple.setStrokeStyle(0);
+        ripple.setBackRippling(false);
 
         setOnClickListener((d) -> {
             ripple.startRippling();
