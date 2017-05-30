@@ -32,7 +32,7 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
             R.color.colorMainBackground);
     int lite = ContextCompat.getColor(
             getContext(),
-            R.color.boxAccentBlue);
+            R.color.colorGreen);
 
     private RippleBackground ripple;
 
@@ -81,7 +81,6 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         setCaption("Cell Tower ID");
     }
 
-
     private void setupRipplingImage() {
         if (ripple != null) return;
         ripple = new RippleBackground(getContext());
@@ -94,6 +93,7 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         ripple.setBackRippling(false);
     }
 
+    @Override
     public void refresh() {
         if (towerIdPublisher == null)
             return;
@@ -129,5 +129,4 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         setFact(ago);
         setCaption(ctid == null ? "n/a" : ctid);
     }
-
 }

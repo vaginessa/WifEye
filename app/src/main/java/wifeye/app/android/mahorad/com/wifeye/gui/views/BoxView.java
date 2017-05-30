@@ -186,7 +186,11 @@ public class BoxView extends RelativeLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         height = getMeasuredHeight() / 3;
         width = getMeasuredWidth() / 3;
-        minLength = Math.min(width, height);
+
+        minLength = (width == 0 || height == 0)
+                ? Math.max(width, height)
+                : Math.min(width, height);
+
         scaleTextSizes();
         scaleBoxPadding();
 
@@ -402,4 +406,7 @@ public class BoxView extends RelativeLayout {
         caption.setTextSize(captionSize);
     }
 
+    public void refresh() {
+
+    }
 }

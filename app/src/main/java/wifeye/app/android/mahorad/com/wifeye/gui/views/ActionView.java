@@ -146,6 +146,7 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
         return params;
     }
 
+    @Override
     public void refresh() {
         if (actionPublisher == null)
             return;
@@ -210,5 +211,4 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
             return Constants.WIFI_ENABLE_TIMEOUT;
         return 1;
     }
-
 }
