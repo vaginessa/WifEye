@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -23,7 +25,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
     private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
 
     private static String ssid;
-    private static String date;
+    private static Date date = Calendar.getInstance().getTime();;
     private final WifiManager wifiManager;
     private final Context context;
     private final Set<IWifiSsidNameConsumer> consumers;
@@ -43,10 +45,7 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
             if ("0x".equals(hotSpot)) return;
             if (isSame(hotSpot)) return;
             ssid = hotSpot;
-            date = MainApplication
-                    .mainComponent()
-                    .utilities()
-                    .formatDateNow();
+            date = Calendar.getInstance().getTime();
             if (hotSpot == null)
                 notifyInternetDisconnected();
             else
@@ -98,6 +97,6 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
         return ssid;
     }
 
-    public String date() { return date; }
+    public Date date() { return date; }
 
 }

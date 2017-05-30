@@ -1,5 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.app.publishers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -11,7 +13,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 public class SystemStatePublisher {
 
     private static String state;
-    private static String date;
+    private static Date date = Calendar.getInstance().getTime();
     private final Set<ISystemStateConsumer> consumers;
 
     public SystemStatePublisher() {
@@ -20,10 +22,7 @@ public class SystemStatePublisher {
 
     public void publish(final IState state) {
         this.state = state.toString();
-        date = MainApplication
-                .mainComponent()
-                .utilities()
-                .formatDateNow();
+        date = Calendar.getInstance().getTime();
         for (final ISystemStateConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
@@ -43,7 +42,7 @@ public class SystemStatePublisher {
         return state;
     }
 
-    public String date() {
+    public Date date() {
         return date;
     }
 }
