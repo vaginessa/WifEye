@@ -18,6 +18,7 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IOngoingActionConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
@@ -70,11 +71,13 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     private void finishActionViewInflation() {
-        MainApplication
-                .mainComponent()
-                .inject(this);
+        MainComponent mainComponent =
+                MainApplication.mainComponent();
+        if (mainComponent != null)
+            mainComponent.inject(this);
 
-        actionPublisher.subscribe(this);
+        if (actionPublisher != null)
+            actionPublisher.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -83,7 +86,8 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        actionPublisher.unsubscribe(this);
+        if (actionPublisher != null)
+            actionPublisher.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -143,6 +147,8 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     public void refresh() {
+        if (actionPublisher == null)
+            return;
         action = actionPublisher.action();
         date = actionPublisher.date();
         post(this::updateView);

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.ICellTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
@@ -54,11 +55,13 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     }
 
     private void finishSignalViewInflation() {
-        MainApplication
-                .mainComponent()
-                .inject(this);
+        MainComponent mainComponent =
+                MainApplication.mainComponent();
+        if (mainComponent != null)
+                mainComponent.inject(this);
 
-        towerIdPublisher.subscribe(this);
+        if (towerIdPublisher != null)
+            towerIdPublisher.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -67,7 +70,8 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        towerIdPublisher.unsubscribe(this);
+        if (towerIdPublisher != null)
+            towerIdPublisher.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -91,6 +95,8 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     }
 
     public void refresh() {
+        if (towerIdPublisher == null)
+            return;
         ctid = towerIdPublisher.ctid();
         date = towerIdPublisher.date();
         post(this::updateView);
