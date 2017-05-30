@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
+import java.util.Date;
+
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
@@ -98,7 +100,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateActionState(final Action action, final String date) {
+    public void updateActionState(final Action action, final Date date) {
 //        runOnUiThread(() -> {
 //            actionText.setText(action.toString());
 //            actionDate.setText(date);
@@ -111,7 +113,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateTowerIdState(final String ctid, final String date) {
+    public void updateTowerIdState(final String ctid, final Date date) {
 //        runOnUiThread(() -> {
 //            ctidText.setText(ctid);
 //            ctidDate.setText(date);
@@ -119,7 +121,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateHotspotState(final String ssid, final String date) {
+    public void updateHotspotState(final String ssid, final Date date) {
 //        runOnUiThread(() -> {
 //            ssidText.setText(ssid == null ? "" : ssid);
 //            ssidDate.setText(date);
@@ -127,7 +129,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateEngineState(final String state, String date) {
+    public void updateEngineState(final String state, Date date) {
 //        runOnUiThread(() -> {
 //            stateText.setText(state);
 //            stateDate.setText(date);

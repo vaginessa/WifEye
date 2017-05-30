@@ -2,6 +2,8 @@ package wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp;
 
 import android.content.Context;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
@@ -76,20 +78,19 @@ public class SummaryPresenter implements
 
     private void updateHotspotState() {
         String ssid = ssidPublisher.ssid();
-        String date = ssidPublisher.date();
+        Date date = ssidPublisher.date();
         view.updateHotspotState(ssid, date);
     }
 
     private void updateTowerIdState() {
         String ctid = ctidPublisher.ctid();
-        String date = (ctid == null || ctid.equals(""))
-                ? "" : utils.formatDate(ctidPublisher.date());
+        Date date = ctidPublisher.date();
         view.updateTowerIdState(ctid, date);
     }
 
     private void updateEngineState() {
         String state = statePublisher.state();
-        String date = statePublisher.date();
+        Date date = statePublisher.date();
         view.updateEngineState(state, date);
     }
 
@@ -99,32 +100,26 @@ public class SummaryPresenter implements
 
     @Override
     public void onInternetConnected(String ssid) {
-        view.updateHotspotState(ssid, utils.formatDateNow());
     }
 
     @Override
     public void onInternetDisconnected() {
-        view.updateHotspotState(null, utils.formatDateNow());
     }
 
     @Override
     public void onReceivedKnownTowerId(String ctid) {
-        view.updateTowerIdState(ctid, utils.formatDateNow());
     }
 
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
-        view.updateTowerIdState(ctid, utils.formatDateNow());
     }
 
     @Override
     public void onWifiStateChanged(WifiState state) {
-        view.updateWifiDeviceState(state);
     }
 
     @Override
     public void onStateChanged(IState state) {
-        view.updateEngineState(state.toString(), utils.formatDateNow());
     }
 
 }
