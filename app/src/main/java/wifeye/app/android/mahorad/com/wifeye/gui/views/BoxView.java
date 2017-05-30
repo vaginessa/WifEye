@@ -170,6 +170,10 @@ public class BoxView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        finishBoxViewInflation();
+    }
+
+    private void finishBoxViewInflation() {
         setupBackground();
         setupHeader();
         setupContents();

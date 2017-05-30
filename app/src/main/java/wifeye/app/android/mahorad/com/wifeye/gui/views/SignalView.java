@@ -50,7 +50,10 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        finishSignalViewInflation();
+    }
 
+    private void finishSignalViewInflation() {
         MainApplication
                 .mainComponent()
                 .inject(this);

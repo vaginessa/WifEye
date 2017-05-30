@@ -66,7 +66,10 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        finishActionViewInflation();
+    }
 
+    private void finishActionViewInflation() {
         MainApplication
                 .mainComponent()
                 .inject(this);
