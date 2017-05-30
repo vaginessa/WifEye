@@ -50,6 +50,11 @@ public class Utilities {
         return df.format(Calendar.getInstance().getTime());
     }
 
+    public String formatDate(Date date) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(date);
+    }
+
     public String toAgo(final Date date, Context context){
         return new PrettyTime(getLocale(context)).format(date);
     }

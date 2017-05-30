@@ -83,7 +83,7 @@ public class SummaryPresenter implements
     private void updateTowerIdState() {
         String ctid = ctidPublisher.ctid();
         String date = (ctid == null || ctid.equals(""))
-                ? "" : ctidPublisher.date();
+                ? "" : utils.formatDate(ctidPublisher.date());
         view.updateTowerIdState(ctid, date);
     }
 

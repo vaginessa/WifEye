@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -149,14 +148,14 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     @Override
     public void onActionChanged(Action action) {
         this.action = action;
-        date = Calendar.getInstance().getTime();
+        date = actionPublisher.date();
         post(this::updateView);
     }
 
     private void updateView() {
         String ago = utils
                 .toAgo(date, getContext());
-        setCaption(ago);
+        setCaption("since ".concat(ago));
         if (action == Halt) {
             shimmerStop();
             progressStop();

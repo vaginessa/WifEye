@@ -14,7 +14,7 @@ public class OngoingActionPublisher {
 
     private Set<IOngoingActionConsumer> consumers = new HashSet<>();
     private static Action action = Action.Halt;
-    private static Date date;
+    private static Date date = Calendar.getInstance().getTime();
 
     private Utilities utils =
             MainApplication

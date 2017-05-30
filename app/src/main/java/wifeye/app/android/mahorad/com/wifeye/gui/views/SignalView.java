@@ -25,6 +25,13 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     Utilities utils;
 
     private Date date;
+    private String ctid;
+    int dark = ContextCompat.getColor(
+            getContext(),
+            R.color.colorMainBackground);
+    int lite = ContextCompat.getColor(
+            getContext(),
+            R.color.boxAccentBlue);
 
     private RippleBackground ripple;
 
@@ -62,17 +69,15 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
 
     private void setupContents() {
         setupRipplingImage();
-//        LinearLayout layout = getContentLayout();
         setContents(ripple);
-//        layout.addView(ripple);
         setFact("Tower identifier");
         setCaption("Cell Tower ID");
     }
 
+
     private void setupRipplingImage() {
         if (ripple != null) return;
         ripple = new RippleBackground(getContext());
-        ripple.setStrokeColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         ripple.setImage(R.drawable.tower);
         ripple.setCount(3);
         ripple.setInitialRadius(20f);
@@ -80,69 +85,40 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         ripple.setDuration(2000);
         ripple.setStrokeStyle(0);
         ripple.setBackRippling(false);
-
-        setOnClickListener((d) -> {
-            ripple.startRippling();
-        });
-//        ripple.setLayoutParams(getRippleLayoutParams());
     }
 
-//    private void setupProgressBar() {
-//        if (progressBar != null) return;
-//        progressBar = new CircularProgressBar(getContext(), null);
-//        progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxAccentBlue));
-//        progressBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
-//        float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
-//        progressBar.setProgressBarWidth(progressBarWidth);
-//        float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
-//        progressBar.setBackgroundProgressBarWidth(backgroundWidth);
-//        progressBar.setLayoutParams(getProgressBarLayoutParams());
-//    }
-
-//    @NonNull
-//    private LinearLayout getContentLayout() {
-//        LinearLayout layout = new LinearLayout(getContext(), null);
-//        layout.setOrientation(VERTICAL);
-//        layout.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
-//        return layout;
-//    }
-
-//    @NonNull
-//    private LinearLayout.LayoutParams getRippleLayoutParams() {
-//        LinearLayout.LayoutParams params =
-//                new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
-//        params.gravity = CENTER;
-//        params.weight = 1;
-//        return params;
-//    }
-
     public void refresh() {
-//        action = towerIdPublisher.action();
-//        date = towerIdPublisher.date();
+        ctid = towerIdPublisher.ctid();
+        date = towerIdPublisher.date();
         post(this::updateView);
     }
 
     @Override
     public void onReceivedKnownTowerId(String ctid) {
-
+        ripple.setStrokeColor(lite);
+        onReceivedCellTowerId(ctid);
     }
 
     @Override
     public void onReceivedUnknownTowerId(String ctid) {
+        ripple.setStrokeColor(dark);
+        onReceivedCellTowerId(ctid);
+    }
 
+    private void onReceivedCellTowerId(String ctid) {
+        this.ctid = ctid;
+        this.date = towerIdPublisher.date();
+        post(this::updateView);
+        post(() -> ripple.startRippling());
     }
 
     private void updateView() {
-//        String ago = utils
-//                .toAgo(date, getContext());
-//        setCaption(ago);
-//        if (action == Halt) {
-//            shimmerStop();
-//            progressStop();
-//        } else {
-//            shimmerStart();
-//            progressStart();
-//        }
+        this.ctid = towerIdPublisher.ctid();
+        this.date = towerIdPublisher.date();
+        String ago = utils
+                .toAgo(date, getContext());
+        setFact(ago);
+        setCaption(ctid == null ? "n/a" : ctid);
     }
 
 }

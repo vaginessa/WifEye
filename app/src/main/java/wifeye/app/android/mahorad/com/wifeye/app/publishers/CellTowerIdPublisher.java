@@ -5,6 +5,8 @@ import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -20,7 +22,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 public class CellTowerIdPublisher extends PhoneStateListener {
 
     private static String ctid;
-    private static String date;
+    private static Date date = Calendar.getInstance().getTime();
     private final Set<ICellTowerIdConsumer> consumers;
     private final Context context;
     private final IPersistence persistence;
@@ -38,10 +40,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
             String towerId = cellLocation.toString();
             if (isSame(towerId)) return;
             ctid = towerId;
-            date = MainApplication
-                    .mainComponent()
-                    .utilities()
-                    .formatDateNow();
+            date = Calendar.getInstance().getTime();
             if (persistence.exist(ctid))
                 publishReceivedKnownTowerId();
             else
@@ -94,7 +93,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
         return ctid;
     }
 
-    public String date() {
+    public Date date() {
         return date;
     }
 
