@@ -7,6 +7,11 @@ public class StateRouterArea extends State {
     }
 
     @Override
+    public Type type() {
+        return Type.RouterArea;
+    }
+
+    @Override
     public void onInternetConnected() {
         engine.haltWifiAct();
     }
@@ -24,8 +29,4 @@ public class StateRouterArea extends State {
         engine.persist();
     }
 
-    @Override
-    public String toString() {
-        return "ROUTER AREA";
-    }
 }

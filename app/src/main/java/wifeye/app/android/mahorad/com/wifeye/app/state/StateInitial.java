@@ -7,6 +7,11 @@ public class StateInitial extends State {
     }
 
     @Override
+    public Type type() {
+        return Type.Initial;
+    }
+
+    @Override
     public void onInternetConnected() {
         engine.toConnectedState();
     }
@@ -27,8 +32,4 @@ public class StateInitial extends State {
         engine.toUnknownAreaState();
     }
 
-    @Override
-    public String toString() {
-        return "INITIAL";
-    }
 }

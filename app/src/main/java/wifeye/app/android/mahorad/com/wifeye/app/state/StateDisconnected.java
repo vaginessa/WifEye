@@ -7,6 +7,11 @@ public class StateDisconnected extends State {
     }
 
     @Override
+    public Type type() {
+        return Type.DisConnected;
+    }
+
+    @Override
     public void onInternetConnected() {
         engine.toConnectedState();
         engine.haltWifiAct();
@@ -28,8 +33,4 @@ public class StateDisconnected extends State {
         engine.disableWifi();
     }
 
-    @Override
-    public String toString() {
-        return "DISCONNECTED";
-    }
 }

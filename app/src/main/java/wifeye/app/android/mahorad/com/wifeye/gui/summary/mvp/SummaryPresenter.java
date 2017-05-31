@@ -21,12 +21,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class SummaryPresenter implements
-        IPresenter,
-        ICellTowerIdConsumer,
-        ISystemStateConsumer,
-        IWifiDeviceStateConsumer,
-        IWifiSsidNameConsumer {
+public class SummaryPresenter implements IPresenter {
 
     private final ISummaryView view;
 
@@ -51,10 +46,6 @@ public class SummaryPresenter implements
     }
 
     private void subscribe() {
-        ssidPublisher.subscribe(this);
-        ctidPublisher.subscribe(this);
-        statePublisher.subscribe(this);
-        wifiPublisher.subscribe(this);
     }
 
     @Override
@@ -70,56 +61,5 @@ public class SummaryPresenter implements
     public void onDestroy() {}
 
     private void updateViewStates() {
-        updateHotspotState();
-        updateTowerIdState();
-        updateEngineState();
-        updateWifiDeviceState();
     }
-
-    private void updateHotspotState() {
-        String ssid = ssidPublisher.ssid();
-        Date date = ssidPublisher.date();
-        view.updateHotspotState(ssid, date);
-    }
-
-    private void updateTowerIdState() {
-        String ctid = ctidPublisher.ctid();
-        Date date = ctidPublisher.date();
-        view.updateTowerIdState(ctid, date);
-    }
-
-    private void updateEngineState() {
-        String state = statePublisher.state();
-        Date date = statePublisher.date();
-        view.updateEngineState(state, date);
-    }
-
-    private void updateWifiDeviceState() {
-        view.updateWifiDeviceState(wifiPublisher.state());
-    }
-
-    @Override
-    public void onInternetConnected(String ssid) {
-    }
-
-    @Override
-    public void onInternetDisconnected() {
-    }
-
-    @Override
-    public void onReceivedKnownTowerId(String ctid) {
-    }
-
-    @Override
-    public void onReceivedUnknownTowerId(String ctid) {
-    }
-
-    @Override
-    public void onWifiStateChanged(WifiState state) {
-    }
-
-    @Override
-    public void onStateChanged(IState state) {
-    }
-
 }

@@ -7,6 +7,11 @@ public class StateConnected extends State {
     }
 
     @Override
+    public Type type() {
+        return Type.Connected;
+    }
+
+    @Override
     public void onInternetConnected() {
         engine.haltWifiAct(); // stopMainService any ongoing timeouts
         engine.persist(); // persist another SSIDs perhaps
@@ -29,8 +34,4 @@ public class StateConnected extends State {
         engine.persist(); // persist the location
     }
 
-    @Override
-    public String toString() {
-        return "CONNECTED";
-    }
 }

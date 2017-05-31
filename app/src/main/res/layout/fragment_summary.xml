@@ -43,7 +43,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.StateView
         android:id="@+id/d"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -53,19 +53,6 @@
         app:factColor="@color/boxActiveTextColor"
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
-
-    <!--<wifeye.app.android.mahorad.com.wifeye.gui.views.RippleBackground-->
-        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/content"-->
-        <!--app:rb_color="#0099CC"-->
-        <!--app:rb_radius="32dp"-->
-        <!--app:rb_rippleAmount="4"-->
-        <!--app:rb_duration="3000"-->
-        <!--app:rb_scale="6">-->
-    <!--</wifeye.app.android.mahorad.com.wifeye.gui.views.RippleBackground>-->
 
     <wifeye.app.android.mahorad.com.wifeye.gui.views.SignalView
         android:id="@+id/signalBox"

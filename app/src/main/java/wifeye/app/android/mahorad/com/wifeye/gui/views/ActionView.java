@@ -47,7 +47,6 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     WifiDevice wifiDevice;
 
     private Action action;
-    private Date date;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
@@ -151,20 +150,18 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
         if (actionPublisher == null)
             return;
         action = actionPublisher.action();
-        date = actionPublisher.date();
         post(this::updateView);
     }
 
     @Override
-    public void onActionChanged(Action action) {
+    public synchronized void onActionChanged(Action action) {
         this.action = action;
-        date = actionPublisher.date();
         post(this::updateView);
     }
 
     private void updateView() {
-        String ago = utils
-                .toAgo(date, getContext());
+        String ago = utils.toAgo(
+                actionPublisher.date(), getContext());
         setCaption("since ".concat(ago));
         if (action == Halt) {
             shimmerStop();

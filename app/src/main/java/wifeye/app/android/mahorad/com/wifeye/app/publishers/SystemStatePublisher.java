@@ -9,10 +9,11 @@ import java.util.concurrent.Executors;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISystemStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.app.state.State;
 
 public class SystemStatePublisher {
 
-    private static String state;
+    private static IState.Type state = IState.Type.Initial;
     private static Date date = Calendar.getInstance().getTime();
     private final Set<ISystemStateConsumer> consumers;
 
@@ -21,12 +22,12 @@ public class SystemStatePublisher {
     }
 
     public void publish(final IState state) {
-        this.state = state.toString();
+        SystemStatePublisher.state = state.type();
         date = Calendar.getInstance().getTime();
         for (final ISystemStateConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
-                    .submit(() -> consumer.onStateChanged(state));
+                    .submit(() -> consumer.onStateChanged(state.type()));
         }
     }
 
@@ -38,7 +39,7 @@ public class SystemStatePublisher {
         return consumers.remove(consumer);
     }
 
-    public String state() {
+    public IState.Type state() {
         return state;
     }
 

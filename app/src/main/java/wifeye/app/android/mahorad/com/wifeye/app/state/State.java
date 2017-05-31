@@ -8,4 +8,8 @@ public abstract class State implements IState {
         this.engine = engine;
     }
 
+    @Override
+    public String toString() {
+        return type().title();
+    }
 }

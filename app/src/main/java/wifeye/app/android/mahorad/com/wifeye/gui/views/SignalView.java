@@ -25,8 +25,8 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     @Inject
     Utilities utils;
 
-    private Date date;
     private String ctid;
+
     int dark = ContextCompat.getColor(
             getContext(),
             R.color.colorMainBackground);
@@ -97,8 +97,7 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     public void refresh() {
         if (towerIdPublisher == null)
             return;
-        ctid = towerIdPublisher.ctid();
-        date = towerIdPublisher.date();
+        this.ctid = towerIdPublisher.ctid();
         post(this::updateView);
     }
 
@@ -114,18 +113,15 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         onReceivedCellTowerId(ctid);
     }
 
-    private void onReceivedCellTowerId(String ctid) {
+    private synchronized void onReceivedCellTowerId(String ctid) {
         this.ctid = ctid;
-        this.date = towerIdPublisher.date();
         post(this::updateView);
         post(() -> ripple.startRippling());
     }
 
     private void updateView() {
-        this.ctid = towerIdPublisher.ctid();
-        this.date = towerIdPublisher.date();
-        String ago = utils
-                .toAgo(date, getContext());
+        String ago = utils.toAgo(
+                towerIdPublisher.date(), getContext());
         setFact(ago);
         setCaption(ctid == null ? "n/a" : ctid);
     }

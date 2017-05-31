@@ -7,6 +7,11 @@ public class StateKnownArea extends State {
     }
 
     @Override
+    public Type type() {
+        return Type.KnownArea;
+    }
+
+    @Override
     public void onInternetConnected() {
         engine.toConnectedState();
         engine.haltWifiAct();
@@ -26,8 +31,4 @@ public class StateKnownArea extends State {
         engine.toUnknownAreaState();
     }
 
-    @Override
-    public String toString() {
-        return "KNOWN AREA";
-    }
 }
