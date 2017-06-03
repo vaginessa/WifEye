@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
@@ -149,12 +147,17 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     public void refresh() {
         if (actionPublisher == null)
             return;
-        action = actionPublisher.action();
+        Action action = actionPublisher.action();
+        if (action == this.action)
+            return;
+        this.action = action;
         post(this::updateView);
     }
 
     @Override
     public synchronized void onActionChanged(Action action) {
+        if (action == this.action)
+            return;
         this.action = action;
         post(this::updateView);
     }
@@ -189,7 +192,7 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     public void progressStart() {
         int progress = (int) wifiDevice.elapsed();
         int total = getTotalDuration();
-        int remained = (total - progress) * 2000;
+        int remained = (total - progress) * 1000;
         int percent = (100 * progress) / total;
         progressBar.setProgress(percent);
         progressBar.setProgressWithAnimation(100, remained);

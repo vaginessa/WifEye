@@ -13,44 +13,77 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
+
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.*;
 
 /**
  * listens to connected ssid names and notifies consumers
  * if the Internet is connected or disconnected.
  */
-public class WifiSsidNamePublisher extends BroadcastReceiver {
+public class WifiSsidNamePublisher
+        extends BroadcastReceiver
+        implements IWifiDeviceStateConsumer {
 
     private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
 
-    private static String ssid;
+    private static String ssid = null;
     private static Date date = Calendar.getInstance().getTime();;
     private final WifiManager wifiManager;
+    private final WifiDeviceStatePublisher wifiPublisher;
     private final Context context;
     private final Set<IWifiSsidNameConsumer> consumers;
 
-    public WifiSsidNamePublisher(Context context) {
+    public WifiSsidNamePublisher(Context context, WifiDeviceStatePublisher wifiPublisher) {
         this.context = context;
+        this.wifiPublisher = wifiPublisher;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         consumers = new HashSet<>();
     }
 
     @Override
+    public void onWifiStateChanged(WifiState state) {
+        boolean wifiDisabled =
+                WifiDeviceStatePublisher.state() == Disabled;
+        if (!wifiDisabled) return;
+        notifyInternetDisconnected();
+    }
+
+    @Override
     public void onReceive(Context context, Intent intent) {
         synchronized (this) {
+
+            boolean wifiEnabled =
+                    WifiDeviceStatePublisher.state() == Enabled;
+            if (!wifiEnabled) {
+                notifyInternetDisconnected();
+                return;
+            }
+
             WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             String bssid = connectionInfo.getBSSID();
-            String hotSpot = (bssid == null ? null : connectionInfo.getSSID());
-            if ("0x".equals(hotSpot)) return;
+            String hotSpot = (bssid == null
+                    ? null
+                    : connectionInfo.getSSID());
+            if (!isValidName(hotSpot)) {
+                ssid = null;
+                notifyInternetDisconnected();
+                return;
+            }
+
             if (isSame(hotSpot)) return;
             ssid = hotSpot;
             date = Calendar.getInstance().getTime();
-            if (hotSpot == null)
-                notifyInternetDisconnected();
-            else
-                notifyInternetGotConnected();
+            notifyInternetGotConnected();
         }
+    }
+
+    private synchronized boolean isValidName(String hotSpot) {
+        if (hotSpot == null) return false;
+        if ("0x".equals(hotSpot)) return false;
+        if (hotSpot.length() == 0) return false;
+        return !hotSpot.contains("unknown");
     }
 
     private boolean isSame(String text) {
@@ -76,11 +109,13 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
     }
 
     public void start() {
+        wifiPublisher.subscribe(this);
         IntentFilter intentFilter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         context.registerReceiver(this, intentFilter);
     }
 
     public void stop() {
+        wifiPublisher.unsubscribe(this);
         context.unregisterReceiver(this);
         consumers.clear();
     }
@@ -93,10 +128,10 @@ public class WifiSsidNamePublisher extends BroadcastReceiver {
         return consumers.remove(consumer);
     }
 
-    public String ssid() {
+    public static String ssid() {
         return ssid;
     }
 
-    public Date date() { return date; }
+    public static Date date() { return date; }
 
 }

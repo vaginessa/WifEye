@@ -51,33 +51,6 @@ public class SummaryFragment extends Fragment implements ISummaryView {
         b.setFact("15,966 steps");
         b.setCaption("1,300 steps to go");
 
-        /*************************/
-        BoxView c = (BoxView) frame.findViewById(R.id.c);
-        c.setHeader("CONNECTION STATE");
-
-        ShimmerTextView stv = new ShimmerTextView(getContext());
-        stv.setText("Connecting");
-        stv.setTextColor(getResources().getColor(R.color.colorMainBackground));
-        stv.setReflectionColor(getResources().getColor(R.color.boxInfoTextColor));
-        stv.setTextSize(20);
-        stv.setGravity(Gravity.CENTER);
-        stv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        Shimmer shimmer = new Shimmer();
-        shimmer.start(stv);
-
-        c.setContents(stv);
-        c.setFact("12:18 Today");
-        c.setCaption("Last Occurrence");
-
-        /*************************/
-//        BoxView d = (BoxView) frame.findViewById(R.id.d);
-//        d.setHeader("CELL TOWER SIGNAL");
-//        ImageView hotspot = new ImageView(container.getContext());
-//        hotspot.setImageResource(R.drawable.hotspots);
-//        d.setContents(hotspot);
-//        d.setFact("10:30pm Today");
-//        d.setCaption("Last Received Date");
-
         return frame;
     }
 

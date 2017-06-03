@@ -3,17 +3,19 @@ package wifeye.app.android.mahorad.com.wifeye.app.wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiDeviceStateConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.BinaryCountdown;
-import wifeye.app.android.mahorad.com.wifeye.app.utilities.BinaryCountdownBuilder;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.UnaryCountdown;
-import wifeye.app.android.mahorad.com.wifeye.app.utilities.UnaryCountdownBuilder;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.OBSERVE_REPEAT_COUNT;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.WIFI_DISABLE_TIMEOUT;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.WIFI_ENABLE_TIMEOUT;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.*;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Halt;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeEnabling;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.Disabled;
 
 public class WifiDevice implements IWifiDeviceStateConsumer {
@@ -23,8 +25,8 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
     private final IWifiHandler wifiHandler;
     private final OngoingActionPublisher actionPublisher;
 
-    private UnaryCountdown disablingTimer;
-    private BinaryCountdown observingTimer;
+    private final UnaryCountdown disablingTimer;
+    private final BinaryCountdown observingTimer;
 
     /**
      * provides functionalities for controlling wifi on device
@@ -36,67 +38,78 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
                       WifiDeviceStatePublisher wifiPublisher) {
         this.wifiHandler = wifiHandler;
         this.actionPublisher = actionPublisher;
+        disablingTimer = createDisablingTimer();
+        observingTimer = createObservingTimer();
         wifiPublisher.subscribe(this);
+    }
 
+    private UnaryCountdown createDisablingTimer() {
+        return UnaryCountdown
+                .builder()
+                .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
+                .setCompletionAction(wifiHandler::disable)
+                .build();
+    }
+
+    private BinaryCountdown createObservingTimer() {
+        return BinaryCountdown
+                .builder()
+                .setRunTimes(OBSERVE_REPEAT_COUNT)
+                .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
+                .setMoreDelayedAction(this::enableWifi)
+                .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
+                .setLessDelayedAction(this::disableWifi)
+                .setCompletionAction(wifiHandler::disable)
+                .build();
+    }
+
+    public synchronized void disable() {
+        if (!isEnabled()) return;
+        if (isDisabling()) return;
+        halt();
+        actionPublisher.publish(DisablingMode);
+        disablingTimer.start();
+    }
+
+    public synchronized void observe() {
+        if (isObserving()) return;
+        halt();
+        actionPublisher.publish(ObserveModeEnabling);
+        observingTimer.start();
+    }
+
+    private void enableWifi() {
+        if (isEnabled()) {
+            halt();
+            return;
+        }
+        wifiHandler.enable();
+        actionPublisher.publish(ObserveModeDisabling);
+    }
+
+    private void disableWifi() {
+        if (isConnected()) {
+            halt();
+            return;
+        }
+        wifiHandler.disable();
+        actionPublisher.publish(ObserveModeEnabling);
     }
 
     public boolean isEnabled() {
         return wifiHandler.isEnabled();
     }
 
-    public void disable() {
-        synchronized (this) {
-            if (!isEnabled())  return;
-            if (isDisabling()) return;
-            halt();
-            actionPublisher.publish(DisablingMode);
-            disablingTimer = UnaryCountdown
-                    .builder()
-                    .setRunTimes(1)
-                    .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
-                    .setIntervalsAction(wifiHandler::disable)
-                    .build();
-            disablingTimer.start();
-        }
-    }
-
     private boolean isDisabling() {
-        return disablingTimer != null && disablingTimer.isActive();
+        return disablingTimer.isActive();
     }
 
-    public void observe() {
-        synchronized (this) {
-            if (isObserving()) return;
-            halt();
-            observingTimer = BinaryCountdown
-                    .builder()
-                    .setRunTimes(OBSERVE_REPEAT_COUNT)
-                    .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
-                    .setMoreDelayedAction(() ->  {
-                        wifiHandler.enable();
-                        actionPublisher.publish(ObserveModeDisabling);
-                    })
-                    .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
-                    .setLessDelayedAction(() -> {
-                        wifiHandler.disable();
-                        actionPublisher.publish(ObserveModeEnabling);
-                    })
-                    .setCompletionAction(wifiHandler::disable)
-                    .build();
-            actionPublisher.publish(ObserveModeEnabling);
-            observingTimer.start();
-        }
+    private boolean isConnected() {
+        return WifiSsidNamePublisher.ssid() != null;
     }
 
     private boolean isObserving() {
-        return observingTimer != null && observingTimer.isActive();
-    }
-
-    public void halt() {
-        synchronized (this) {
-            stopObservingTimer();
-            stopDisablingTimer();
-        }
+        return observingTimer.isActive();
     }
 
     public long elapsed() {
@@ -107,24 +120,23 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
         return 0;
     }
 
+    public synchronized void halt() {
+        stopObservingTimer();
+        stopDisablingTimer();
+    }
+
     private void stopObservingTimer() {
-        if (observingTimer == null)
-            return;
         observingTimer.stop();
-        observingTimer = null;
         actionPublisher.publish(Halt);
     }
 
     private void stopDisablingTimer() {
-        if (disablingTimer == null)
-            return;
         disablingTimer.stop();
-        disablingTimer = null;
         actionPublisher.publish(Halt);
     }
 
     @Override
-    public void onWifiStateChanged(WifiState state) {
+    public synchronized void onWifiStateChanged(WifiState state) {
         if (state != Disabled)
             return;
         stopDisablingTimer();

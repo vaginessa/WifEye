@@ -26,8 +26,9 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context) {
-        return new WifiSsidNamePublisher(context);
+    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context,
+                                                WifiDeviceStatePublisher wifiPublisher) {
+        return new WifiSsidNamePublisher(context, wifiPublisher);
     }
 
     @Provides

@@ -18,7 +18,7 @@ public class WifiDeviceStatePublisher extends BroadcastReceiver {
 
     private final Context context;
     private final Set<IWifiDeviceStateConsumer> consumers;
-    private WifiState wifiState = Unknown;
+    private static WifiState wifiState = Unknown;
 
     public WifiDeviceStatePublisher(Context context) {
         this.context = context;
@@ -62,7 +62,7 @@ public class WifiDeviceStatePublisher extends BroadcastReceiver {
         return consumers.remove(consumer);
     }
 
-    public WifiState state() {
+    public static WifiState state() {
         return wifiState;
     }
 }

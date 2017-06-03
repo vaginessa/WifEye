@@ -5,16 +5,21 @@ import java.util.concurrent.TimeUnit;
 
 public class BinaryCountdown {
 
-    private UnaryCountdown unaryTimer;
+    private static final int MORE_DELAY = 1;
+    private static final int LESS_DELAY = -1;
 
     private int ranTimes;
     private int runTimes;
+    private int runningCountdownTimer;
 
     private boolean startsWithMoreDelayedAction;
+
+    private final UnaryCountdown lessDelayedCountdown;
     private int lessDelayedLength;
     private TimeUnit lessDelayedUnit;
-
     private Runnable lessDelayedAction;
+
+    private final UnaryCountdown moreDelayedCountdown;
     private int moreDelayedLength;
     private TimeUnit moreDelayedUnit;
     private Runnable moreDelayedAction;
@@ -29,97 +34,115 @@ public class BinaryCountdown {
         lessDelayedLength = builder.lessDelayedLength();
         lessDelayedUnit = builder.lessDelayedUnit();
         lessDelayedAction = builder.lessDelayedAction();
+        lessDelayedCountdown = createLessDelayedTimer();
 
         moreDelayedLength = builder.moreDelayedLength();
         moreDelayedUnit = builder.moreDelayedUnit();
         moreDelayedAction = builder.moreDelayedAction();
+        moreDelayedCountdown = createMoreDelayedTimer();
 
         exceptionAction = builder.exceptionAction();
         completionAction = builder.completionAction();
     }
 
-    public void start() {
-        if (isActive())
-            return;
-        reset();
-    }
-
     private UnaryCountdown createMoreDelayedTimer() {
         return UnaryCountdown
                 .builder()
-                .setRunTimes(1)
                 .setDuration(moreDelayedLength, moreDelayedUnit)
-                .setIntervalsAction(moreDelayedAction)
-                .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::reset)
+                .setCompletionAction(() -> {
+                    try {
+                        moreDelayedAction.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        exceptionAction.run();
+                    }
+                    reset();
+                })
                 .build();
     }
 
     private UnaryCountdown createLessDelayedTimer() {
         return UnaryCountdown
                 .builder()
-                .setRunTimes(1)
                 .setDuration(lessDelayedLength, lessDelayedUnit)
-                .setIntervalsAction(lessDelayedAction)
-                .setExceptionAction(exceptionAction)
-                .setCompletionAction(this::reset)
+                .setCompletionAction(() -> {
+                    try {
+                        lessDelayedAction.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        exceptionAction.run();
+                    }
+                    reset();
+                })
                 .build();
     }
 
-    private void reset() {
-        Executors.newSingleThreadExecutor()
-                .submit(this::verifyCompletion);
+    public void start() {
+        if (isActive()) return;
+        if (startsWithMoreDelayedAction) {
+            runningCountdownTimer = 1;
+            moreDelayedCountdown.start();
+        } else {
+            runningCountdownTimer = -1;
+            lessDelayedCountdown.start();
+        }
     }
 
-    private void verifyCompletion() {
-        if (ranTimes++ >= 2 * runTimes) {
-            runCompletionAction();
+    private void reset() {
+        if (++ranTimes >= 2 * runTimes) {
+            completionAction.run();
             stop();
         } else {
-            createUnaryTimer();
-            unaryTimer.start();
+            Executors
+                    .newSingleThreadExecutor()
+                    .submit(this::startNextTimer);
         }
     }
 
-    private void createUnaryTimer() {
-        if (unaryTimer != null) {
-            unaryTimer = isLessDelayedAction()
-                    ? createMoreDelayedTimer()
-                    : createLessDelayedTimer();
-        } else {
-            unaryTimer = startsWithMoreDelayedAction
-                    ? createMoreDelayedTimer()
-                    : createLessDelayedTimer();
+    private void startNextTimer() {
+        if (runningCountdownTimer == MORE_DELAY) {
+            runningCountdownTimer = LESS_DELAY;
+            lessDelayedCountdown.start();
         }
-    }
-
-    private boolean isLessDelayedAction() {
-        return
-                unaryTimer.durationTime() == lessDelayedLength &&
-                lessDelayedUnit.equals(unaryTimer.durationUnit());
-    }
-
-    private void runCompletionAction() {
-        Executors
-                .newSingleThreadExecutor()
-                .submit(completionAction);
+        else if (runningCountdownTimer == LESS_DELAY) {
+            runningCountdownTimer = MORE_DELAY;
+            moreDelayedCountdown.start();
+        }
     }
 
     public void stop() {
-        unaryTimer.stop();
-        unaryTimer = null;
+        moreDelayedCountdown.stop();
+        lessDelayedCountdown.stop();
+        ranTimes = 0;
+        runningCountdownTimer = 0;
     }
 
     public boolean isActive() {
-        if (unaryTimer == null)
+        if (isLessDelayedCountdownActive())
+            return true;
+        if (isMoreDelayedCountdownActive())
+            return true;
+        return false;
+    }
+
+    private boolean isMoreDelayedCountdownActive() {
+        if (moreDelayedCountdown == null)
             return false;
-        return unaryTimer.isActive();
+        return moreDelayedCountdown.isActive();
+    }
+
+    private boolean isLessDelayedCountdownActive() {
+        if (lessDelayedCountdown == null)
+            return false;
+        return lessDelayedCountdown.isActive();
     }
 
     public long elapsed() {
-        if (unaryTimer == null)
-            return 0;
-        return unaryTimer.elapsed();
+        switch (runningCountdownTimer) {
+            case  1: return moreDelayedCountdown.elapsed();
+            case -1: return lessDelayedCountdown.elapsed();
+            default: return 0;
+        }
     }
 
     public static BinaryCountdownBuilder builder() {

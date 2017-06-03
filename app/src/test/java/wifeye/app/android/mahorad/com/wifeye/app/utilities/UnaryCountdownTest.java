@@ -9,50 +9,28 @@ import static junit.framework.Assert.assertFalse;
 
 public class UnaryCountdownTest {
 
-    private int interval = 0;
-    private int exception = 0;
+    private UnaryCountdown timer;
     private int completed = 0;
 
     @Test
-    public void singleRunTime_OneSecond_NoException_NoCompletion() {
-        UnaryCountdown timer = UnaryCountdown
+    public void elapse_NoCompletion_TimerElapses() {
+        timer = UnaryCountdown
                 .builder()
                 .setDuration(1, SECONDS)
-                .setRunTimes(1)
-                .setIntervalsAction(() -> interval++)
                 .build();
 
         timer.start();
 
         await().atMost(2, SECONDS)
-               .until(() -> interval == 1);
+               .until(() -> timer.elapsed() == 1);
         assertFalse(timer.isActive());
     }
 
     @Test
-    public void singleRunTime_HasException_NoCompletion() {
-        UnaryCountdown timer = UnaryCountdown
+    public void completion_CompletionActionRuns() {
+        timer = UnaryCountdown
                 .builder()
                 .setDuration(1, SECONDS)
-                .setRunTimes(1)
-                .setIntervalsAction(() -> interval = interval/0)
-                .setExceptionAction(() -> exception++)
-                .build();
-
-        timer.start();
-
-        await()
-                .atMost(2, SECONDS)
-                .until(() -> exception == 1);
-    }
-
-    @Test
-    public void singleRunTime_NoException_HasCompletion() {
-        UnaryCountdown timer = UnaryCountdown
-                .builder()
-                .setDuration(1, SECONDS)
-                .setRunTimes(1)
-                .setIntervalsAction(() -> interval++)
                 .setCompletionAction(() -> completed++)
                 .build();
 
@@ -60,26 +38,82 @@ public class UnaryCountdownTest {
 
         await()
                 .atMost(2, SECONDS)
-                .until(() -> interval == 1);
+                .until(() -> completed == 1);
 
-        assertEquals(1, completed);
         assertFalse(timer.isActive());
     }
 
     @Test
-    public void manyRunTimes_NoException_NoCompletion() {
-        UnaryCountdown timer = UnaryCountdown
+    public void stop_TimerStops() {
+        timer = UnaryCountdown
                 .builder()
-                .setDuration(1, SECONDS)
-                .setRunTimes(3)
-                .setIntervalsAction(() -> interval++)
+                .setDuration(3, SECONDS)
+                .setCompletionAction(() -> completed++)
                 .build();
+
+        timer.start();
+        await()
+                .atMost(3, SECONDS)
+                .until(() -> timer.elapsed() == 2);
+
+        timer.stop();
+        assertEquals(0, completed);
+        assertFalse(timer.isActive());
+    }
+
+    @Test
+    public void restart_AfterCompletion() {
+        timer = UnaryCountdown
+                .builder()
+                .setDuration(2, SECONDS)
+                .setCompletionAction(() -> completed++)
+                .build();
+
+        timer.start();
+        await()
+                .atMost(3, SECONDS)
+                .until(() -> !timer.isActive());
+
+        assertEquals(2, timer.elapsed());
+        timer.start();
+
+        await()
+                .atMost(3, SECONDS)
+                .until(() -> !timer.isActive());
+
+        assertEquals(2, completed);
+        assertEquals(2, timer.elapsed());
+        assertFalse(timer.isActive());
+    }
+
+    @Test
+    public void restart_AfterStop() {
+        timer = UnaryCountdown
+                .builder()
+                .setDuration(3, SECONDS)
+                .setCompletionAction(() -> completed++)
+                .build();
+
+        timer.start();
+        await()
+                .atMost(3, SECONDS)
+                .until(() -> timer.elapsed() == 1);
+
+        timer.stop();
+
+        await()
+                .atMost(2, SECONDS)
+                .until(() -> !timer.isActive());
 
         timer.start();
 
         await()
                 .atMost(4, SECONDS)
-                .until(() -> interval == 3);
+                .until(() -> !timer.isActive());
+
+        assertEquals(1, completed);
+        assertEquals(3, timer.elapsed());
+        assertFalse(timer.isActive());
     }
 
 }

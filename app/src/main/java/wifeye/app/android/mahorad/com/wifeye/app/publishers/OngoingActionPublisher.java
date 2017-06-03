@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IOngoingActionConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 public class OngoingActionPublisher {
 
@@ -16,17 +14,10 @@ public class OngoingActionPublisher {
     private static Action action = Action.Halt;
     private static Date date = Calendar.getInstance().getTime();
 
-    private Utilities utils =
-            MainApplication
-                    .mainComponent()
-                    .utilities();
-
-    public void publish(Action wifiAction) {
-        synchronized (this) {
-            action = wifiAction;
-            date = Calendar.getInstance().getTime();
-            publishOngoingAction();
-        }
+    public synchronized void publish(Action wifiAction) {
+        action = wifiAction;
+        date = Calendar.getInstance().getTime();
+        publishOngoingAction();
     }
 
     private void publishOngoingAction() {

@@ -12,6 +12,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView;
+import wifeye.app.android.mahorad.com.wifeye.gui.views.BssidView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.SignalView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.StateView;
 
@@ -28,6 +29,8 @@ public interface MainComponent {
     void inject(ActionView actionView);
 
     void inject(StateView stateView);
+
+    void inject(BssidView bssidView);
 
     OngoingActionPublisher actionPublisher();
 

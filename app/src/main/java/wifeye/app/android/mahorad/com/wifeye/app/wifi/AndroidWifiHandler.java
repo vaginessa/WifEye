@@ -1,9 +1,10 @@
 package wifeye.app.android.mahorad.com.wifeye.app.wifi;
 
 import android.content.Context;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 
 public class AndroidWifiHandler implements IWifiHandler {
 
@@ -32,15 +33,10 @@ public class AndroidWifiHandler implements IWifiHandler {
 
     @Override
     public void disable() {
-        if (isConnected()) return;
+        if (WifiSsidNamePublisher.ssid() != null)
+            return;
         wifiManager.setWifiEnabled(false);
         Log.d(TAG, "[[ disabling wifi... ]]");
     }
 
-    private boolean isConnected() {
-        WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-        String bssid = connectionInfo.getBSSID();
-        String ssid = (bssid == null ? null : connectionInfo.getSSID());
-        return ssid != null && !ssid.equals("0x");
-    }
 }

@@ -8,34 +8,34 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class StateView extends BoxView implements ISystemStateConsumer {
+public class BssidView extends BoxView implements IWifiSsidNameConsumer {
 
-    private static final String HEADER = "S T A T E";
+    private static final String HEADER = "H O T  S P O T";
 
     @Inject
-    SystemStatePublisher statePublisher;
+    WifiSsidNamePublisher ssidNamePublisher;
 
     @Inject
     Utilities utils;
 
-    private IState.Type state;
+    private String ssid;
     private ImageView stateIcon;
 
-    public StateView(Context context) {
+    public BssidView(Context context) {
         super(context);
     }
 
-    public StateView(Context context, AttributeSet attrs) {
+    public BssidView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public StateView(Context context, AttributeSet attrs, int defStyle) {
+    public BssidView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -51,8 +51,8 @@ public class StateView extends BoxView implements ISystemStateConsumer {
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (statePublisher != null)
-            statePublisher.subscribe(this);
+        if (ssidNamePublisher != null)
+            ssidNamePublisher.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -61,8 +61,8 @@ public class StateView extends BoxView implements ISystemStateConsumer {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (statePublisher != null)
-            statePublisher.unsubscribe(this);
+        if (ssidNamePublisher != null)
+            ssidNamePublisher.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -74,45 +74,38 @@ public class StateView extends BoxView implements ISystemStateConsumer {
 
     private void setupStateIconView() {
         stateIcon = new ImageView(getContext());
-        stateIcon.setImageResource(R.drawable.state_initial);
+        stateIcon.setImageResource(R.drawable.no_ssid);
     }
 
     @Override
     public void refresh() {
-        if (statePublisher == null)
+        if (ssidNamePublisher == null)
             return;
-        state = statePublisher.state();
+        ssid = ssidNamePublisher.ssid();
         post(this::updateView);
     }
 
     @Override
-    public void onStateChanged(IState.Type state) {
-        this.state = state;
+    public void onInternetConnected(String ssid) {
+        this.ssid = ssid;
+        post(this::updateView);
+    }
+
+    @Override
+    public void onInternetDisconnected() {
+        this.ssid = null;
         post(this::updateView);
     }
 
     private void updateView() {
-        setFact(state.title());
+        setFact(ssid == null ? "n/a" : ssid);
         String ago = utils.toAgo(
-                statePublisher.date(), getContext());
+                ssidNamePublisher.date(), getContext());
         setCaption(ago);
-        stateIcon.setImageResource(getIcon());
+        int icon = ssid != null
+                ? R.drawable.has_ssid
+                : R.drawable.no_ssid;
+        stateIcon.setImageResource(icon);
     }
 
-    public int getIcon() {
-        switch (state) {
-            case Connected:
-                return R.drawable.state_connected;
-            case DisConnected:
-                return R.drawable.state_disconnected;
-            case KnownArea:
-                return R.drawable.state_known;
-            case RouterArea:
-                return R.drawable.state_router;
-            case UnknownArea:
-                return R.drawable.state_unknown;
-            default:
-                return R.drawable.state_initial;
-        }
-    }
 }

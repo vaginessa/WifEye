@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 
@@ -164,10 +164,9 @@ public class CircularProgressBar extends View {
      * @param duration The length of the animation, in milliseconds.
      */
     public void setProgressWithAnimation(float progress, int duration) {
-        stop();
         objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
         objectAnimator.setDuration(duration);
-        objectAnimator.setInterpolator(new DecelerateInterpolator());
+        objectAnimator.setInterpolator(new LinearInterpolator());
         objectAnimator.start();
     }
 
