@@ -2,23 +2,15 @@ package wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp;
 
 import android.content.Context;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ICellTowerIdConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISystemStateConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiDeviceStateConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
-import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 public class SummaryPresenter implements IPresenter {
@@ -30,7 +22,8 @@ public class SummaryPresenter implements IPresenter {
     @Inject WifiSsidNamePublisher ssidPublisher;
     @Inject CellTowerIdPublisher ctidPublisher;
     @Inject SystemStatePublisher statePublisher;
-    @Inject WifiDeviceStatePublisher wifiPublisher;
+    @Inject
+    Wifi wifiPublisher;
     @Inject IPersistence persistence;
 
     /**

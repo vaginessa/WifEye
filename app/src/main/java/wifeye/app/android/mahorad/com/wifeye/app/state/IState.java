@@ -5,8 +5,8 @@ public interface IState {
     enum Type {
 
         Initial("Initial"),
-        Connected("Connected"),
-        DisConnected("Disconnected"),
+        Connected("router reach"),
+        DisConnected("disconnected"),
         UnknownArea("unknown region"),
         KnownArea("nearby area"),
         RouterArea("router reach");

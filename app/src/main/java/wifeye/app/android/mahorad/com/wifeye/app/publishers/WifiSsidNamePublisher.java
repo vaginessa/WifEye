@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiDeviceStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
 
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.*;
@@ -24,18 +24,18 @@ import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.*;
  */
 public class WifiSsidNamePublisher
         extends BroadcastReceiver
-        implements IWifiDeviceStateConsumer {
+        implements IWifiConsumer {
 
     private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
 
     private static String ssid = null;
     private static Date date = Calendar.getInstance().getTime();;
     private final WifiManager wifiManager;
-    private final WifiDeviceStatePublisher wifiPublisher;
+    private final Wifi wifiPublisher;
     private final Context context;
     private final Set<IWifiSsidNameConsumer> consumers;
 
-    public WifiSsidNamePublisher(Context context, WifiDeviceStatePublisher wifiPublisher) {
+    public WifiSsidNamePublisher(Context context, Wifi wifiPublisher) {
         this.context = context;
         this.wifiPublisher = wifiPublisher;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -45,7 +45,7 @@ public class WifiSsidNamePublisher
     @Override
     public void onWifiStateChanged(WifiState state) {
         boolean wifiDisabled =
-                WifiDeviceStatePublisher.state() == Disabled;
+                Wifi.state() == Disabled;
         if (!wifiDisabled) return;
         notifyInternetDisconnected();
     }
@@ -55,7 +55,7 @@ public class WifiSsidNamePublisher
         synchronized (this) {
 
             boolean wifiEnabled =
-                    WifiDeviceStatePublisher.state() == Enabled;
+                    Wifi.state() == Enabled;
             if (!wifiEnabled) {
                 notifyInternetDisconnected();
                 return;

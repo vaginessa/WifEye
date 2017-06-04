@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.SsidTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 
 public class MainService extends Service {
@@ -31,7 +31,7 @@ public class MainService extends Service {
 
     private boolean started;
 
-    @Inject WifiDeviceStatePublisher wifiPublisher;
+    @Inject Wifi wifi;
     @Inject CellTowerIdPublisher ctidPublisher;
     @Inject WifiSsidNamePublisher ssidPublisher;
     @Inject SsidTowerIdConsumer consumer;
@@ -62,7 +62,7 @@ public class MainService extends Service {
 
         ctidPublisher.subscribe(consumer);
         ssidPublisher.subscribe(consumer);
-        wifiPublisher.start();
+        wifi.register();
         ctidPublisher.start();
         ssidPublisher.start();
 
@@ -85,7 +85,7 @@ public class MainService extends Service {
     private void stop() {
         if (!started) return;
 
-        wifiPublisher.stop();
+        wifi.unregister();
         ctidPublisher.stop();
         ssidPublisher.stop();
 

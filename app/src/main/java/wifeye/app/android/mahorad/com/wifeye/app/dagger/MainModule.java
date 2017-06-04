@@ -13,12 +13,10 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.AndroidWifiHandler;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.IWifiHandler;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
 
 @Module(includes = ApplicationModule.class)
@@ -26,15 +24,14 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context,
-                                                WifiDeviceStatePublisher wifiPublisher) {
-        return new WifiSsidNamePublisher(context, wifiPublisher);
+    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context, Wifi wifi) {
+        return new WifiSsidNamePublisher(context, wifi);
     }
 
     @Provides
     @ApplicationScope
-    public WifiDeviceStatePublisher wifiPublisher(@ApplicationContext Context context) {
-        return new WifiDeviceStatePublisher(context);
+    public Wifi wifi(@ApplicationContext Context context) {
+        return new Wifi(context);
     }
 
     @Provides
@@ -46,15 +43,9 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public IWifiHandler wifiHandler(@ApplicationContext Context context) {
-        return new AndroidWifiHandler(context);
-    }
-
-    @Provides
-    @ApplicationScope
-    public WifiDevice wifiDevice(IWifiHandler wifiHandler,
+    public WifiDevice wifiDevice(Wifi wifiHandler,
                                  OngoingActionPublisher actionPublisher,
-                                 WifiDeviceStatePublisher wifiPublisher) {
+                                 Wifi wifiPublisher) {
         return new WifiDevice(wifiHandler, actionPublisher, wifiPublisher);
     }
 

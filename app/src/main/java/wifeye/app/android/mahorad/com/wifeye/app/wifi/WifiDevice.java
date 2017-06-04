@@ -1,8 +1,8 @@
 package wifeye.app.android.mahorad.com.wifeye.app.wifi;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiDeviceStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiDeviceStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.BinaryCountdown;
@@ -18,11 +18,11 @@ import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Observ
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeEnabling;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.Disabled;
 
-public class WifiDevice implements IWifiDeviceStateConsumer {
+public class WifiDevice implements IWifiConsumer {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    private final IWifiHandler wifiHandler;
+    private final Wifi wifiHandler;
     private final OngoingActionPublisher actionPublisher;
 
     private final UnaryCountdown disablingTimer;
@@ -33,9 +33,9 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
      * @param wifiHandler Android wifi manager for controlling
      *                    wifi behaviours on the phone/tablet
      */
-    public WifiDevice(IWifiHandler wifiHandler,
+    public WifiDevice(Wifi wifiHandler,
                       OngoingActionPublisher actionPublisher,
-                      WifiDeviceStatePublisher wifiPublisher) {
+                      Wifi wifiPublisher) {
         this.wifiHandler = wifiHandler;
         this.actionPublisher = actionPublisher;
         disablingTimer = createDisablingTimer();
@@ -64,7 +64,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
     }
 
     public synchronized void disable() {
-        if (!isEnabled()) return;
+        if (!wifiHandler.isEnabled()) return;
         if (isDisabling()) return;
         halt();
         actionPublisher.publish(DisablingMode);
@@ -79,7 +79,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
     }
 
     private void enableWifi() {
-        if (isEnabled()) {
+        if (wifiHandler.isEnabled()) {
             halt();
             return;
         }
@@ -88,7 +88,7 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
     }
 
     private void disableWifi() {
-        if (isConnected()) {
+        if (WifiSsidNamePublisher.ssid() != null) {
             halt();
             return;
         }
@@ -96,16 +96,8 @@ public class WifiDevice implements IWifiDeviceStateConsumer {
         actionPublisher.publish(ObserveModeEnabling);
     }
 
-    public boolean isEnabled() {
-        return wifiHandler.isEnabled();
-    }
-
     private boolean isDisabling() {
         return disablingTimer.isActive();
-    }
-
-    private boolean isConnected() {
-        return WifiSsidNamePublisher.ssid() != null;
     }
 
     private boolean isObserving() {
