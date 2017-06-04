@@ -14,7 +14,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublish
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
@@ -24,8 +24,8 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiSsidNamePublisher bssidPublisher(@ApplicationContext Context context, Wifi wifi) {
-        return new WifiSsidNamePublisher(context, wifi);
+    public Internet bssidPublisher(@ApplicationContext Context context, Wifi wifi) {
+        return new Internet(context, wifi);
     }
 
     @Provides
@@ -43,10 +43,8 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiDevice wifiDevice(Wifi wifiHandler,
-                                 OngoingActionPublisher actionPublisher,
-                                 Wifi wifiPublisher) {
-        return new WifiDevice(wifiHandler, actionPublisher, wifiPublisher);
+    public WifiDevice wifiDevice(Wifi wifi, OngoingActionPublisher actionPublisher) {
+        return new WifiDevice(wifi, actionPublisher);
     }
 
     @Provides

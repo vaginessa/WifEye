@@ -2,20 +2,16 @@ package wifeye.app.android.mahorad.com.wifeye.gui.summary;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.romainpiel.shimmer.Shimmer;
-import com.romainpiel.shimmer.ShimmerTextView;
-
 import java.util.Date;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.IPresenter;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.ISummaryView;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.SummaryPresenter;
@@ -81,7 +77,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateWifiDeviceState(WifiState state) {
+    public void updateWifiDeviceState(Wifi.State state) {
 //        runOnUiThread(() -> wifiText.setText(state.toString()));
     }
 

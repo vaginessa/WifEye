@@ -16,37 +16,33 @@ import java.util.concurrent.Executors;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
 
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.*;
-
 /**
  * listens to connected ssid names and notifies consumers
  * if the Internet is connected or disconnected.
  */
-public class WifiSsidNamePublisher
+public class Internet
         extends BroadcastReceiver
         implements IWifiConsumer {
 
-    private static String TAG = WifiSsidNamePublisher.class.getSimpleName();
+    private static String TAG = Internet.class.getSimpleName();
 
     private static String ssid = null;
     private static Date date = Calendar.getInstance().getTime();;
     private final WifiManager wifiManager;
-    private final Wifi wifiPublisher;
+    private final Wifi wifi;
     private final Context context;
     private final Set<IWifiSsidNameConsumer> consumers;
 
-    public WifiSsidNamePublisher(Context context, Wifi wifiPublisher) {
+    public Internet(Context context, Wifi wifi) {
         this.context = context;
-        this.wifiPublisher = wifiPublisher;
+        this.wifi = wifi;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         consumers = new HashSet<>();
     }
 
     @Override
-    public void onWifiStateChanged(WifiState state) {
-        boolean wifiDisabled =
-                Wifi.state() == Disabled;
-        if (!wifiDisabled) return;
+    public void onWifiStateChanged(Wifi.State state) {
+        if (!wifi.isDisabled()) return;
         notifyInternetDisconnected();
     }
 
@@ -54,9 +50,7 @@ public class WifiSsidNamePublisher
     public void onReceive(Context context, Intent intent) {
         synchronized (this) {
 
-            boolean wifiEnabled =
-                    Wifi.state() == Enabled;
-            if (!wifiEnabled) {
+            if (!wifi.isEnabled()) {
                 notifyInternetDisconnected();
                 return;
             }
@@ -109,13 +103,13 @@ public class WifiSsidNamePublisher
     }
 
     public void start() {
-        wifiPublisher.subscribe(this);
+        wifi.subscribe(this);
         IntentFilter intentFilter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         context.registerReceiver(this, intentFilter);
     }
 
     public void stop() {
-        wifiPublisher.unsubscribe(this);
+        wifi.unsubscribe(this);
         context.unregisterReceiver(this);
         consumers.clear();
     }

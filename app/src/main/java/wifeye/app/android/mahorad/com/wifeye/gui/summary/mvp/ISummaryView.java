@@ -3,7 +3,7 @@ package wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp;
 import java.util.Date;
 
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 
 public interface ISummaryView {
 
@@ -15,6 +15,6 @@ public interface ISummaryView {
 
     void updateActionState(Action action, Date date);
 
-    void updateWifiDeviceState(WifiState state);
+    void updateWifiDeviceState(Wifi.State state);
 
 }

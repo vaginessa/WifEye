@@ -10,7 +10,7 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
@@ -19,7 +19,7 @@ public class BssidView extends BoxView implements IWifiSsidNameConsumer {
     private static final String HEADER = "H O T  S P O T";
 
     @Inject
-    WifiSsidNamePublisher ssidNamePublisher;
+    Internet ssidNamePublisher;
 
     @Inject
     Utilities utils;

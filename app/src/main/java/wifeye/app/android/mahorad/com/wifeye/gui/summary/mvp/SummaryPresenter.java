@@ -10,7 +10,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 public class SummaryPresenter implements IPresenter {
@@ -19,7 +19,8 @@ public class SummaryPresenter implements IPresenter {
 
     @Inject @ApplicationContext Context context;
     @Inject Utilities utils;
-    @Inject WifiSsidNamePublisher ssidPublisher;
+    @Inject
+    Internet ssidPublisher;
     @Inject CellTowerIdPublisher ctidPublisher;
     @Inject SystemStatePublisher statePublisher;
     @Inject

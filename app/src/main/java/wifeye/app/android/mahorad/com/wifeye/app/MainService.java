@@ -14,7 +14,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.SsidTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiSsidNamePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 
 public class MainService extends Service {
 
@@ -33,7 +33,8 @@ public class MainService extends Service {
 
     @Inject Wifi wifi;
     @Inject CellTowerIdPublisher ctidPublisher;
-    @Inject WifiSsidNamePublisher ssidPublisher;
+    @Inject
+    Internet ssidPublisher;
     @Inject SsidTowerIdConsumer consumer;
 
     @Override

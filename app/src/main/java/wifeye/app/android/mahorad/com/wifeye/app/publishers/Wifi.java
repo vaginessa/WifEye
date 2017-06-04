@@ -16,9 +16,7 @@ import java.util.concurrent.Executors;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
 
 import static android.content.Context.WIFI_SERVICE;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.Disabled;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.Enabled;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.WifiState.Unknown;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.*;
 
 public class Wifi extends BroadcastReceiver {
 
@@ -26,11 +24,39 @@ public class Wifi extends BroadcastReceiver {
 
     private final Context context;
     private final WifiManager wifiManager;
-    private static WifiState wifiState = Unknown;
+    private static State state = Unknown;
     private static Date date;
 
     private final Set<IWifiConsumer> consumers;
 
+    /**
+     * wifi states
+     */
+    public enum State {
+        Disabling(0), Disabled(1), Enabling(2), Enabled(3), Unknown(4);
+        private int value;
+
+        State(int value) {
+            this.value = value;
+        }
+
+        public static State get(int state) {
+            switch (state) {
+                case 0: return Disabling;
+                case 1: return Disabled;
+                case 2: return Enabling;
+                case 3: return Enabled;
+                default: return Unknown;
+            }
+        }
+
+        public int value() { return value; }
+    }
+
+    /**
+     * constructor
+     * @param context
+     */
     public Wifi(Context context) {
         this.context = context;
         wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
@@ -43,17 +69,17 @@ public class Wifi extends BroadcastReceiver {
             int wifiState = intent.getIntExtra(
                     WifiManager.EXTRA_WIFI_STATE,
                     WifiManager.WIFI_STATE_UNKNOWN);
-            WifiState state = WifiState.get(wifiState);
+            State state = State.get(wifiState);
             boolean updated = update(state);
             if (updated) publish();
         }
     }
 
-    private boolean update(WifiState state) {
-        if (wifiState == state)
+    private boolean update(State wifiState) {
+        if (state == wifiState)
             return false;
-        wifiState = state;
-        if (wifiState == Enabled || wifiState == Disabled)
+        state = wifiState;
+        if (state == Enabled || state == Disabled)
             date = Calendar.getInstance().getTime();
         return true;
     }
@@ -62,7 +88,7 @@ public class Wifi extends BroadcastReceiver {
         for (IWifiConsumer consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
-                    .submit(() -> consumer.onWifiStateChanged(wifiState));
+                    .submit(() -> consumer.onWifiStateChanged(state));
         }
     }
 
@@ -91,28 +117,26 @@ public class Wifi extends BroadcastReceiver {
     }
 
     public void disable() {
-        if (WifiSsidNamePublisher.ssid() != null)
+        if (Internet.ssid() != null)
             return;
         wifiManager.setWifiEnabled(false);
         Log.d(TAG, "[[ disabling wifi... ]]");
     }
 
     public boolean isEnabled() {
-        int state = wifiManager.getWifiState();
-        boolean enabled = (state == WifiManager.WIFI_STATE_ENABLED);
-        Log.d(TAG, String.format("[[ wifiManager %b, wifiState %b ]]", enabled, wifiState == Enabled));
+        boolean enabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED);
+        Log.d(TAG, String.format("[[ wifiManager %b, this.state %b ]]", enabled, state == Enabled));
         return enabled;
     }
 
     public boolean isDisabled() {
-        int state = wifiManager.getWifiState();
-        boolean disabled = (state == WifiManager.WIFI_STATE_DISABLED);
-        Log.d(TAG, String.format("[[ wifiManager %b, wifiState %b ]]", disabled, wifiState == Disabled));
+        boolean disabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED);
+        Log.d(TAG, String.format("[[ wifiManager %b, this.state %b ]]", disabled, state == Disabled));
         return disabled;
     }
 
-    public static WifiState state() {
-        return wifiState;
+    public static State state() {
+        return state;
     }
 
     public static Date date() {
