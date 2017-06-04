@@ -4,12 +4,13 @@ import dagger.Component;
 import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationScope;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
+import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
 import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.SummaryPresenter;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.BssidView;
@@ -19,6 +20,8 @@ import wifeye.app.android.mahorad.com.wifeye.gui.views.StateView;
 @ApplicationScope
 @Component(modules = MainModule.class)
 public interface MainComponent {
+
+    void inject(StateMachine stateMachine);
 
     void inject(SummaryPresenter presenter);
 
@@ -32,17 +35,19 @@ public interface MainComponent {
 
     void inject(BssidView bssidView);
 
-    OngoingActionPublisher actionPublisher();
+    Action actionPublisher();
 
-    SystemStatePublisher statePublisher();
+    Engine statePublisher();
 
-    CellTowerIdPublisher ctidPublisher();
+    Signal ctidPublisher();
 
     Internet ssidPublisher();
 
-    PersistencePublisher repoPublisher();
+    Persist repoPublisher();
 
     Utilities utilities();
 
     IPersistence persistence();
+
+    StateMachine engine();
 }

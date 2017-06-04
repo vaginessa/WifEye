@@ -4,23 +4,21 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ICellTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISignalListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class SignalView extends BoxView implements ICellTowerIdConsumer {
+public class SignalView extends BoxView implements ISignalListener {
 
     private static final String HEADER = "S I G N A L";
 
     @Inject
-    CellTowerIdPublisher towerIdPublisher;
+    Signal signalIdPublisher;
 
     @Inject
     Utilities utils;
@@ -60,8 +58,8 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (towerIdPublisher != null)
-            towerIdPublisher.subscribe(this);
+        if (signalIdPublisher != null)
+            signalIdPublisher.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -70,15 +68,15 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (towerIdPublisher != null)
-            towerIdPublisher.unsubscribe(this);
+        if (signalIdPublisher != null)
+            signalIdPublisher.unsubscribe(this);
     }
 
     private void setupContents() {
         setupRipplingImage();
         setContents(ripple);
-        setFact("Tower identifier");
-        setCaption("Cell Tower ID");
+        setFact("Signal identifier");
+        setCaption("Cell Signal ID");
     }
 
     private void setupRipplingImage() {
@@ -95,9 +93,9 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
 
     @Override
     public void refresh() {
-        if (towerIdPublisher == null)
+        if (signalIdPublisher == null)
             return;
-        this.ctid = towerIdPublisher.ctid();
+        this.ctid = signalIdPublisher.ctid();
         post(this::updateView);
     }
 
@@ -121,7 +119,7 @@ public class SignalView extends BoxView implements ICellTowerIdConsumer {
 
     private void updateView() {
         String ago = utils.toAgo(
-                towerIdPublisher.date(), getContext());
+                signalIdPublisher.date(), getContext());
         setFact(ago);
         setCaption(ctid == null ? "n/a" : ctid);
     }

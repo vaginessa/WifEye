@@ -1,12 +1,12 @@
 package wifeye.app.android.mahorad.com.wifeye.app.persist;
 
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 
 public abstract class Persistence implements IPersistence {
 
-    protected final PersistencePublisher publisher;
+    protected final Persist publisher;
 
-    public Persistence(PersistencePublisher publisher) {
+    public Persistence(Persist publisher) {
         this.publisher = publisher;
     }
 

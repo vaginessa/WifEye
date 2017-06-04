@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
 
 import static android.content.Context.WIFI_SERVICE;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.*;
@@ -27,7 +27,7 @@ public class Wifi extends BroadcastReceiver {
     private static State state = Unknown;
     private static Date date;
 
-    private final Set<IWifiConsumer> consumers;
+    private final Set<IWifiListener> consumers;
 
     /**
      * wifi states
@@ -85,28 +85,28 @@ public class Wifi extends BroadcastReceiver {
     }
 
     private void publish() {
-        for (IWifiConsumer consumer : consumers) {
+        for (IWifiListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(() -> consumer.onWifiStateChanged(state));
         }
     }
 
-    public void register() {
+    public void registerBroadcast() {
         IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
         context.registerReceiver(this, intentFilter);
     }
 
-    public void unregister() {
+    public void unregisterBroadcast() {
         context.unregisterReceiver(this);
         consumers.clear();
     }
 
-    public boolean subscribe(IWifiConsumer consumer) {
+    public boolean subscribe(IWifiListener consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(IWifiConsumer consumer) {
+    public boolean unsubscribe(IWifiListener consumer) {
         return consumers.remove(consumer);
     }
 

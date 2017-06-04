@@ -2,7 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye.app.state;
 
 public class StateInitial extends State {
 
-    public StateInitial(Engine machine) {
+    public StateInitial(StateMachine machine) {
         super(machine);
     }
 
@@ -13,23 +13,23 @@ public class StateInitial extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.toConnectedState();
+        stateMachine.toConnectedState();
     }
 
     @Override
     public void onInternetDisconnects() {
-        engine.toDisconnectedState();
+        stateMachine.toDisconnectedState();
     }
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.toKnownAreaState();
-        engine.observeWifi();
+        stateMachine.toKnownAreaState();
+        stateMachine.observeWifi();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toUnknownAreaState();
+        stateMachine.toUnknownAreaState();
     }
 
 }

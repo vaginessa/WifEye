@@ -8,18 +8,18 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IEngineListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class StateView extends BoxView implements ISystemStateConsumer {
+public class StateView extends BoxView implements IEngineListener {
 
     private static final String HEADER = "S T A T E";
 
     @Inject
-    SystemStatePublisher statePublisher;
+    Engine statePublisher;
 
     @Inject
     Utilities utils;

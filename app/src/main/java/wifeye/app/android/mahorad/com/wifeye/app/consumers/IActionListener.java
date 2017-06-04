@@ -2,8 +2,8 @@ package wifeye.app.android.mahorad.com.wifeye.app.consumers;
 
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 
-public interface IOngoingActionConsumer {
+public interface IActionListener {
 
-    void onActionChanged(Action action);
+    void onActionChanged(Action.State action);
 
 }

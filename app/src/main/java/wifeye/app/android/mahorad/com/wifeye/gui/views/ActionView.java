@@ -15,10 +15,9 @@ import javax.inject.Inject;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IOngoingActionConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IActionListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
 
@@ -26,25 +25,20 @@ import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.LinearLayout.VERTICAL;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.DisablingMode;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Halt;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeDisabling;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeEnabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.Halt;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeEnabling;
 
-public class ActionView extends BoxView implements IOngoingActionConsumer {
+public class ActionView extends BoxView implements IActionListener {
 
     private static final String HEADER = "A C T I O N";
 
-    @Inject
-    OngoingActionPublisher actionPublisher;
+    @Inject Action actionPublisher;
+    @Inject Utilities utils;
+    @Inject WifiDevice wifiDevice;
 
-    @Inject
-    Utilities utils;
-
-    @Inject
-    WifiDevice wifiDevice;
-
-    private Action action;
+    private Action.State action;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
@@ -147,7 +141,7 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     public void refresh() {
         if (actionPublisher == null)
             return;
-        Action action = actionPublisher.action();
+        Action.State action = actionPublisher.action();
         if (action == this.action)
             return;
         this.action = action;
@@ -155,7 +149,7 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     @Override
-    public synchronized void onActionChanged(Action action) {
+    public synchronized void onActionChanged(Action.State action) {
         if (action == this.action)
             return;
         this.action = action;
@@ -183,7 +177,7 @@ public class ActionView extends BoxView implements IOngoingActionConsumer {
     }
 
     private void shimmerStop() {
-        shimmerText.setText(Action.Halt.title());
+        shimmerText.setText(Halt.title());
         shimmer.cancel();
         int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
         shimmerText.setTextColor(textColor);

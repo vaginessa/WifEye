@@ -1,7 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.app.wifi;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.BinaryCountdown;
@@ -11,18 +11,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.OBSERVE_REPEAT_COUNT;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.WIFI_DISABLE_TIMEOUT;
 import static wifeye.app.android.mahorad.com.wifeye.app.constants.Constants.WIFI_ENABLE_TIMEOUT;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.DisablingMode;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Halt;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeDisabling;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.ObserveModeEnabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.Halt;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeEnabling;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Disabled;
 
-public class WifiDevice implements IWifiConsumer {
+public class WifiDevice implements IWifiListener {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
     private final Wifi wifi;
-    private final OngoingActionPublisher actionPublisher;
+    private final Action actionPublisher;
 
     private final UnaryCountdown disablingTimer;
     private final BinaryCountdown observingTimer;
@@ -32,8 +32,7 @@ public class WifiDevice implements IWifiConsumer {
      * @param wifi Android wifi manager for controlling
      *                    wifi behaviours on the phone/tablet
      */
-    public WifiDevice(Wifi wifi,
-                      OngoingActionPublisher actionPublisher) {
+    public WifiDevice(Wifi wifi, Action actionPublisher) {
         this.wifi = wifi;
         this.wifi.subscribe(this);
         this.actionPublisher = actionPublisher;

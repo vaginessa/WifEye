@@ -2,7 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye.app.state;
 
 public class StateConnected extends State {
 
-    public StateConnected(Engine machine) {
+    public StateConnected(StateMachine machine) {
         super(machine);
     }
 
@@ -13,25 +13,25 @@ public class StateConnected extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.haltWifiAct(); // stopMainService any ongoing timeouts
-        engine.persist(); // persist another SSIDs perhaps
+        stateMachine.haltWifiAct(); // stopMainService any ongoing timeouts
+        stateMachine.persist(); // persist another SSIDs perhaps
     }
 
     @Override
     public void onInternetDisconnects() {
-        engine.toDisconnectedState();
-        engine.disableWifi(); // startMainService a disabling timeout
+        stateMachine.toDisconnectedState();
+        stateMachine.disableWifi(); // startMainService a disabling timeout
     }
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.toRouterAreaState();
+        stateMachine.toRouterAreaState();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toRouterAreaState();
-        engine.persist(); // persist the location
+        stateMachine.toRouterAreaState();
+        stateMachine.persist(); // persist the location
     }
 
 }

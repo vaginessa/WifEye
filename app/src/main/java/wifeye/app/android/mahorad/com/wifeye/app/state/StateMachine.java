@@ -2,8 +2,15 @@ package wifeye.app.android.mahorad.com.wifeye.app.state;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
+import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISignalListener;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
 
 /**
@@ -11,9 +18,13 @@ import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
  * It keeps the system state as well as allowing
  * different states to make the right action.
  */
-public class Engine implements IStateMachine, IActuator {
+public class StateMachine implements
+        IStateMachine,
+        IActuator,
+        IInternetListener,
+        ISignalListener {
 
-    private static final String TAG = Engine.class.getSimpleName();
+    private static final String TAG = StateMachine.class.getSimpleName();
 
     private final IState initial = new StateInitial(this);
     private final IState connected = new StateConnected(this);
@@ -26,23 +37,51 @@ public class Engine implements IStateMachine, IActuator {
     private String ssid;
     private String ctid;
 
-    private final SystemStatePublisher publisher;
-    private final WifiDevice wifiDevice;
-    private final IPersistence persistence;
+    @Inject Internet internet;
+    @Inject Signal signal;
+    @Inject Engine engine;
+    @Inject WifiDevice wifiDevice;
+    @Inject IPersistence persistence;
 
     /**
-     * Creates a state machine engine with wifi controller
+     * Creates a state machine stateMachine with wifi controller
      * and persistence abilities.
-     *
-     * @param wifiDevice
-     * @param persistence
-     * @param publisher
      */
-    public Engine(WifiDevice wifiDevice, IPersistence persistence, SystemStatePublisher publisher) {
-        this.wifiDevice = wifiDevice;
-        this.persistence = persistence;
-        this.publisher = publisher;
+    public StateMachine() {
+        MainApplication
+                .mainComponent()
+                .inject(this);
     }
+
+    /* listeners */
+    @Override
+    public void onInternetConnected(String ssid) {
+        synchronized (this) {
+            internetConnected(ssid);
+        }
+    }
+
+    @Override
+    public void onInternetDisconnected() {
+        synchronized (this) {
+            internetDisconnected();
+        }
+    }
+
+    @Override
+    public void onReceivedKnownTowerId(String ctid) {
+        synchronized (this) {
+            receivedKnownTowerId();
+        }
+    }
+
+    @Override
+    public void onReceivedUnknownTowerId(String ctid) {
+        synchronized (this) {
+            receivedUnknownTowerId(ctid);
+        }
+    }
+
 
     /* used by client */
     @Override
@@ -103,7 +142,19 @@ public class Engine implements IStateMachine, IActuator {
     private void setState(IState state) {
         currentState = state;
         Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
-        publisher.publish(state);
+        engine.publish(state);
+    }
+
+    @Override
+    public void start() {
+        signal.subscribe(this);
+        internet.subscribe(this);
+    }
+
+    @Override
+    public void stop() {
+        signal.unsubscribe(this);
+        internet.unsubscribe(this);
     }
 
     @Override

@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
 
 /**
  * listens to connected ssid names and notifies consumers
@@ -22,7 +22,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer
  */
 public class Internet
         extends BroadcastReceiver
-        implements IWifiConsumer {
+        implements IWifiListener {
 
     private static String TAG = Internet.class.getSimpleName();
 
@@ -31,7 +31,7 @@ public class Internet
     private final WifiManager wifiManager;
     private final Wifi wifi;
     private final Context context;
-    private final Set<IWifiSsidNameConsumer> consumers;
+    private final Set<IInternetListener> consumers;
 
     public Internet(Context context, Wifi wifi) {
         this.context = context;
@@ -87,7 +87,7 @@ public class Internet
     }
 
     private void notifyInternetGotConnected() {
-        for (final IWifiSsidNameConsumer consumer : consumers) {
+        for (final IInternetListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(() -> consumer.onInternetConnected(ssid));
@@ -95,30 +95,30 @@ public class Internet
     }
 
     private void notifyInternetDisconnected() {
-        for (final IWifiSsidNameConsumer consumer : consumers) {
+        for (final IInternetListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(consumer::onInternetDisconnected);
         }
     }
 
-    public void start() {
+    public void registerBroadcast() {
         wifi.subscribe(this);
         IntentFilter intentFilter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         context.registerReceiver(this, intentFilter);
     }
 
-    public void stop() {
+    public void unregisterBroadcast() {
         wifi.unsubscribe(this);
         context.unregisterReceiver(this);
         consumers.clear();
     }
 
-    public boolean subscribe(IWifiSsidNameConsumer consumer) {
+    public boolean subscribe(IInternetListener consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(IWifiSsidNameConsumer consumer) {
+    public boolean unsubscribe(IInternetListener consumer) {
         return consumers.remove(consumer);
     }
 

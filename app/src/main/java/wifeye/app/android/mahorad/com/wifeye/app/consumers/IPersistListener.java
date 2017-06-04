@@ -1,6 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.app.consumers;
 
-public interface IPersistenceConsumer {
+public interface IPersistListener {
 
     void onDataPersisted();
 

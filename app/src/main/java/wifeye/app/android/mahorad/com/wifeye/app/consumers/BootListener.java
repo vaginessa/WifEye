@@ -8,7 +8,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 
 import static android.content.Intent.ACTION_BOOT_COMPLETED;
 
-public class AndroidBootConsumer extends BroadcastReceiver {
+public class BootListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

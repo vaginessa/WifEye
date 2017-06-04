@@ -8,13 +8,13 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiSsidNameConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class BssidView extends BoxView implements IWifiSsidNameConsumer {
+public class BssidView extends BoxView implements IInternetListener {
 
     private static final String HEADER = "H O T  S P O T";
 

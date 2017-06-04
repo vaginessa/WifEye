@@ -4,26 +4,26 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IPersistenceConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IPersistListener;
 
-public class PersistencePublisher {
+public class Persist {
 
-    private Set<IPersistenceConsumer> consumers = new HashSet<>();
+    private Set<IPersistListener> consumers = new HashSet<>();
 
     public void publishDataPersisted() {
         synchronized (this) {
-            for (IPersistenceConsumer consumer : consumers) {
+            for (IPersistListener consumer : consumers) {
                 Executors.newSingleThreadExecutor()
                         .submit(consumer::onDataPersisted);
             }
         }
     }
 
-    public boolean subscribe(IPersistenceConsumer consumer) {
+    public boolean subscribe(IPersistListener consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(IPersistenceConsumer consumer) {
+    public boolean unsubscribe(IPersistListener consumer) {
         return consumers.remove(consumer);
     }
 

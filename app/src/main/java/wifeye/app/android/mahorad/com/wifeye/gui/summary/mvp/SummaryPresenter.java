@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
@@ -19,12 +19,12 @@ public class SummaryPresenter implements IPresenter {
 
     @Inject @ApplicationContext Context context;
     @Inject Utilities utils;
+    @Inject Internet ssidPublisher;
     @Inject
-    Internet ssidPublisher;
-    @Inject CellTowerIdPublisher ctidPublisher;
-    @Inject SystemStatePublisher statePublisher;
+    Signal ctidPublisher;
     @Inject
-    Wifi wifiPublisher;
+    Engine statePublisher;
+    @Inject Wifi wifiPublisher;
     @Inject IPersistence persistence;
 
     /**

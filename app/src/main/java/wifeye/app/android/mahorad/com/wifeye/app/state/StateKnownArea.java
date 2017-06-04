@@ -2,7 +2,7 @@ package wifeye.app.android.mahorad.com.wifeye.app.state;
 
 public class StateKnownArea extends State {
 
-    public StateKnownArea(Engine machine) {
+    public StateKnownArea(StateMachine machine) {
         super(machine);
     }
 
@@ -13,9 +13,9 @@ public class StateKnownArea extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.toConnectedState();
-        engine.haltWifiAct();
-        engine.persist();
+        stateMachine.toConnectedState();
+        stateMachine.haltWifiAct();
+        stateMachine.persist();
     }
 
     @Override
@@ -23,12 +23,12 @@ public class StateKnownArea extends State {
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.observeWifi();
+        stateMachine.observeWifi();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toUnknownAreaState();
+        stateMachine.toUnknownAreaState();
     }
 
 }

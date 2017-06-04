@@ -11,10 +11,10 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.SsidTowerIdConsumer;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
+import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
 
 public class MainService extends Service {
 
@@ -32,10 +32,9 @@ public class MainService extends Service {
     private boolean started;
 
     @Inject Wifi wifi;
-    @Inject CellTowerIdPublisher ctidPublisher;
-    @Inject
-    Internet ssidPublisher;
-    @Inject SsidTowerIdConsumer consumer;
+    @Inject Signal signal;
+    @Inject Internet internet;
+    @Inject StateMachine stateMachine;
 
     @Override
     public void onCreate() {
@@ -61,11 +60,10 @@ public class MainService extends Service {
     private void start() {
         if (started) return;
 
-        ctidPublisher.subscribe(consumer);
-        ssidPublisher.subscribe(consumer);
-        wifi.register();
-        ctidPublisher.start();
-        ssidPublisher.start();
+        wifi.registerBroadcast();
+        internet.registerBroadcast();
+        signal.startListening();
+        stateMachine.start();
 
         started = true;
         Log.v(TAG, "started main service");
@@ -86,9 +84,10 @@ public class MainService extends Service {
     private void stop() {
         if (!started) return;
 
-        wifi.unregister();
-        ctidPublisher.stop();
-        ssidPublisher.stop();
+        stateMachine.stop();
+        wifi.unregisterBroadcast();
+        internet.unregisterBroadcast();
+        signal.stopListening();
 
         started = false;
         Log.v(TAG, "stopped main service");

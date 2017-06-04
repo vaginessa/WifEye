@@ -4,18 +4,17 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.SsidTowerIdConsumer;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationScope;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.MemoryPersistence;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.CellTowerIdPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.OngoingActionPublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.PersistencePublisher;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.SystemStatePublisher;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
-import wifeye.app.android.mahorad.com.wifeye.app.state.Engine;
+import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
 
@@ -36,53 +35,39 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public CellTowerIdPublisher towerIdPublisher(@ApplicationContext Context context,
-                                                 IPersistence persistence) {
-        return new CellTowerIdPublisher(context, persistence);
+    public Signal towerIdPublisher(@ApplicationContext Context context,
+                                   IPersistence persistence) {
+        return new Signal(context, persistence);
     }
 
     @Provides
     @ApplicationScope
-    public WifiDevice wifiDevice(Wifi wifi, OngoingActionPublisher actionPublisher) {
+    public WifiDevice wifiDevice(Wifi wifi, Action actionPublisher) {
         return new WifiDevice(wifi, actionPublisher);
     }
 
     @Provides
     @ApplicationScope
-    public IPersistence persistence(PersistencePublisher publisher) {
+    public IPersistence persistence(Persist publisher) {
         return new MemoryPersistence(publisher);
     }
 
     @Provides
     @ApplicationScope
-    public Engine engine(SystemStatePublisher publisher,
-                         WifiDevice wifiDevice,
-                         IPersistence persistence) {
-        return new Engine(wifiDevice, persistence, publisher);
+    public Persist persistencePublisher() {
+        return new Persist();
     }
 
     @Provides
     @ApplicationScope
-    public SsidTowerIdConsumer ssidTowerIdConsumer(Engine engine) {
-        return new SsidTowerIdConsumer(engine);
+    public Action actionPublisher() {
+        return new Action() ;
     }
 
     @Provides
     @ApplicationScope
-    public PersistencePublisher persistencePublisher() {
-        return new PersistencePublisher();
-    }
-
-    @Provides
-    @ApplicationScope
-    public OngoingActionPublisher actionPublisher() {
-        return new OngoingActionPublisher() ;
-    }
-
-    @Provides
-    @ApplicationScope
-    public SystemStatePublisher statePublisher() {
-        return new SystemStatePublisher();
+    public Engine statePublisher() {
+        return new Engine();
     }
 
     @Provides
@@ -90,4 +75,8 @@ public class MainModule {
     public Utilities utils() {
         return new Utilities();
     }
+
+    @Provides
+    @ApplicationScope
+    public StateMachine engine() { return new StateMachine(); }
 }

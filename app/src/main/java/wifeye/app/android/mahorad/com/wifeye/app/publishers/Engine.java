@@ -6,36 +6,34 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISystemStateConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IEngineListener;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
-import wifeye.app.android.mahorad.com.wifeye.app.state.State;
 
-public class SystemStatePublisher {
+public class Engine {
 
     private static IState.Type state = IState.Type.Initial;
     private static Date date = Calendar.getInstance().getTime();
-    private final Set<ISystemStateConsumer> consumers;
+    private final Set<IEngineListener> consumers;
 
-    public SystemStatePublisher() {
+    public Engine() {
         consumers = new HashSet<>();
     }
 
     public void publish(final IState state) {
-        SystemStatePublisher.state = state.type();
+        Engine.state = state.type();
         date = Calendar.getInstance().getTime();
-        for (final ISystemStateConsumer consumer : consumers) {
+        for (final IEngineListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(() -> consumer.onStateChanged(state.type()));
         }
     }
 
-    public boolean subscribe(ISystemStateConsumer consumer) {
+    public boolean subscribe(IEngineListener consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(ISystemStateConsumer consumer) {
+    public boolean unsubscribe(IEngineListener consumer) {
         return consumers.remove(consumer);
     }
 

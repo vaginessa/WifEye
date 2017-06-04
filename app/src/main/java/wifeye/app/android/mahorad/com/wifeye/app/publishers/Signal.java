@@ -11,23 +11,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.ICellTowerIdConsumer;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISignalListener;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 
 /**
  * listens to receiving cell tower identifiers and
  * notifies the consumers.
  */
-public class CellTowerIdPublisher extends PhoneStateListener {
+public class Signal extends PhoneStateListener {
 
     private static String ctid;
     private static Date date = Calendar.getInstance().getTime();
-    private final Set<ICellTowerIdConsumer> consumers;
+    private final Set<ISignalListener> consumers;
     private final Context context;
     private final IPersistence persistence;
 
-    public CellTowerIdPublisher(Context context, IPersistence persistence) {
+    public Signal(Context context, IPersistence persistence) {
         this.context = context;
         consumers = new HashSet<>();
         this.persistence = persistence;
@@ -55,7 +54,7 @@ public class CellTowerIdPublisher extends PhoneStateListener {
     }
 
     private void publishReceivedKnownTowerId() {
-        for (final ICellTowerIdConsumer consumer : consumers) {
+        for (final ISignalListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(() -> consumer.onReceivedKnownTowerId(ctid));
@@ -63,29 +62,29 @@ public class CellTowerIdPublisher extends PhoneStateListener {
     }
 
     private void publishReceivedUnknownTowerId() {
-        for (final ICellTowerIdConsumer consumer : consumers) {
+        for (final ISignalListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()
                     .submit(() -> consumer.onReceivedUnknownTowerId(ctid));
         }
     }
 
-    public void start() {
+    public void startListening() {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(this, PhoneStateListener.LISTEN_CELL_LOCATION);
     }
 
-    public void stop() {
+    public void stopListening() {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
         consumers.clear();
     }
 
-    public boolean subscribe(ICellTowerIdConsumer consumer) {
+    public boolean subscribe(ISignalListener consumer) {
         return consumers.add(consumer);
     }
 
-    public boolean unsubscribe(ICellTowerIdConsumer consumer) {
+    public boolean unsubscribe(ISignalListener consumer) {
         return consumers.remove(consumer);
     }
 
