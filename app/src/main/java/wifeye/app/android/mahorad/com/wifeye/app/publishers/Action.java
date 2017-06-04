@@ -54,9 +54,9 @@ public class Action {
         return consumers.remove(consumer);
     }
 
-    public State action() {
+    public static State action() {
         return action;
     }
 
-    public Date date() { return date; }
+    public static Date date() { return date; }
 }

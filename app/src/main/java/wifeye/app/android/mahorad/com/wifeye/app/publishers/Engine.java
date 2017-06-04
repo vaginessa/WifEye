@@ -37,11 +37,11 @@ public class Engine {
         return consumers.remove(consumer);
     }
 
-    public IState.Type state() {
+    public static IState.Type state() {
         return state;
     }
 
-    public Date date() {
+    public static Date date() {
         return date;
     }
 }

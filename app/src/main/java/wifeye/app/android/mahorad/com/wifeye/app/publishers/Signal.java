@@ -88,11 +88,11 @@ public class Signal extends PhoneStateListener {
         return consumers.remove(consumer);
     }
 
-    public String ctid() {
+    public static String ctid() {
         return ctid;
     }
 
-    public Date date() {
+    public static Date date() {
         return date;
     }
 
