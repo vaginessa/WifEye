@@ -13,7 +13,7 @@ import wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp.SummaryPresenter;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView;
-import wifeye.app.android.mahorad.com.wifeye.gui.views.BssidView;
+import wifeye.app.android.mahorad.com.wifeye.gui.views.HotspotView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.SignalView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.StateView;
 
@@ -33,7 +33,7 @@ public interface MainComponent {
 
     void inject(StateView stateView);
 
-    void inject(BssidView bssidView);
+    void inject(HotspotView hotspotView);
 
     Action actionPublisher();
 

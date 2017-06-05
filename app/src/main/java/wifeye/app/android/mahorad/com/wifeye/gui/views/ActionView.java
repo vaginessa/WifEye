@@ -93,7 +93,7 @@ public class ActionView extends BoxView implements IActionListener {
     private void setupProgressBar() {
         if (progressBar != null) return;
         progressBar = new CircularProgressBar(getContext(), null);
-        progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxAccentBlue));
+        progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
         progressBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
         progressBar.setProgressBarWidth(progressBarWidth);

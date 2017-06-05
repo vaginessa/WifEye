@@ -14,28 +14,25 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class BssidView extends BoxView implements IInternetListener {
+public class HotspotView extends BoxView implements IInternetListener {
 
     private static final String HEADER = "H O T  S P O T";
 
-    @Inject
-    Internet ssidNamePublisher;
-
-    @Inject
-    Utilities utils;
+    @Inject Internet internet;
+    @Inject Utilities utils;
 
     private String ssid;
     private ImageView stateIcon;
 
-    public BssidView(Context context) {
+    public HotspotView(Context context) {
         super(context);
     }
 
-    public BssidView(Context context, AttributeSet attrs) {
+    public HotspotView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BssidView(Context context, AttributeSet attrs, int defStyle) {
+    public HotspotView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -51,8 +48,8 @@ public class BssidView extends BoxView implements IInternetListener {
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (ssidNamePublisher != null)
-            ssidNamePublisher.subscribe(this);
+        if (internet != null)
+            internet.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -61,8 +58,8 @@ public class BssidView extends BoxView implements IInternetListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (ssidNamePublisher != null)
-            ssidNamePublisher.unsubscribe(this);
+        if (internet != null)
+            internet.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -79,9 +76,9 @@ public class BssidView extends BoxView implements IInternetListener {
 
     @Override
     public void refresh() {
-        if (ssidNamePublisher == null)
+        if (internet == null)
             return;
-        ssid = ssidNamePublisher.ssid();
+        ssid = internet.ssid();
         post(this::updateView);
     }
 
@@ -100,7 +97,7 @@ public class BssidView extends BoxView implements IInternetListener {
     private void updateView() {
         setFact(ssid == null ? "n/a" : ssid);
         String ago = utils.toAgo(
-                ssidNamePublisher.date(), getContext());
+                internet.date(), getContext());
         setCaption(ago);
         int icon = ssid != null
                 ? R.drawable.has_ssid
