@@ -18,8 +18,8 @@ public class Action {
 
     public enum Type {
 
-        Halt("Idle"),
-        DisablingMode("Disabling"),
+        Halt("idle"),
+        DisablingMode("disabling"),
         ObserveModeDisabling("..disabling.."),
         ObserveModeEnabling("..enabling..");
 

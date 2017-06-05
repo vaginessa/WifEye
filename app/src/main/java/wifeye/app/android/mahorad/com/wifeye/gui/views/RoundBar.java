@@ -42,14 +42,10 @@ public class RoundBar extends View {
     private void init(Context context, AttributeSet attrs) {
         rectF = new RectF();
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RoundBar, 0, 0);
-        //Reading values from the XML layout
         try {
-            // Value
             progress = typedArray.getFloat(R.styleable.RoundBar_roundBarProgress, progress);
-            // StrokeWidth
             foregroundWidth = typedArray.getDimension(R.styleable.RoundBar_roundBarBgWidth, foregroundWidth);
             backgroundWidth = typedArray.getDimension(R.styleable.RoundBar_roundBarBgWidth, backgroundWidth);
-            // Color
             foregroundColor = typedArray.getInt(R.styleable.RoundBar_roundBarFgColor, foregroundColor);
             backgroundColor = typedArray.getInt(R.styleable.RoundBar_roundBarBgColor, backgroundColor);
         } finally {
@@ -87,13 +83,13 @@ public class RoundBar extends View {
         rectF.set(0 + stroke / 2, 0 + stroke / 2, min - stroke / 2, min - stroke / 2);
     }
 
-    //region Method Get/Set
+    //region getter/setter methods
     public float getProgress() {
         return progress;
     }
 
-    public void setProgress(float progress) {
-        this.progress = (progress<=100) ? progress : 100;
+    public void setProgress(float percent) {
+        this.progress = Math.min(100, percent);
         invalidate();
     }
 
@@ -143,12 +139,9 @@ public class RoundBar extends View {
     //endregion
 
     //region start/stop methods
-    public synchronized void setProgressWithAnimation(float progress) {
-        setProgressWithAnimation(progress, 1500);
-    }
-
-    public synchronized void setProgressWithAnimation(float progress, int duration) {
-        objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
+    public synchronized void start(float frPercent, float toPercent, int duration) {
+        setProgress(frPercent);
+        objectAnimator = ObjectAnimator.ofFloat(this, "progress", toPercent);
         objectAnimator.setDuration(duration);
         objectAnimator.setInterpolator(new LinearInterpolator());
         objectAnimator.start();

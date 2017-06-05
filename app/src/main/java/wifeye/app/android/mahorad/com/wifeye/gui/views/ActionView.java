@@ -1,6 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.gui.views;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -41,6 +42,11 @@ public class ActionView extends BoxView implements IActionListener {
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private RoundBar roundBar;
+
+    private int activeTextColor = ContextCompat.getColor(getContext(), R.color.boxActiveTextColor);
+    private int mainBackground = ContextCompat.getColor(getContext(), R.color.colorMainBackground);
+    private int activeRedColor = ContextCompat.getColor(getContext(), R.color.boxAccentRed);
+    private int textColorIdling = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
 
     public ActionView(Context context) {
         super(context);
@@ -92,8 +98,8 @@ public class ActionView extends BoxView implements IActionListener {
     private void setupProgressBar() {
         if (roundBar != null) return;
         roundBar = new RoundBar(getContext(), null);
-        roundBar.setForegroundColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
-        roundBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
+        roundBar.setForegroundColor(activeTextColor);
+        roundBar.setBackgroundColor(mainBackground);
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
         roundBar.setForegroundWidth(progressBarWidth);
         float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
@@ -104,10 +110,11 @@ public class ActionView extends BoxView implements IActionListener {
     private void setupShimmerText() {
         if (shimmerText != null) return;
         shimmerText = new ShimmerTextView(getContext());
-        int reflectColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
-        shimmerText.setReflectionColor(reflectColor);
+        shimmerText.setTextColor(mainBackground);
+        shimmerText.setReflectionColor(activeTextColor);
         shimmerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        shimmerText.setTextSize(20);
+        shimmerText.setTextSize(18);
+        shimmerText.setTypeface(null, Typeface.BOLD);
         shimmerText.setLayoutParams(getShimmerTextLayoutParams());
     }
 
@@ -156,32 +163,40 @@ public class ActionView extends BoxView implements IActionListener {
             shimmerStop();
             progressStop();
         } else {
-            shimmerStart();
             progressStart();
+            shimmerStart();
         }
     }
 
     public synchronized void shimmerStart() {
         shimmerText.setText(Action.type().title());
+        shimmerText.setPrimaryColor(mainBackground);
+        shimmerText.setTextColor(mainBackground);
+        shimmerText.setReflectionColor(actionColor());
         shimmer.start(shimmerText);
-        int boxBackground = ContextCompat.getColor(getContext(), R.color.boxBackground);
-        shimmerText.setTextColor(boxBackground);
+    }
+
+    public int actionColor() {
+        if (Action.type() == ObserveModeEnabling)
+            return activeTextColor;
+        else
+            return activeRedColor;
     }
 
     private synchronized void shimmerStop() {
         shimmerText.setText(Halt.title());
+        shimmerText.setTextColor(textColorIdling);
         shimmer.cancel();
-        int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
-        shimmerText.setTextColor(textColor);
     }
 
     public synchronized void progressStart() {
         int progress = (int) wifiHandler.elapsed();
         int total = getTotalDuration();
-        int remained = (total - progress) * 1000;
-        int percent = (100 * progress) / total;
-        roundBar.setProgress(percent);
-        roundBar.setProgressWithAnimation(100, remained);
+        int duration = (total - progress) * 1000;
+        int passed = (100 * progress) / total;
+        if (Action.type() == Halt) return;
+        roundBar.setForegroundColor(actionColor());
+        roundBar.start(passed, 100, duration);
     }
 
     public synchronized void progressStop() {

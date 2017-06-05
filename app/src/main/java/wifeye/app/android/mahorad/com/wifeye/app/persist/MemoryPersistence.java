@@ -16,29 +16,36 @@ public class MemoryPersistence extends Persistence {
 
     public MemoryPersistence(Persist publisher) {
         super(publisher);
-        addFakeValues();
+//        addFakeValues();
     }
 
-    private void addFakeValues() {
-        HashSet<String> towers = new HashSet<String>() {{
-            add("[20201,13238893,-1]");
-            add("[20101,13302242,-1]");
-            add("[20201,13302242,-1]");
-            add("[20201,13292922,-1]");
-            add("[20101,13173328,-1]");
-            add("[2011,134415638,-1]");
-            add("[2021,582420,-1]");
-            add("[20201,13173317,-1]");
-        }};
-        db.put("Archer", towers);
-    }
+//    private void addFakeValues() {
+//        HashSet<String> towers = new HashSet<String>() {{
+//            add("[20201,13238893,-1]");
+//            add("[20101,13302242,-1]");
+//            add("[20201,13302242,-1]");
+//            add("[20201,13292922,-1]");
+//            add("[20101,13173328,-1]");
+//            add("[2011,134415638,-1]");
+//            add("[2021,582420,-1]");
+//            add("[20201,13173317,-1]");
+//        }};
+//        db.put("Archer", towers);
+//    }
 
     @Override
     public void persist(String ssid, final String ctid) {
-        if (ssid == null || ctid == null)
-            return;
+        if (nullOrEmpty(ssid)) return;
+        if (nullOrEmpty(ctid)) return;
         if (exist(ssid, ctid)) return;
         doPersist(ssid, ctid);
+    }
+
+    private boolean nullOrEmpty(String text) {
+        if (text == null) return true;
+        if (text.length() == 0)
+            return true;
+        return text.replace(" ", "").length() == 0;
     }
 
     private void doPersist(String ssid, final String ctid) {
@@ -46,12 +53,30 @@ public class MemoryPersistence extends Persistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
-            persist.setData(ssid + " - " + ctid);
+            persist.setData(format(ssid));
             Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
-            persist.setData(ssid + " - " + ctid);
+            persist.setData(format(ssid));
         }
+    }
+
+    private String format(String ssid) {
+        int towers = towersCount(ssid);
+        String plural = towers > 1 ? "s" : "";
+        return String.format("%s: %d Tower%s", ssid, towers, plural);
+    }
+
+    private int towersCount(String ssid) {
+        return towersOf(ssid).size();
+    }
+
+    private Set<String> towersOf(String ssid) {
+        if (nullOrEmpty(ssid))
+            return new HashSet<>();
+        if (!db.containsKey(ssid))
+            return new HashSet<>();
+        return db.get(ssid);
     }
 
     @Override
