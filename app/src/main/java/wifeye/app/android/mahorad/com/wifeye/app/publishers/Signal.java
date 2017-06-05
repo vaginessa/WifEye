@@ -40,7 +40,7 @@ public class Signal extends PhoneStateListener {
             if (isSame(towerId)) return;
             ctid = towerId;
             date = Calendar.getInstance().getTime();
-            if (persistence.exist(Internet.ssid(), ctid))
+            if (persistence.exist(ctid))
                 publishReceivedKnownTowerId();
             else
                 publishReceivedUnknownTowerId();

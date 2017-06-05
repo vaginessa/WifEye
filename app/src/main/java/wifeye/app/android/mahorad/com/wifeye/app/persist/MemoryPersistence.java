@@ -37,6 +37,11 @@ public class MemoryPersistence extends Persistence {
     public void persist(String ssid, final String ctid) {
         if (ssid == null || ctid == null)
             return;
+        if (exist(ssid, ctid)) return;
+        doPersist(ssid, ctid);
+    }
+
+    private void doPersist(String ssid, final String ctid) {
         if (!db.containsKey(ssid)) {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
@@ -56,6 +61,7 @@ public class MemoryPersistence extends Persistence {
         return db.get(ssid).contains(ctid);
     }
 
+    @Override
     public boolean exist(String ctid) {
         for (Set<String> set : db.values()) {
             if (set.contains(ctid))
