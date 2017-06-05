@@ -13,7 +13,7 @@ import android.view.animation.LinearInterpolator;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 
-public class CircularProgressBar extends View {
+public class RoundBar extends View {
 
     // Properties
     private float progress = 0;
@@ -30,24 +30,24 @@ public class CircularProgressBar extends View {
     private ObjectAnimator objectAnimator;
 
     //region Constructor & Init Method
-    public CircularProgressBar(Context context, AttributeSet attrs) {
+    public RoundBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         rectF = new RectF();
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircularProgressBar, 0, 0);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RoundBar, 0, 0);
         //Reading values from the XML layout
         try {
             // Value
-            progress = typedArray.getFloat(R.styleable.CircularProgressBar_cpb_progress, progress);
+            progress = typedArray.getFloat(R.styleable.RoundBar_cpb_progress, progress);
             // StrokeWidth
-            strokeWidth = typedArray.getDimension(R.styleable.CircularProgressBar_cpb_progressbar_width, strokeWidth);
-            backgroundStrokeWidth = typedArray.getDimension(R.styleable.CircularProgressBar_cpb_background_progressbar_width, backgroundStrokeWidth);
+            strokeWidth = typedArray.getDimension(R.styleable.RoundBar_cpb_progressbar_width, strokeWidth);
+            backgroundStrokeWidth = typedArray.getDimension(R.styleable.RoundBar_cpb_background_progressbar_width, backgroundStrokeWidth);
             // Color
-            color = typedArray.getInt(R.styleable.CircularProgressBar_cpb_progressbar_color, color);
-            backgroundColor = typedArray.getInt(R.styleable.CircularProgressBar_cpb_background_progressbar_color, backgroundColor);
+            color = typedArray.getInt(R.styleable.RoundBar_cpb_progressbar_color, color);
+            backgroundColor = typedArray.getInt(R.styleable.RoundBar_cpb_background_progressbar_color, backgroundColor);
         } finally {
             typedArray.recycle();
         }
@@ -147,7 +147,7 @@ public class CircularProgressBar extends View {
     /**
      * Set the progress with an animation.
      * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link CircularProgressBar#setProgress(float)} directly within this method.
+     * so don't call the {@link RoundBar#setProgress(float)} directly within this method.
      *
      * @param progress The progress it should animate to it.
      */
@@ -158,7 +158,7 @@ public class CircularProgressBar extends View {
     /**
      * Set the progress with an animation.
      * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link CircularProgressBar#setProgress(float)} directly within this method.
+     * so don't call the {@link RoundBar#setProgress(float)} directly within this method.
      *
      * @param progress The progress it should animate to it.
      * @param duration The length of the animation, in milliseconds.

@@ -57,6 +57,7 @@ public class WifiHandler implements IWifiListener {
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
                 .setLessDelayedAction(this::disableWifi)
                 .setCompletionAction(wifi::disable)
+                .startWithMoreDelayedAction()
                 .build();
     }
 
@@ -85,7 +86,7 @@ public class WifiHandler implements IWifiListener {
     }
 
     private void disableWifi() {
-        if (Internet.ssid() != null) {
+        if (Internet.connected()) {
             halt();
             return;
         }

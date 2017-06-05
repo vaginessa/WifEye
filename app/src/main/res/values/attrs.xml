@@ -12,7 +12,7 @@
         <attr name="captionColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="CircularProgressBar">
+    <declare-styleable name="RoundBar">
         <attr name="cpb_progress" format="integer" />
         <attr name="cpb_progressbar_color" format="color" />
         <attr name="cpb_background_progressbar_color" format="color" />

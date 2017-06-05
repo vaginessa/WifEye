@@ -128,4 +128,7 @@ public class Internet
 
     public static Date date() { return date; }
 
+    public static boolean connected() {
+        return ssid != null;
+    }
 }

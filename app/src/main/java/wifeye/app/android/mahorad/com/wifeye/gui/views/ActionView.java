@@ -41,7 +41,7 @@ public class ActionView extends BoxView implements IActionListener {
     private Action.Type action;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
-    private CircularProgressBar progressBar;
+    private RoundBar progressBar;
 
     public ActionView(Context context) {
         super(context);
@@ -92,7 +92,7 @@ public class ActionView extends BoxView implements IActionListener {
 
     private void setupProgressBar() {
         if (progressBar != null) return;
-        progressBar = new CircularProgressBar(getContext(), null);
+        progressBar = new RoundBar(getContext(), null);
         progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
         progressBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
