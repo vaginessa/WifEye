@@ -20,7 +20,7 @@
         <attr name="cpb_background_progressbar_width" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="RippleBackground">
+    <declare-styleable name="RippleView">
         <attr name="rb_color" format="color" />
         <attr name="rb_strokeWidth" format="dimension"/>
         <attr name="rb_radius" format="dimension"/>

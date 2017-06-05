@@ -32,7 +32,7 @@ public class SignalView extends BoxView implements ISignalListener {
             getContext(),
             R.color.colorGreen);
 
-    private RippleBackground ripple;
+    private RippleView ripple;
 
     public SignalView(Context context) {
         super(context);
@@ -81,7 +81,7 @@ public class SignalView extends BoxView implements ISignalListener {
 
     private void setupRipplingImage() {
         if (ripple != null) return;
-        ripple = new RippleBackground(getContext());
+        ripple = new RippleView(getContext());
         ripple.setImage(R.drawable.tower);
         ripple.setCount(3);
         ripple.setInitialRadius(20f);
