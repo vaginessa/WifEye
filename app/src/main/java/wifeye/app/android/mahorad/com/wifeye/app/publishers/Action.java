@@ -56,7 +56,7 @@ public class Action {
         return consumers.remove(consumer);
     }
 
-    public static Type action() {
+    public static Type type() {
         return type;
     }
 

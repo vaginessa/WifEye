@@ -8,7 +8,7 @@
     android:layout_gravity="center_horizontal"
     android:columnCount="2"
     android:orientation="horizontal"
-    tools:context="wifeye.app.android.mahorad.com.wifeye.gui.view.FragmentSummary">
+    tools:context="wifeye.app.android.mahorad.com.wifeye.gui.overview.OverviewFragment">
 
     <wifeye.app.android.mahorad.com.wifeye.gui.views.SignalView
         android:id="@+id/signalBox"

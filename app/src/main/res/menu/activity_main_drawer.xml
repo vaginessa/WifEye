@@ -3,9 +3,9 @@
 
     <group android:id="@+id/top" android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_summary"
-            android:icon="@drawable/summary"
-            android:title="@string/drawer_summary" />
+            android:id="@+id/nav_overview"
+            android:icon="@drawable/overview"
+            android:title="@string/drawer_overview" />
         <item
             android:id="@+id/nav_hotspots"
             android:icon="@drawable/hotspots"

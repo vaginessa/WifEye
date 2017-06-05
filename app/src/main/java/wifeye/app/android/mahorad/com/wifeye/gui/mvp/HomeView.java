@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import wifeye.app.android.mahorad.com.wifeye.R;
-import wifeye.app.android.mahorad.com.wifeye.gui.summary.SummaryFragment;
+import wifeye.app.android.mahorad.com.wifeye.gui.overview.OverviewFragment;
 
 import static wifeye.app.android.mahorad.com.wifeye.R.color.colorAccent;
 import static wifeye.app.android.mahorad.com.wifeye.R.color.colorGreen;
@@ -32,7 +32,7 @@ import static wifeye.app.android.mahorad.com.wifeye.R.color.colorGreen;
 public class HomeView extends FrameLayout {
 
     private final ActivityManagePermission activity;
-    private final SummaryFragment summary = new SummaryFragment();
+    private final OverviewFragment overview = new OverviewFragment();
 
     private ColorStateList greens;
     private ColorStateList accent;
@@ -116,8 +116,8 @@ public class HomeView extends FrameLayout {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_summary:
-                putFragment(summary);
+            case R.id.nav_overview:
+                putFragment(overview);
                 break;
             default:
         }

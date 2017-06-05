@@ -34,14 +34,13 @@ public class ActionView extends BoxView implements IActionListener {
 
     private static final String HEADER = "A C T I O N";
 
-    @Inject Action actionPublisher;
+    @Inject Action action;
     @Inject Utilities utils;
     @Inject WifiHandler wifiHandler;
 
-    private Action.Type action;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
-    private RoundBar progressBar;
+    private RoundBar roundBar;
 
     public ActionView(Context context) {
         super(context);
@@ -67,8 +66,8 @@ public class ActionView extends BoxView implements IActionListener {
         if (mainComponent != null)
             mainComponent.inject(this);
 
-        if (actionPublisher != null)
-            actionPublisher.subscribe(this);
+        if (action != null)
+            action.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -77,8 +76,8 @@ public class ActionView extends BoxView implements IActionListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (actionPublisher != null)
-            actionPublisher.unsubscribe(this);
+        if (action != null)
+            action.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -86,20 +85,20 @@ public class ActionView extends BoxView implements IActionListener {
         setupShimmerText();
         LinearLayout layout = getContentLayout();
         setContents(layout);
-        layout.addView(progressBar);
+        layout.addView(roundBar);
         layout.addView(shimmerText);
     }
 
     private void setupProgressBar() {
-        if (progressBar != null) return;
-        progressBar = new RoundBar(getContext(), null);
-        progressBar.setColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
-        progressBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
+        if (roundBar != null) return;
+        roundBar = new RoundBar(getContext(), null);
+        roundBar.setColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
+        roundBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
-        progressBar.setProgressBarWidth(progressBarWidth);
+        roundBar.setProgressBarWidth(progressBarWidth);
         float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
-        progressBar.setBackgroundProgressBarWidth(backgroundWidth);
-        progressBar.setLayoutParams(getProgressBarLayoutParams());
+        roundBar.setBackgroundProgressBarWidth(backgroundWidth);
+        roundBar.setLayoutParams(getProgressBarLayoutParams());
     }
 
     private void setupShimmerText() {
@@ -139,28 +138,21 @@ public class ActionView extends BoxView implements IActionListener {
 
     @Override
     public void refresh() {
-        if (actionPublisher == null)
+        if (action == null)
             return;
-        Action.Type action = actionPublisher.action();
-        if (action == this.action)
-            return;
-        this.action = action;
         post(this::updateView);
     }
 
     @Override
-    public synchronized void onActionChanged(Action.Type action) {
-        if (action == this.action)
-            return;
-        this.action = action;
+    public synchronized void onActionChanged(Action.Type type) {
         post(this::updateView);
     }
 
     private void updateView() {
         String ago = utils.toAgo(
-                actionPublisher.date(), getContext());
+                Action.date(), getContext());
         setCaption("since ".concat(ago));
-        if (action == Halt) {
+        if (Action.type() == Halt) {
             shimmerStop();
             progressStop();
         } else {
@@ -170,7 +162,7 @@ public class ActionView extends BoxView implements IActionListener {
     }
 
     public void shimmerStart() {
-        shimmerText.setText(action.title());
+        shimmerText.setText(Action.type().title());
         shimmer.start(shimmerText);
         int boxBackground = ContextCompat.getColor(getContext(), R.color.boxBackground);
         shimmerText.setTextColor(boxBackground);
@@ -188,20 +180,20 @@ public class ActionView extends BoxView implements IActionListener {
         int total = getTotalDuration();
         int remained = (total - progress) * 1000;
         int percent = (100 * progress) / total;
-        progressBar.setProgress(percent);
-        progressBar.setProgressWithAnimation(100, remained);
+        roundBar.setProgress(percent);
+        roundBar.setProgressWithAnimation(100, remained);
     }
 
     public void progressStop() {
-        progressBar.stop();
-        progressBar.setProgress(0);
+        roundBar.stop();
+        roundBar.setProgress(0);
     }
 
     private int getTotalDuration() {
-        if (action == DisablingMode
-                || action == ObserveModeDisabling)
+        if (Action.type() == DisablingMode
+                || Action.type() == ObserveModeDisabling)
             return Constants.WIFI_DISABLE_TIMEOUT;
-        if (action == ObserveModeEnabling)
+        if (Action.type() == ObserveModeEnabling)
             return Constants.WIFI_ENABLE_TIMEOUT;
         return 1;
     }

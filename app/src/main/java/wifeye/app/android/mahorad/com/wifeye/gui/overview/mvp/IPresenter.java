@@ -1,4 +1,4 @@
-package wifeye.app.android.mahorad.com.wifeye.gui.summary.mvp;
+package wifeye.app.android.mahorad.com.wifeye.gui.overview.mvp;
 
 public interface IPresenter {
 
