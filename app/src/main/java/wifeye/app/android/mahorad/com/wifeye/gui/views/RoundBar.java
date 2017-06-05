@@ -83,8 +83,8 @@ public class RoundBar extends View {
         final int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int min = Math.min(width, height);
         setMeasuredDimension(min, min);
-        float highStroke = (foregroundWidth > backgroundWidth) ? foregroundWidth : backgroundWidth;
-        rectF.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
+        float stroke = Math.max(foregroundWidth, backgroundWidth);
+        rectF.set(0 + stroke / 2, 0 + stroke / 2, min - stroke / 2, min - stroke / 2);
     }
 
     //region Method Get/Set
@@ -140,50 +140,35 @@ public class RoundBar extends View {
         invalidate();
         requestLayout();
     }
-
-    public boolean isAnimating() {
-        if (objectAnimator == null)
-            return false;
-        boolean started = objectAnimator.isStarted();
-        boolean running = objectAnimator.isRunning();
-        return started && running;
-    }
     //endregion
 
-    //region Other Method
-    /**
-     * Set the progress with an animation.
-     * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link RoundBar#setProgress(float)} directly within this method.
-     *
-     * @param progress The progress it should animate to it.
-     */
-    public void setProgressWithAnimation(float progress) {
+    //region start/stop methods
+    public synchronized void setProgressWithAnimation(float progress) {
         setProgressWithAnimation(progress, 1500);
     }
 
-    /**
-     * Set the progress with an animation.
-     * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link RoundBar#setProgress(float)} directly within this method.
-     *
-     * @param progress The progress it should animate to it.
-     * @param duration The length of the animation, in milliseconds.
-     */
-    public void setProgressWithAnimation(float progress, int duration) {
+    public synchronized void setProgressWithAnimation(float progress, int duration) {
         objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
         objectAnimator.setDuration(duration);
         objectAnimator.setInterpolator(new LinearInterpolator());
         objectAnimator.start();
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (objectAnimator == null)
             return;
         objectAnimator.removeAllListeners();
         objectAnimator.end();
         objectAnimator.cancel();
         objectAnimator = null;
+    }
+
+    public boolean isRunning() {
+        if (objectAnimator == null)
+            return false;
+        boolean started = objectAnimator.isStarted();
+        boolean running = objectAnimator.isRunning();
+        return started && running;
     }
     //endregion
 }
