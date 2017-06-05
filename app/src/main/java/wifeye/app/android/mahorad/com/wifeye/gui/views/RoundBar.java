@@ -17,9 +17,9 @@ public class RoundBar extends View {
 
     // Properties
     private float progress = 0;
-    private float strokeWidth = getResources().getDimension(R.dimen.default_stroke_width);
-    private float backgroundStrokeWidth = getResources().getDimension(R.dimen.default_background_stroke_width);
-    private int color = Color.BLACK;
+    private float foregroundWidth = getResources().getDimension(R.dimen.default_stroke_width);
+    private float backgroundWidth = getResources().getDimension(R.dimen.default_background_stroke_width);
+    private int foregroundColor = Color.BLACK;
     private int backgroundColor = Color.GRAY;
 
     // Object used to draw
@@ -29,7 +29,11 @@ public class RoundBar extends View {
     private Paint foregroundPaint;
     private ObjectAnimator objectAnimator;
 
-    //region Constructor & Init Method
+    /**
+     * creates a round bar
+     * @param context
+     * @param attrs
+     */
     public RoundBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
@@ -41,13 +45,13 @@ public class RoundBar extends View {
         //Reading values from the XML layout
         try {
             // Value
-            progress = typedArray.getFloat(R.styleable.RoundBar_cpb_progress, progress);
+            progress = typedArray.getFloat(R.styleable.RoundBar_roundBarProgress, progress);
             // StrokeWidth
-            strokeWidth = typedArray.getDimension(R.styleable.RoundBar_cpb_progressbar_width, strokeWidth);
-            backgroundStrokeWidth = typedArray.getDimension(R.styleable.RoundBar_cpb_background_progressbar_width, backgroundStrokeWidth);
+            foregroundWidth = typedArray.getDimension(R.styleable.RoundBar_roundBarBgWidth, foregroundWidth);
+            backgroundWidth = typedArray.getDimension(R.styleable.RoundBar_roundBarBgWidth, backgroundWidth);
             // Color
-            color = typedArray.getInt(R.styleable.RoundBar_cpb_progressbar_color, color);
-            backgroundColor = typedArray.getInt(R.styleable.RoundBar_cpb_background_progressbar_color, backgroundColor);
+            foregroundColor = typedArray.getInt(R.styleable.RoundBar_roundBarFgColor, foregroundColor);
+            backgroundColor = typedArray.getInt(R.styleable.RoundBar_roundBarBgColor, backgroundColor);
         } finally {
             typedArray.recycle();
         }
@@ -56,17 +60,15 @@ public class RoundBar extends View {
         backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setColor(backgroundColor);
         backgroundPaint.setStyle(Paint.Style.STROKE);
-        backgroundPaint.setStrokeWidth(backgroundStrokeWidth);
+        backgroundPaint.setStrokeWidth(backgroundWidth);
 
         // Init Foreground
         foregroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        foregroundPaint.setColor(color);
+        foregroundPaint.setColor(foregroundColor);
         foregroundPaint.setStyle(Paint.Style.STROKE);
-        foregroundPaint.setStrokeWidth(strokeWidth);
+        foregroundPaint.setStrokeWidth(foregroundWidth);
     }
-    //endregion
 
-    //region Draw Method
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -74,19 +76,16 @@ public class RoundBar extends View {
         float angle = 360 * progress / 100;
         canvas.drawArc(rectF, startAngle, angle, false, foregroundPaint);
     }
-    //endregion
 
-    //region Mesure Method
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int min = Math.min(width, height);
         setMeasuredDimension(min, min);
-        float highStroke = (strokeWidth > backgroundStrokeWidth) ? strokeWidth : backgroundStrokeWidth;
+        float highStroke = (foregroundWidth > backgroundWidth) ? foregroundWidth : backgroundWidth;
         rectF.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
     }
-    //endregion
 
     //region Method Get/Set
     public float getProgress() {
@@ -98,35 +97,35 @@ public class RoundBar extends View {
         invalidate();
     }
 
-    public float getProgressBarWidth() {
-        return strokeWidth;
+    public float getForegroundWidth() {
+        return foregroundWidth;
     }
 
-    public void setProgressBarWidth(float strokeWidth) {
-        this.strokeWidth = strokeWidth;
+    public void setForegroundWidth(float strokeWidth) {
+        this.foregroundWidth = strokeWidth;
         foregroundPaint.setStrokeWidth(strokeWidth);
         requestLayout();//Because it should recalculate its bounds
         invalidate();
     }
 
-    public float getBackgroundProgressBarWidth() {
-        return backgroundStrokeWidth;
+    public float getBackgroundWidth() {
+        return backgroundWidth;
     }
 
-    public void setBackgroundProgressBarWidth(float backgroundStrokeWidth) {
-        this.backgroundStrokeWidth = backgroundStrokeWidth;
+    public void setBackgroundWidth(float backgroundStrokeWidth) {
+        this.backgroundWidth = backgroundStrokeWidth;
         backgroundPaint.setStrokeWidth(backgroundStrokeWidth);
         requestLayout();//Because it should recalculate its bounds
         invalidate();
     }
 
-    public int getColor() {
-        return color;
+    public int getForegroundColor() {
+        return foregroundColor;
     }
 
-    public void setColor(int color) {
-        this.color = color;
-        foregroundPaint.setColor(color);
+    public void setForegroundColor(int foregroundColor) {
+        this.foregroundColor = foregroundColor;
+        foregroundPaint.setColor(foregroundColor);
         invalidate();
         requestLayout();
     }
@@ -140,6 +139,14 @@ public class RoundBar extends View {
         backgroundPaint.setColor(backgroundColor);
         invalidate();
         requestLayout();
+    }
+
+    public boolean isAnimating() {
+        if (objectAnimator == null)
+            return false;
+        boolean started = objectAnimator.isStarted();
+        boolean running = objectAnimator.isRunning();
+        return started && running;
     }
     //endregion
 

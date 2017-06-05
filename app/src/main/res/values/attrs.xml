@@ -13,11 +13,11 @@
     </declare-styleable>
 
     <declare-styleable name="RoundBar">
-        <attr name="cpb_progress" format="integer" />
-        <attr name="cpb_progressbar_color" format="color" />
-        <attr name="cpb_background_progressbar_color" format="color" />
-        <attr name="cpb_progressbar_width" format="dimension" />
-        <attr name="cpb_background_progressbar_width" format="dimension" />
+        <attr name="roundBarProgress" format="integer" />
+        <attr name="roundBarFgColor" format="color" />
+        <attr name="roundBarBgColor" format="color" />
+        <attr name="roundBarFgWidth" format="dimension" />
+        <attr name="roundBarBgWidth" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="RippleView">

@@ -92,12 +92,12 @@ public class ActionView extends BoxView implements IActionListener {
     private void setupProgressBar() {
         if (roundBar != null) return;
         roundBar = new RoundBar(getContext(), null);
-        roundBar.setColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
+        roundBar.setForegroundColor(ContextCompat.getColor(getContext(), R.color.boxActiveTextColor));
         roundBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorMainBackground));
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
-        roundBar.setProgressBarWidth(progressBarWidth);
+        roundBar.setForegroundWidth(progressBarWidth);
         float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
-        roundBar.setBackgroundProgressBarWidth(backgroundWidth);
+        roundBar.setBackgroundWidth(backgroundWidth);
         roundBar.setLayoutParams(getProgressBarLayoutParams());
     }
 
@@ -148,7 +148,7 @@ public class ActionView extends BoxView implements IActionListener {
         post(this::updateView);
     }
 
-    private void updateView() {
+    private synchronized void updateView() {
         String ago = utils.toAgo(
                 Action.date(), getContext());
         setCaption("since ".concat(ago));
@@ -161,21 +161,21 @@ public class ActionView extends BoxView implements IActionListener {
         }
     }
 
-    public void shimmerStart() {
+    public synchronized void shimmerStart() {
         shimmerText.setText(Action.type().title());
         shimmer.start(shimmerText);
         int boxBackground = ContextCompat.getColor(getContext(), R.color.boxBackground);
         shimmerText.setTextColor(boxBackground);
     }
 
-    private void shimmerStop() {
+    private synchronized void shimmerStop() {
         shimmerText.setText(Halt.title());
         shimmer.cancel();
         int textColor = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
         shimmerText.setTextColor(textColor);
     }
 
-    public void progressStart() {
+    public synchronized void progressStart() {
         int progress = (int) wifiHandler.elapsed();
         int total = getTotalDuration();
         int remained = (total - progress) * 1000;
@@ -184,7 +184,7 @@ public class ActionView extends BoxView implements IActionListener {
         roundBar.setProgressWithAnimation(100, remained);
     }
 
-    public void progressStop() {
+    public synchronized void progressStop() {
         roundBar.stop();
         roundBar.setProgress(0);
     }
