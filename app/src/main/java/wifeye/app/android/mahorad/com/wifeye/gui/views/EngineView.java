@@ -14,9 +14,9 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class StateView extends BoxView implements IEngineListener {
+public class EngineView extends BoxView implements IEngineListener {
 
-    private static final String HEADER = "S T A T E";
+    private static final String HEADER = "E V A L U A T I O N";
 
     @Inject
     Engine statePublisher;
@@ -27,15 +27,15 @@ public class StateView extends BoxView implements IEngineListener {
     private IState.Type state;
     private ImageView stateIcon;
 
-    public StateView(Context context) {
+    public EngineView(Context context) {
         super(context);
     }
 
-    public StateView(Context context, AttributeSet attrs) {
+    public EngineView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public StateView(Context context, AttributeSet attrs, int defStyle) {
+    public EngineView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

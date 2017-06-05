@@ -43,7 +43,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.views.StateView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.EngineView
         android:id="@+id/d"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -54,7 +54,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.WifiView
         android:id="@+id/a"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -65,7 +65,7 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <wifeye.app.android.mahorad.com.wifeye.gui.views.BoxView
+    <wifeye.app.android.mahorad.com.wifeye.gui.views.PersistView
         android:id="@+id/b"
         android:layout_width="150dp"
         android:layout_height="150dp"

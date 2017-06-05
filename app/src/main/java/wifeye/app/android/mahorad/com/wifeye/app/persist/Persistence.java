@@ -4,10 +4,10 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 
 public abstract class Persistence implements IPersistence {
 
-    protected final Persist publisher;
+    protected final Persist persist;
 
-    public Persistence(Persist publisher) {
-        this.publisher = publisher;
+    public Persistence(Persist persist) {
+        this.persist = persist;
     }
 
 }

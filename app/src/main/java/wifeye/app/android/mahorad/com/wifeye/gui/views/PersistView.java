@@ -8,31 +8,29 @@ import javax.inject.Inject;
 
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
+import wifeye.app.android.mahorad.com.wifeye.app.consumers.IPersistListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
-import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class HotspotView extends BoxView implements IInternetListener {
+public class PersistView extends BoxView implements IPersistListener {
 
-    private static final String HEADER = "H O T S P O T";
+    private static final String HEADER = "P E R S I S T";
 
-    @Inject Internet internet;
+    @Inject Persist persist;
     @Inject Utilities utils;
 
-    private String ssid;
     private ImageView stateIcon;
 
-    public HotspotView(Context context) {
+    public PersistView(Context context) {
         super(context);
     }
 
-    public HotspotView(Context context, AttributeSet attrs) {
+    public PersistView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public HotspotView(Context context, AttributeSet attrs, int defStyle) {
+    public PersistView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -48,8 +46,8 @@ public class HotspotView extends BoxView implements IInternetListener {
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (internet != null)
-            internet.subscribe(this);
+        if (persist != null)
+            persist.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -58,51 +56,37 @@ public class HotspotView extends BoxView implements IInternetListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (internet != null)
-            internet.unsubscribe(this);
+        if (persist != null)
+            persist.unsubscribe(this);
     }
 
     private void setupContents() {
         setupStateIconView();
         setContents(stateIcon);
-        setFact(IState.Type.Initial.title());
+        setFact("-");
         setCaption("n/a");
     }
 
     private void setupStateIconView() {
         stateIcon = new ImageView(getContext());
-        stateIcon.setImageResource(R.drawable.no_ssid);
+        stateIcon.setImageResource(R.drawable.save);
     }
 
     @Override
     public void refresh() {
-        if (internet == null)
-            return;
-        ssid = internet.ssid();
         post(this::updateView);
     }
 
     @Override
-    public void onInternetConnected(String ssid) {
-        this.ssid = ssid;
-        post(this::updateView);
-    }
-
-    @Override
-    public void onInternetDisconnected() {
-        this.ssid = null;
+    public void onDataPersisted(String data) {
         post(this::updateView);
     }
 
     private void updateView() {
-        setFact(ssid == null ? "n/a" : ssid);
         String ago = utils.toAgo(
-                internet.date(), getContext());
-        setCaption(ago);
-        int icon = ssid != null
-                ? R.drawable.has_ssid
-                : R.drawable.no_ssid;
-        stateIcon.setImageResource(icon);
+                Persist.date(), getContext());
+        setFact(ago);
+        setCaption(Persist.data());
     }
 
 }

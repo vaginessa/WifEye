@@ -41,11 +41,11 @@ public class MemoryPersistence extends Persistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
-            publisher.publishDataPersisted();
+            persist.setData(ssid + " - " + ctid);
             Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
-            publisher.publishDataPersisted();
+            persist.setData(ssid + " - " + ctid);
         }
     }
 
