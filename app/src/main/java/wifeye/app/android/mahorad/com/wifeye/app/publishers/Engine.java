@@ -19,9 +19,14 @@ public class Engine {
         consumers = new HashSet<>();
     }
 
-    public void publish(final IState state) {
+    public void setState(final IState state) {
+        if (Engine.state == state.type()) return;
         Engine.state = state.type();
         date = Calendar.getInstance().getTime();
+        publish(state);
+    }
+
+    private void publish(IState state) {
         for (final IEngineListener consumer : consumers) {
             Executors
                     .newSingleThreadExecutor()

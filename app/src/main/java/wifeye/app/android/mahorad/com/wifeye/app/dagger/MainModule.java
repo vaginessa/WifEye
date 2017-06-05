@@ -16,7 +16,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
+import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 @Module(includes = ApplicationModule.class)
 public class MainModule {
@@ -42,8 +42,8 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public WifiDevice wifiDevice(Wifi wifi, Action actionPublisher) {
-        return new WifiDevice(wifi, actionPublisher);
+    public WifiHandler wifiDevice(Wifi wifi, Action actionPublisher) {
+        return new WifiHandler(wifi, actionPublisher);
     }
 
     @Provides

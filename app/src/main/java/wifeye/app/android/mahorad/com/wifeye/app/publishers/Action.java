@@ -8,13 +8,15 @@ import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IActionListener;
 
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.Halt;
+
 public class Action {
 
     private Set<IActionListener> consumers = new HashSet<>();
-    private static State action = State.Halt;
+    private static Type type = Halt;
     private static Date date = Calendar.getInstance().getTime();
 
-    public enum State {
+    public enum Type {
 
         Halt("Idle"),
         DisablingMode("Disabling"),
@@ -23,7 +25,7 @@ public class Action {
 
         private final String title;
 
-        State(String title) {
+        Type(String title) {
             this.title = title;
         }
 
@@ -32,17 +34,17 @@ public class Action {
         }
     }
 
-
-    public synchronized void publish(State wifiAction) {
-        action = wifiAction;
+    public synchronized void setType(Type type) {
+        if (Action.type == type) return;
+        Action.type = type;
         date = Calendar.getInstance().getTime();
-        publishOngoingAction();
+        publish();
     }
 
-    private void publishOngoingAction() {
+    private void publish() {
         for (IActionListener consumer : consumers) {
             Executors.newSingleThreadExecutor()
-                    .submit(() -> consumer.onActionChanged(action));
+                    .submit(() -> consumer.onActionChanged(type));
         }
     }
 
@@ -54,8 +56,8 @@ public class Action {
         return consumers.remove(consumer);
     }
 
-    public static State action() {
-        return action;
+    public static Type action() {
+        return type;
     }
 
     public static Date date() { return date; }

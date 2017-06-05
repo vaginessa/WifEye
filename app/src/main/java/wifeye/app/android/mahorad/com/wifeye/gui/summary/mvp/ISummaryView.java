@@ -13,7 +13,7 @@ public interface ISummaryView {
 
     void updateEngineState(String state, Date date);
 
-    void updateActionState(Action.State action, Date date);
+    void updateActionState(Action.Type action, Date date);
 
     void updateWifiDeviceState(Wifi.State state);
 

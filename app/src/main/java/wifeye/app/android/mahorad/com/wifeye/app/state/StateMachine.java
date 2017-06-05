@@ -11,7 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
+import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 /**
  * A state machine and an actuator.
@@ -40,7 +40,8 @@ public class StateMachine implements
     @Inject Internet internet;
     @Inject Signal signal;
     @Inject Engine engine;
-    @Inject WifiDevice wifiDevice;
+    @Inject
+    WifiHandler wifiHandler;
     @Inject IPersistence persistence;
 
     /**
@@ -142,7 +143,7 @@ public class StateMachine implements
     private void setState(IState state) {
         currentState = state;
         Log.i(TAG, String.format("CURRENT STATE: %S", currentState.toString()));
-        engine.publish(state);
+        engine.setState(state);
     }
 
     @Override
@@ -160,19 +161,19 @@ public class StateMachine implements
     @Override
     public void disableWifi() {
         Log.i(TAG, "----> DISABLING WIFI...");
-        wifiDevice.disable();
+        wifiHandler.disable();
     }
 
     @Override
     public void observeWifi() {
         Log.i(TAG, "----> OBSERVING WIFI...");
-        wifiDevice.observe();
+        wifiHandler.observe();
     }
 
     @Override
     public void haltWifiAct() {
         Log.i(TAG, "----> HALTING WIFI ACTIONS...");
-        wifiDevice.halt();
+        wifiHandler.halt();
     }
 
     @Override

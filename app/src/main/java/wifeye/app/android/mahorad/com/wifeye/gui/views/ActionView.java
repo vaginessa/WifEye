@@ -19,16 +19,16 @@ import wifeye.app.android.mahorad.com.wifeye.app.consumers.IActionListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiDevice;
+import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.LinearLayout.VERTICAL;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.DisablingMode;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.Halt;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeDisabling;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.State.ObserveModeEnabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.DisablingMode;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.Halt;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeDisabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeEnabling;
 
 public class ActionView extends BoxView implements IActionListener {
 
@@ -36,9 +36,9 @@ public class ActionView extends BoxView implements IActionListener {
 
     @Inject Action actionPublisher;
     @Inject Utilities utils;
-    @Inject WifiDevice wifiDevice;
+    @Inject WifiHandler wifiHandler;
 
-    private Action.State action;
+    private Action.Type action;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircularProgressBar progressBar;
@@ -141,7 +141,7 @@ public class ActionView extends BoxView implements IActionListener {
     public void refresh() {
         if (actionPublisher == null)
             return;
-        Action.State action = actionPublisher.action();
+        Action.Type action = actionPublisher.action();
         if (action == this.action)
             return;
         this.action = action;
@@ -149,7 +149,7 @@ public class ActionView extends BoxView implements IActionListener {
     }
 
     @Override
-    public synchronized void onActionChanged(Action.State action) {
+    public synchronized void onActionChanged(Action.Type action) {
         if (action == this.action)
             return;
         this.action = action;
@@ -184,7 +184,7 @@ public class ActionView extends BoxView implements IActionListener {
     }
 
     public void progressStart() {
-        int progress = (int) wifiDevice.elapsed();
+        int progress = (int) wifiHandler.elapsed();
         int total = getTotalDuration();
         int remained = (total - progress) * 1000;
         int percent = (100 * progress) / total;

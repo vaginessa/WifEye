@@ -69,7 +69,7 @@ public class SummaryFragment extends Fragment implements ISummaryView {
     }
 
     @Override
-    public void updateActionState(final Action.State action, final Date date) {
+    public void updateActionState(final Action.Type action, final Date date) {
 //        runOnUiThread(() -> {
 //            actionText.setText(action.toString());
 //            actionDate.setText(date);
