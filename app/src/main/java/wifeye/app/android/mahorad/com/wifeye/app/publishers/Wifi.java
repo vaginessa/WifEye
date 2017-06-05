@@ -64,19 +64,17 @@ public class Wifi extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        synchronized (this) {
-            int wifiState = intent.getIntExtra(
-                    WifiManager.EXTRA_WIFI_STATE,
-                    WifiManager.WIFI_STATE_UNKNOWN);
-            State state = State.get(wifiState);
-            boolean updated = update(state);
-            if (updated) publish();
-        }
+    public synchronized void onReceive(Context context, Intent intent) {
+        int wifiState = intent.getIntExtra(
+                WifiManager.EXTRA_WIFI_STATE,
+                WifiManager.WIFI_STATE_UNKNOWN);
+        State state = State.get(wifiState);
+        boolean updated = update(state);
+        if (updated) publish();
     }
 
     private boolean update(State wifiState) {
-        if (state == wifiState)
+        if (state.equals(wifiState))
             return false;
         state = wifiState;
         if (state == Enabled || state == Disabled)

@@ -47,38 +47,41 @@ public class Internet
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        synchronized (this) {
-
-            if (!wifi.isEnabled()) {
-                notifyInternetDisconnected();
-                return;
-            }
-
-            WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            String bssid = connectionInfo.getBSSID();
-            String hotSpot = (bssid == null
-                    ? null
-                    : connectionInfo.getSSID());
-            if (!isValidName(hotSpot)) {
-                ssid = null;
-                notifyInternetDisconnected();
-                return;
-            }
-
-            hotSpot = hotSpot.replace("\"", "");
-            if (isSame(hotSpot)) return;
-            ssid = hotSpot;
-            date = Calendar.getInstance().getTime();
-            notifyInternetGotConnected();
+    public synchronized void onReceive(Context context, Intent intent) {
+        if (!wifi.isEnabled()) {
+            notifyInternetDisconnected();
+            return;
         }
+
+        WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+        String bssid = connectionInfo.getBSSID();
+        String hotSpot = (bssid == null
+                ? null
+                : connectionInfo.getSSID());
+        if (!isValidName(hotSpot)) {
+            ssid = null;
+            notifyInternetDisconnected();
+            return;
+        }
+
+        hotSpot = hotSpot.replace("\"", "");
+        if (isSame(hotSpot)) return;
+        ssid = hotSpot;
+        date = Calendar.getInstance().getTime();
+        notifyInternetGotConnected();
     }
 
     private synchronized boolean isValidName(String hotSpot) {
-        if (hotSpot == null) return false;
+        if (nullOrEmpty(hotSpot)) return false;
         if ("0x".equals(hotSpot)) return false;
-        if (hotSpot.length() == 0) return false;
         return !hotSpot.contains("unknown");
+    }
+
+    private boolean nullOrEmpty(String text) {
+        if (text == null) return true;
+        if (text.length() == 0)
+            return true;
+        return text.replace(" ", "").length() == 0;
     }
 
     private boolean isSame(String text) {

@@ -20,7 +20,7 @@ public class Engine {
     }
 
     public void setState(final IState state) {
-        if (Engine.state == state.type()) return;
+        if (Engine.state.equals(state.type())) return;
         Engine.state = state.type();
         date = Calendar.getInstance().getTime();
         publish(state);

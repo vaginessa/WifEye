@@ -35,7 +35,7 @@ public class Action {
     }
 
     public synchronized void setType(Type type) {
-        if (Action.type == type) return;
+        if (Action.type.equals(type)) return;
         Action.type = type;
         date = Calendar.getInstance().getTime();
         publish();

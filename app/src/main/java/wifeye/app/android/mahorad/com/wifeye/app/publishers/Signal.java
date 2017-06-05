@@ -33,18 +33,24 @@ public class Signal extends PhoneStateListener {
     }
 
     @Override
-    public void onCellLocationChanged(CellLocation cellLocation) {
+    public synchronized void onCellLocationChanged(CellLocation cellLocation) {
         super.onCellLocationChanged(cellLocation);
-        synchronized (this) {
-            String towerId = cellLocation.toString();
-            if (isSame(towerId)) return;
-            ctid = towerId;
-            date = Calendar.getInstance().getTime();
-            if (persistence.exist(ctid))
-                publishReceivedKnownTowerId();
-            else
-                publishReceivedUnknownTowerId();
-        }
+        String towerId = cellLocation.toString();
+        if (nullOrEmpty(towerId)) return;
+        if (isSame(towerId)) return;
+        ctid = towerId;
+        date = Calendar.getInstance().getTime();
+        if (persistence.exist(ctid))
+            publishReceivedKnownTowerId();
+        else
+            publishReceivedUnknownTowerId();
+    }
+
+    private boolean nullOrEmpty(String text) {
+        if (text == null) return true;
+        if (text.length() == 0)
+            return true;
+        return text.replace(" ", "").length() == 0;
     }
 
     private boolean isSame(String text) {

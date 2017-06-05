@@ -15,6 +15,8 @@ public class Persist {
     private static String data = "-";
 
     public void setData(final String data) {
+        if (Persist.data.equals(data))
+            return;
         Persist.data = data;
         Persist.date = getTime();
         publish(data);
@@ -24,12 +26,10 @@ public class Persist {
         return Calendar.getInstance().getTime();
     }
 
-    private void publish(String data) {
-        synchronized (this) {
-            for (IPersistListener consumer : consumers) {
-                Executors.newSingleThreadExecutor()
-                        .submit(() -> consumer.onDataPersisted(data));
-            }
+    private synchronized void publish(String data) {
+        for (IPersistListener consumer : consumers) {
+            Executors.newSingleThreadExecutor()
+                    .submit(() -> consumer.onDataPersisted(data));
         }
     }
 

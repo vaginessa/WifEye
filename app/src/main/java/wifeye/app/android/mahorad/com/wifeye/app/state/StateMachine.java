@@ -11,6 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 /**
@@ -34,15 +35,17 @@ public class StateMachine implements
     private final IState routerArea = new StateRouterArea(this);
 
     private IState currentState = initial;
-    private String ssid;
-    private String ctid;
 
-    @Inject Internet internet;
-    @Inject Signal signal;
-    @Inject Engine engine;
+    @Inject
+    Internet internet;
+    @Inject
+    Signal signal;
+    @Inject
+    Engine engine;
     @Inject
     WifiHandler wifiHandler;
-    @Inject IPersistence persistence;
+    @Inject
+    IPersistence persistence;
 
     /**
      * Creates a state machine stateMachine with wifi controller
@@ -56,67 +59,49 @@ public class StateMachine implements
 
     /* listeners */
     @Override
-    public void onInternetConnected(String ssid) {
-        synchronized (this) {
-            internetConnected(ssid);
-        }
+    public synchronized void onInternetConnected(String ssid) {
+        internetConnected(ssid);
     }
 
     @Override
-    public void onInternetDisconnected() {
-        synchronized (this) {
-            internetDisconnected();
-        }
+    public synchronized void onInternetDisconnected() {
+        internetDisconnected();
     }
 
     @Override
-    public void onReceivedKnownTowerId(String ctid) {
-        synchronized (this) {
-            receivedKnownTowerId();
-        }
+    public synchronized void onReceivedKnownTowerId(String ctid) {
+        receivedKnownTowerId();
     }
 
     @Override
-    public void onReceivedUnknownTowerId(String ctid) {
-        synchronized (this) {
-            receivedUnknownTowerId(ctid);
-        }
+    public synchronized void onReceivedUnknownTowerId(String ctid) {
+        receivedUnknownTowerId(ctid);
     }
 
 
     /* used by client */
     @Override
-    public void internetConnected(String ssid) {
-        synchronized (this) {
-            Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
-            this.ssid = ssid;
-            currentState.onInternetConnected();
-        }
+    public synchronized void internetConnected(String ssid) {
+        Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
+        currentState.onInternetConnected();
     }
 
     @Override
-    public void internetDisconnected() {
-        synchronized (this) {
-            Log.i(TAG, String.format("--| EVENT: disconnected |"));
-            currentState.onInternetDisconnects();
-        }
+    public synchronized void internetDisconnected() {
+        Log.i(TAG, String.format("--| EVENT: disconnected |"));
+        currentState.onInternetDisconnects();
     }
 
     @Override
-    public void receivedKnownTowerId() {
-        synchronized (this) {
-            Log.i(TAG, String.format("--| EVENT: known ctid |"));
-            currentState.onReceivedKnownTowerId();
-        }
+    public synchronized void receivedKnownTowerId() {
+        Log.i(TAG, String.format("--| EVENT: known ctid |"));
+        currentState.onReceivedKnownTowerId();
     }
 
     @Override
-    public void receivedUnknownTowerId(String ctid) {
-        synchronized (this) {
-            Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
-            this.ctid = ctid;
-            currentState.onReceivedUnknownTowerId();
-        }
+    public synchronized void receivedUnknownTowerId(String ctid) {
+        Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
+        currentState.onReceivedUnknownTowerId();
     }
 
     /* used by states */
@@ -179,6 +164,6 @@ public class StateMachine implements
     @Override
     public void persist() {
         Log.i(TAG, "----> PERSISTING...");
-        persistence.persist(ssid, ctid);
+        persistence.persist(Internet.ssid(), Signal.ctid());
     }
 }
