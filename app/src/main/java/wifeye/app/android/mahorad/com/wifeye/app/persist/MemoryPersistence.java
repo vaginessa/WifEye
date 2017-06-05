@@ -16,22 +16,22 @@ public class MemoryPersistence extends Persistence {
 
     public MemoryPersistence(Persist publisher) {
         super(publisher);
-//        addFakeValues();
+        addFakeValues();
     }
 
-//    private void addFakeValues() {
-//        HashSet<String> towers = new HashSet<String>() {{
-//            add("[20201,13238893,-1]");
-//            add("[20101,13302242,-1]");
-//            add("[20201,13302242,-1]");
-//            add("[20201,13292922,-1]");
-//            add("[20101,13173328,-1]");
-//            add("[2011,134415638,-1]");
-//            add("[2021,582420,-1]");
-//            add("[20201,13173317,-1]");
-//        }};
-//        db.put("Archer", towers);
-//    }
+    private void addFakeValues() {
+        HashSet<String> towers = new HashSet<String>() {{
+            add("[20201,13238893,-1]");
+            add("[20101,13302242,-1]");
+            add("[20201,13302242,-1]");
+            add("[20201,13292922,-1]");
+            add("[20101,13173328,-1]");
+            add("[2011,134415638,-1]");
+            add("[2021,582420,-1]");
+            add("[20201,13173317,-1]");
+        }};
+        db.put("Archer", towers);
+    }
 
     @Override
     public void persist(String ssid, final String ctid) {

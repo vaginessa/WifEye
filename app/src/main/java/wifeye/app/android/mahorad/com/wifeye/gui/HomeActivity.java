@@ -26,11 +26,9 @@ public class HomeActivity extends ActivityManagePermission
                             MainApplication.mainComponent()
                     )
                     .build();
-    @Inject
-    HomeView view;
 
-    @Inject
-    HomePresenter presenter;
+    @Inject HomeView view;
+    @Inject HomePresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

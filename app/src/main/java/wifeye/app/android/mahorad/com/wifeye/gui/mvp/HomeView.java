@@ -26,7 +26,7 @@ import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.gui.overview.OverviewFragment;
 
-import static wifeye.app.android.mahorad.com.wifeye.R.color.colorAccent;
+import static wifeye.app.android.mahorad.com.wifeye.R.color.colorPrimary;
 import static wifeye.app.android.mahorad.com.wifeye.R.color.colorGreen;
 
 public class HomeView extends FrameLayout {
@@ -94,7 +94,7 @@ public class HomeView extends FrameLayout {
                 new int[]   { ResourcesCompat.getColor(getResources(), colorGreen, null) });
         accent = new ColorStateList(
                 new int[][] { new int[0] },
-                new int[]   { ResourcesCompat.getColor(getResources(), colorAccent, null) });
+                new int[]   { ResourcesCompat.getColor(getResources(), colorPrimary, null) });
     }
 
     public void selectFirstMenuItem() {

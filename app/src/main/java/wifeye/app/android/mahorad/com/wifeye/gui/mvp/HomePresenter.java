@@ -34,14 +34,10 @@ public class HomePresenter {
         }
     }
 
-    @Inject
-    HomeView view;
-
+    @Inject HomeView view;
+    @Inject Utilities utils;
     @Inject @HomeScope
     ActivityManagePermission activity;
-
-    @Inject
-    Utilities utils;
 
     /**
      * Home Screen Presenter
