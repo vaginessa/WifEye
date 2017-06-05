@@ -66,6 +66,7 @@ public class Internet
                 return;
             }
 
+            hotSpot = hotSpot.replace("\"", "");
             if (isSame(hotSpot)) return;
             ssid = hotSpot;
             date = Calendar.getInstance().getTime();

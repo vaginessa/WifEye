@@ -56,7 +56,6 @@ public class MemoryPersistence extends Persistence {
         return db.get(ssid).contains(ctid);
     }
 
-    @Override
     public boolean exist(String ctid) {
         for (Set<String> set : db.values()) {
             if (set.contains(ctid))
