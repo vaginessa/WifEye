@@ -11,7 +11,6 @@ import wifeye.app.android.mahorad.com.wifeye.app.persist.MemoryPersistence;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
@@ -48,14 +47,8 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public IPersistence persistence(Persist publisher) {
-        return new MemoryPersistence(publisher);
-    }
-
-    @Provides
-    @ApplicationScope
-    public Persist persistencePublisher() {
-        return new Persist();
+    public IPersistence persistence() {
+        return new MemoryPersistence();
     }
 
     @Provides

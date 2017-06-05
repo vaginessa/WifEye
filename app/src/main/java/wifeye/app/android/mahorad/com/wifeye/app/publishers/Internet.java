@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
+import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 /**
  * listens to connected ssid names and notifies consumers
@@ -65,29 +66,16 @@ public class Internet
         }
 
         hotSpot = hotSpot.replace("\"", "");
-        if (isSame(hotSpot)) return;
+        if (Utilities.areEqual(ssid, hotSpot)) return;
         ssid = hotSpot;
         date = Calendar.getInstance().getTime();
         notifyInternetGotConnected();
     }
 
     private synchronized boolean isValidName(String hotSpot) {
-        if (nullOrEmpty(hotSpot)) return false;
+        if (Utilities.isNullOrEmpty(hotSpot)) return false;
         if ("0x".equals(hotSpot)) return false;
         return !hotSpot.contains("unknown");
-    }
-
-    private boolean nullOrEmpty(String text) {
-        if (text == null) return true;
-        if (text.length() == 0)
-            return true;
-        return text.replace(" ", "").length() == 0;
-    }
-
-    private boolean isSame(String text) {
-        if (text == null && ssid == null) return true;
-        boolean anyNull = (ssid == null || text == null);
-        return !anyNull && ssid.equals(text);
     }
 
     private void notifyInternetGotConnected() {

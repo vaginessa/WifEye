@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
+import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 public class MemoryPersistence extends Persistence {
 
@@ -14,8 +14,7 @@ public class MemoryPersistence extends Persistence {
 
     private final HashMap<String, Set<String>> db = new HashMap<>();
 
-    public MemoryPersistence(Persist publisher) {
-        super(publisher);
+    public MemoryPersistence() {
 //        addFakeValues();
     }
 
@@ -35,17 +34,10 @@ public class MemoryPersistence extends Persistence {
 
     @Override
     public void persist(String ssid, final String ctid) {
-        if (nullOrEmpty(ssid)) return;
-        if (nullOrEmpty(ctid)) return;
+        if (Utilities.isNullOrEmpty(ssid)) return;
+        if (Utilities.isNullOrEmpty(ctid)) return;
         if (exist(ssid, ctid)) return;
         doPersist(ssid, ctid);
-    }
-
-    private boolean nullOrEmpty(String text) {
-        if (text == null) return true;
-        if (text.length() == 0)
-            return true;
-        return text.replace(" ", "").length() == 0;
     }
 
     private void doPersist(String ssid, final String ctid) {
@@ -53,26 +45,17 @@ public class MemoryPersistence extends Persistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
-            persist.setData(format(ssid));
+            setData(ctid);
             Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
-            persist.setData(format(ssid));
+            setData(ctid);
         }
     }
 
-    private String format(String ssid) {
-        int towers = towersCount(ssid);
-        String plural = towers > 1 ? "s" : "";
-        return String.format("%s: %d Tower%s", ssid, towers, plural);
-    }
-
-    private int towersCount(String ssid) {
-        return towersOf(ssid).size();
-    }
-
-    private Set<String> towersOf(String ssid) {
-        if (nullOrEmpty(ssid))
+    @Override
+    public Set<String> towersOf(String ssid) {
+        if (Utilities.isNullOrEmpty(ssid))
             return new HashSet<>();
         if (!db.containsKey(ssid))
             return new HashSet<>();

@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.ISignalListener;
 import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
+import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 /**
  * listens to receiving cell tower identifiers and
@@ -36,27 +37,14 @@ public class Signal extends PhoneStateListener {
     public synchronized void onCellLocationChanged(CellLocation cellLocation) {
         super.onCellLocationChanged(cellLocation);
         String towerId = cellLocation.toString();
-        if (nullOrEmpty(towerId)) return;
-        if (isSame(towerId)) return;
+        if (Utilities.isNullOrEmpty(towerId)) return;
+        if (Utilities.areEqual(ctid, towerId)) return;
         ctid = towerId;
         date = Calendar.getInstance().getTime();
         if (persistence.exist(ctid))
             publishReceivedKnownTowerId();
         else
             publishReceivedUnknownTowerId();
-    }
-
-    private boolean nullOrEmpty(String text) {
-        if (text == null) return true;
-        if (text.length() == 0)
-            return true;
-        return text.replace(" ", "").length() == 0;
-    }
-
-    private boolean isSame(String text) {
-        if (text == null && ctid == null) return true;
-        boolean anyNull = (ctid == null || text == null);
-        return !anyNull && ctid.equals(text);
     }
 
     private void publishReceivedKnownTowerId() {

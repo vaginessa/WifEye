@@ -10,14 +10,16 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.consumers.IPersistListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
+import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
+import wifeye.app.android.mahorad.com.wifeye.app.persist.Persistence;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
 public class PersistView extends BoxView implements IPersistListener {
 
     private static final String HEADER = "P E R S I S T";
 
-    @Inject Persist persist;
+    @Inject IPersistence persistence;
     @Inject Utilities utils;
 
     private ImageView stateIcon;
@@ -46,8 +48,8 @@ public class PersistView extends BoxView implements IPersistListener {
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (persist != null)
-            persist.subscribe(this);
+        if (persistence != null)
+            persistence.subscribe(this);
         setHeader(HEADER);
         setupContents();
         refresh();
@@ -56,8 +58,8 @@ public class PersistView extends BoxView implements IPersistListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (persist != null)
-            persist.unsubscribe(this);
+        if (persistence != null)
+            persistence.unsubscribe(this);
     }
 
     private void setupContents() {
@@ -84,9 +86,19 @@ public class PersistView extends BoxView implements IPersistListener {
 
     private void updateView() {
         String ago = utils.toAgo(
-                Persist.date(), getContext());
+                Persistence.date(), getContext());
         setFact(ago);
-        setCaption(Persist.data());
+        String caption = caption();
+        setCaption(caption);
+    }
+
+    private String caption() {
+        String ssid = Internet.ssid();
+        if (Utilities.isNullOrEmpty(ssid))
+            return "-";
+        int towers = persistence.towersOf(ssid).size();
+        String plural = towers > 1 ? "s" : "";
+        return String.format("%s: %d Tower%s", ssid, towers, plural);
     }
 
 }

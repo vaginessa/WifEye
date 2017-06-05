@@ -36,16 +36,11 @@ public class StateMachine implements
 
     private IState currentState = initial;
 
-    @Inject
-    Internet internet;
-    @Inject
-    Signal signal;
-    @Inject
-    Engine engine;
-    @Inject
-    WifiHandler wifiHandler;
-    @Inject
-    IPersistence persistence;
+    @Inject Internet internet;
+    @Inject Signal signal;
+    @Inject Engine engine;
+    @Inject WifiHandler wifiHandler;
+    @Inject IPersistence persistence;
 
     /**
      * Creates a state machine stateMachine with wifi controller

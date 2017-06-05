@@ -9,7 +9,6 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
 import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persist;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.ActionView;
 import wifeye.app.android.mahorad.com.wifeye.gui.views.HotspotView;
@@ -45,8 +44,6 @@ public interface MainComponent {
     Signal ctidPublisher();
 
     Internet ssidPublisher();
-
-    Persist repoPublisher();
 
     Utilities utilities();
 

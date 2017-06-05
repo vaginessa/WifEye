@@ -45,16 +45,6 @@ public class Utilities {
                     .getSystemService(Context.ACTIVITY_SERVICE);
     }
 
-    public String formatDateNow() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return df.format(Calendar.getInstance().getTime());
-    }
-
-    public String formatDate(Date date) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return df.format(date);
-    }
-
     public String toAgo(final Date date, Context context){
         return new PrettyTime(getLocale(context)).format(date);
     }
@@ -94,5 +84,15 @@ public class Utilities {
                 Uri.fromParts("package", context.getPackageName(), null));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static boolean isNullOrEmpty(String s) {
+        return (s == null || s.trim().equals(""));
+    }
+
+    public static boolean areEqual(String s1, String s2) {
+        if (s1 == null && s2 == null) return true;
+        boolean anyNull = (s1 == null || s2 == null);
+        return !anyNull && s1.equals(s2);
     }
 }
