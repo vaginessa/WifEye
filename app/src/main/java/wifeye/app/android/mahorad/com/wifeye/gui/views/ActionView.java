@@ -145,8 +145,6 @@ public class ActionView extends BoxView implements IActionListener {
 
     @Override
     public void refresh() {
-        if (action == null)
-            return;
         post(this::updateView);
     }
 
