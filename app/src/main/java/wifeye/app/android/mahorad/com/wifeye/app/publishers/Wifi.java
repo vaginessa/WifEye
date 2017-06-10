@@ -77,8 +77,7 @@ public class Wifi extends BroadcastReceiver {
         if (state.equals(wifiState))
             return false;
         state = wifiState;
-        if (state == Enabled || state == Disabled)
-            date = Calendar.getInstance().getTime();
+        date = Calendar.getInstance().getTime();
         return true;
     }
 
