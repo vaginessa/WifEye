@@ -1,46 +1,38 @@
 package wifeye.app.android.mahorad.com.wifeye.app.publishers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
+import io.reactivex.Observable;
+import wifeye.app.android.mahorad.com.wifeye.app.events.WifiEvent;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.rx.wifi.RxWifiManager;
+import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-import static android.content.Context.WIFI_SERVICE;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.*;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Enabled;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Unknown;
 
-public class Wifi extends BroadcastReceiver {
+public class Wifi {
 
     private static final String TAG = Wifi.class.getSimpleName();
 
-    private final Context context;
     private final WifiManager wifiManager;
     private static State state = Unknown;
-    private static Date date;
+    private static Date date = Utilities.now();
 
-    private final Set<IWifiListener> consumers;
-
-    /**
-     * wifi states
-     */
     public enum State {
-        Disabling(0), Disabled(1), Enabling(2), Enabled(3), Unknown(4);
+
+        Unknown(-1), Disabling(0), Disabled(1), Enabling(2), Enabled(3);
+
         private int value;
 
         State(int value) {
             this.value = value;
         }
 
-        public static State get(int state) {
+        public static State toState(int state) {
             switch (state) {
                 case 0: return Disabling;
                 case 1: return Disabled;
@@ -50,61 +42,31 @@ public class Wifi extends BroadcastReceiver {
             }
         }
 
-        public int value() { return value; }
-    }
-
-    /**
-     * constructor
-     * @param context
-     */
-    public Wifi(Context context) {
-        this.context = context;
-        wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
-        consumers = new HashSet<>();
-    }
-
-    @Override
-    public synchronized void onReceive(Context context, Intent intent) {
-        int wifiState = intent.getIntExtra(
-                WifiManager.EXTRA_WIFI_STATE,
-                WifiManager.WIFI_STATE_UNKNOWN);
-        State state = State.get(wifiState);
-        boolean updated = update(state);
-        if (updated) publish();
-    }
-
-    private boolean update(State wifiState) {
-        if (state.equals(wifiState))
-            return false;
-        state = wifiState;
-        date = Calendar.getInstance().getTime();
-        return true;
-    }
-
-    private void publish() {
-        for (IWifiListener consumer : consumers) {
-            Executors
-                    .newSingleThreadExecutor()
-                    .submit(() -> consumer.onWifiStateChanged(state));
+        public int value() {
+            return value;
         }
     }
 
-    public void registerBroadcast() {
-        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        context.registerReceiver(this, intentFilter);
+    /**
+     *
+     * @param context
+     */
+    public Wifi(Context context) {
+        this.wifiManager = Utilities.getWifiManager(context);
     }
 
-    public void unregisterBroadcast() {
-        context.unregisterReceiver(this);
-        consumers.clear();
+    public static Observable<WifiEvent> observable(Context context) {
+        return RxWifiManager
+                .wifiStateChanges(context)
+                .distinctUntilChanged()
+                .map(State::toState)
+                .map(Wifi::toEvent);
     }
 
-    public boolean subscribe(IWifiListener consumer) {
-        return consumers.add(consumer);
-    }
-
-    public boolean unsubscribe(IWifiListener consumer) {
-        return consumers.remove(consumer);
+    private static WifiEvent toEvent(State state) {
+        Wifi.date = Utilities.now();
+        Wifi.state = state;
+        return WifiEvent.create(Wifi.state, Wifi.date());
     }
 
     public void enable() {
@@ -122,14 +84,8 @@ public class Wifi extends BroadcastReceiver {
 
     public boolean isEnabled() {
         boolean enabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED);
-        Log.d(TAG, String.format("[[ wifiManager %b, this.state %b ]]", enabled, state == Enabled));
+        Log.d(TAG, String.format("[[ wifiManager %b, this.wifiEvent %b ]]", enabled, state == Enabled));
         return enabled;
-    }
-
-    public boolean isDisabled() {
-        boolean disabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED);
-        Log.d(TAG, String.format("[[ wifiManager %b, this.state %b ]]", disabled, state == Disabled));
-        return disabled;
     }
 
     public static State state() {
@@ -138,6 +94,10 @@ public class Wifi extends BroadcastReceiver {
 
     public static Date date() {
         return date;
+    }
+
+    public static WifiEvent lastEvent() {
+        return WifiEvent.create(state, date);
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -22,7 +23,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 
 public class Utilities {
 
-    public boolean isRunning(Class<?> serviceClass) {
+    public static boolean isRunning(Class<?> serviceClass) {
         if (serviceClass == null) return false;
         String targetServiceName = serviceClass.getName();
         for (RunningServiceInfo service : getRunningServices()) {
@@ -33,12 +34,12 @@ public class Utilities {
         return false;
     }
 
-    public List<RunningServiceInfo> getRunningServices() {
+    public static List<RunningServiceInfo> getRunningServices() {
         ActivityManager manager = getActivityManager();
         return manager.getRunningServices(Integer.MAX_VALUE);
     }
 
-    private ActivityManager getActivityManager() {
+    private static ActivityManager getActivityManager() {
         return (ActivityManager) MainApplication
                     .appComponent()
                     .context()
@@ -47,6 +48,10 @@ public class Utilities {
 
     public String toAgo(final Date date, Context context){
         return new PrettyTime(getLocale(context)).format(date);
+    }
+
+    public static Date now() {
+        return Calendar.getInstance().getTime();
     }
 
     public Locale getLocale(Context context) {
@@ -60,6 +65,10 @@ public class Utilities {
                 .getResources()
                 .getConfiguration()
                 .locale;
+    }
+
+    public static WifiManager getWifiManager(Context context) {
+        return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
     public Uri getResourceUri(int id, Context context) {

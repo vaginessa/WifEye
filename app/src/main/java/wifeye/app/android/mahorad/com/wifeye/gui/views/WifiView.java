@@ -2,24 +2,32 @@ package wifeye.app.android.mahorad.com.wifeye.gui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
+import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
+import wifeye.app.android.mahorad.com.wifeye.app.events.WifiEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class WifiView extends BoxView implements IWifiListener {
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Enabled;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.date;
+
+public class WifiView extends BoxView {
+
+    public static final String TAG = WifiView.class.getSimpleName();
 
     private static final String HEADER = "W I F I";
 
-    @Inject Wifi wifi;
     @Inject Utilities utils;
-
+    private Disposable disposable;
+    private Disposable serviceDisposable;
     private ImageView stateIcon;
 
     public WifiView(Context context) {
@@ -37,27 +45,47 @@ public class WifiView extends BoxView implements IWifiListener {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        finishSignalViewInflation();
+        onFinishedInflation();
     }
 
-    private void finishSignalViewInflation() {
+    private void onFinishedInflation() {
         MainComponent mainComponent =
                 MainApplication.mainComponent();
         if (mainComponent != null)
                 mainComponent.inject(this);
 
-        if (wifi != null)
-            wifi.subscribe(this);
+        serviceDisposable = MainService
+                .observable()
+                .subscribe(e -> {
+                    if (e) enable();
+                    else disable();
+                });
+
         setHeader(HEADER);
         setupContents();
-        refresh();
+    }
+
+    @Override
+    public void enable() {
+        disposable = Wifi
+                .observable(getContext())
+                .subscribe(e -> post(() -> updateView(e)));
+    }
+
+    @Override
+    public void disable() {
+        if (disposable == null)
+            return;
+        if (disposable.isDisposed())
+            return;
+        disposable.dispose();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (wifi != null)
-            wifi.unsubscribe(this);
+        disable();
+        serviceDisposable.dispose();
     }
 
     private void setupContents() {
@@ -72,25 +100,19 @@ public class WifiView extends BoxView implements IWifiListener {
         stateIcon.setImageResource(R.drawable.wifi_off);
     }
 
-    @Override
-    public void refresh() {
-        post(this::updateView);
-    }
-
-    @Override
-    public void onWifiStateChanged(Wifi.State state) {
-        post(this::updateView);
-    }
-
-    private void updateView() {
-        setFact(wifi.isEnabled() ? "enabled" : "disabled");
-        String ago = utils.toAgo(
-                Wifi.date(), getContext());
-        setCaption(ago);
-        int icon = wifi.isEnabled()
-                ? R.drawable.wifi_on
-                : R.drawable.wifi_off;
-        stateIcon.setImageResource(icon);
+    private void updateView(WifiEvent e) {
+        synchronized (this) {
+            Log.d(TAG, "wifi: " + e.state());
+            boolean enabled = (e.state() == Enabled);
+            setFact(enabled ? "enabled" : "disabled");
+            String ago = utils.toAgo(
+                    date(), getContext());
+            setCaption(ago);
+            int icon = enabled
+                    ? R.drawable.wifi_on
+                    : R.drawable.wifi_off;
+            stateIcon.setImageResource(icon);
+        }
     }
 
 }

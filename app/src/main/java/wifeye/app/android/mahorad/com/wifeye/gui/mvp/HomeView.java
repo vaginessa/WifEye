@@ -137,6 +137,7 @@ public class HomeView extends FrameLayout {
         activity.runOnUiThread(() -> {
             if (enabled) {
                 setFloatingButtonEnabled();
+                showSnackbar("Service Enabled.");
             } else {
                 setFloatingButtonDisable();
                 showSnackbar("Service Disabled.");

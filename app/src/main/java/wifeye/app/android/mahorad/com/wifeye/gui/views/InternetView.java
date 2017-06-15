@@ -12,40 +12,40 @@ import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
-import wifeye.app.android.mahorad.com.wifeye.app.events.PersistenceEvent;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persistence;
+import wifeye.app.android.mahorad.com.wifeye.app.events.InternetEvent;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
+import wifeye.app.android.mahorad.com.wifeye.app.state.IState;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class PersistView extends BoxView {
+public class InternetView extends BoxView {
 
-    public static final String TAG = PersistView.class.getSimpleName();
-
-    private static final String HEADER = "P E R S I S T";
+    private static final String TAG = InternetView.class.getSimpleName();
+    private static final String HEADER = "H O T S P O T";
 
     @Inject Utilities utils;
     private ImageView stateIcon;
     private Disposable disposable;
     private Disposable serviceDisposable;
 
-    public PersistView(Context context) {
+    public InternetView(Context context) {
         super(context);
     }
 
-    public PersistView(Context context, AttributeSet attrs) {
+    public InternetView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public PersistView(Context context, AttributeSet attrs, int defStyle) {
+    public InternetView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        finishSignalViewInflation();
+        onFinishedInflation();
     }
 
-    private void finishSignalViewInflation() {
+    private void onFinishedInflation() {
         MainComponent mainComponent =
                 MainApplication.mainComponent();
         if (mainComponent != null)
@@ -64,8 +64,8 @@ public class PersistView extends BoxView {
 
     @Override
     public void enable() {
-        disposable = Persistence
-                .observable()
+        disposable = Internet
+                .observable(getContext())
                 .subscribe(e -> post(() -> updateView(e)));
     }
 
@@ -88,33 +88,26 @@ public class PersistView extends BoxView {
     private void setupContents() {
         setupStateIconView();
         setContents(stateIcon);
-        setFact("-");
+        setFact(IState.Type.Initial.title());
         setCaption("n/a");
     }
 
     private void setupStateIconView() {
         stateIcon = new ImageView(getContext());
-        stateIcon.setImageResource(R.drawable.save);
+        stateIcon.setImageResource(R.drawable.no_ssid);
     }
 
-    private void updateView(PersistenceEvent e) {
+    private void updateView(InternetEvent e) {
         synchronized (this) {
-            Log.d(TAG, "persist: " + e.ssid() + " " + e.ctid());
-            setFact(facts(e));
-            String caption = String.format("%s: %s", e.ssid(), e.ctid());
-            setCaption(caption);
+            Log.d(TAG, e.ssid() + " " + e.connected());
+            setFact(e.ssid());
+            String ago = utils.toAgo(e.date(), getContext());
+            setCaption(ago);
+            int icon = e.connected()
+                    ? R.drawable.has_ssid
+                    : R.drawable.no_ssid;
+            stateIcon.setImageResource(icon);
         }
     }
 
-    private String facts(PersistenceEvent e) {
-        if (Utilities.isNullOrEmpty(e.ssid()))
-            return "-";
-        int towers = Persistence
-                .towersOf(e.ssid())
-                .size();
-        String plural = towers > 1 ? "s" : "";
-        String ago = utils.toAgo(
-                e.date(), getContext());
-        return String.format("%d Tower%s (%s)", towers, plural, ago);
-    }
 }

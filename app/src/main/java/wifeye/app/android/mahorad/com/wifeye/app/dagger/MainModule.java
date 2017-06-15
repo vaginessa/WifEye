@@ -6,24 +6,20 @@ import dagger.Module;
 import dagger.Provides;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationContext;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationScope;
-import wifeye.app.android.mahorad.com.wifeye.app.persist.IPersistence;
-import wifeye.app.android.mahorad.com.wifeye.app.persist.MemoryPersistence;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Engine;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Location;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
-import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
+import wifeye.app.android.mahorad.com.wifeye.app.state.Engine;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 @Module(includes = ApplicationModule.class)
 public class MainModule {
 
     @Provides
     @ApplicationScope
-    public Internet bssidPublisher(@ApplicationContext Context context, Wifi wifi) {
-        return new Internet(context, wifi);
+    public Internet bssidPublisher() {
+        return new Internet();
     }
 
     @Provides
@@ -34,33 +30,14 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public Signal towerIdPublisher(@ApplicationContext Context context,
-                                   IPersistence persistence) {
-        return new Signal(context, persistence);
+    public Location towerIdPublisher() {
+        return new Location();
     }
 
     @Provides
     @ApplicationScope
-    public WifiHandler wifiDevice(Wifi wifi, Action actionPublisher) {
-        return new WifiHandler(wifi, actionPublisher);
-    }
-
-    @Provides
-    @ApplicationScope
-    public IPersistence persistence() {
-        return new MemoryPersistence();
-    }
-
-    @Provides
-    @ApplicationScope
-    public Action actionPublisher() {
-        return new Action() ;
-    }
-
-    @Provides
-    @ApplicationScope
-    public Engine statePublisher() {
-        return new Engine();
+    public Action actionPublisher(Wifi wifi) {
+        return new Action(wifi) ;
     }
 
     @Provides
@@ -71,5 +48,5 @@ public class MainModule {
 
     @Provides
     @ApplicationScope
-    public StateMachine engine() { return new StateMachine(); }
+    public Engine engine() { return new Engine(); }
 }

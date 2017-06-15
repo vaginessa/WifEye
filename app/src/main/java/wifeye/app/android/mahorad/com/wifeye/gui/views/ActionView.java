@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -13,14 +14,15 @@ import com.romainpiel.shimmer.ShimmerTextView;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
+import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IActionListener;
 import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
+import wifeye.app.android.mahorad.com.wifeye.app.events.ActionEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Action;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
-import wifeye.app.android.mahorad.com.wifeye.app.wifi.WifiHandler;
 
 import static android.view.Gravity.CENTER;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -31,13 +33,14 @@ import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.H
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeDisabling;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeEnabling;
 
-public class ActionView extends BoxView implements IActionListener {
+public class ActionView extends BoxView {
+
+    public static final String TAG = ActionView.class.getSimpleName();
 
     private static final String HEADER = "A C T I O N";
 
     @Inject Action action;
     @Inject Utilities utils;
-    @Inject WifiHandler wifiHandler;
 
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
@@ -47,6 +50,8 @@ public class ActionView extends BoxView implements IActionListener {
     private int mainBackground = ContextCompat.getColor(getContext(), R.color.colorMainBackground);
     private int activeRedColor = ContextCompat.getColor(getContext(), R.color.boxAccentRed);
     private int textColorIdling = ContextCompat.getColor(getContext(), R.color.boxInfoTextColor);
+    private Disposable actionDisposable;
+    private Disposable serviceDisposable;
 
     public ActionView(Context context) {
         super(context);
@@ -63,36 +68,59 @@ public class ActionView extends BoxView implements IActionListener {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        finishActionViewInflation();
+        onFinishedInflation();
     }
 
-    private void finishActionViewInflation() {
+    private void onFinishedInflation() {
         MainComponent mainComponent =
                 MainApplication.mainComponent();
         if (mainComponent != null)
             mainComponent.inject(this);
 
-        if (action != null)
-            action.subscribe(this);
+        serviceDisposable = MainService
+                .observable()
+                .subscribe(e -> {
+                    if (e) enable();
+                    else disable();
+                });
+
         setHeader(HEADER);
         setupContents();
-        refresh();
+    }
+
+    @Override
+    public void enable() {
+        actionDisposable = Action
+                .observable()
+                .subscribe(e -> post(() -> updateView(e)));
+    }
+
+    @Override
+    public void disable() {
+        if (actionDisposable == null)
+            return;
+        if (actionDisposable.isDisposed())
+            return;
+        actionDisposable.dispose();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (action != null)
-            action.unsubscribe(this);
+        disable();
+        serviceDisposable.dispose();
     }
 
     private void setupContents() {
-        setupProgressBar();
-        setupShimmerText();
-        LinearLayout layout = getContentLayout();
-        setContents(layout);
-        layout.addView(roundBar);
-        layout.addView(shimmerText);
+        synchronized (this) {
+            setupProgressBar();
+            setupShimmerText();
+            LinearLayout layout = getContentLayout();
+            setContents(layout);
+            layout.addView(roundBar);
+            layout.addView(shimmerText);
+            setCaption("n/a");
+        }
     }
 
     private void setupProgressBar() {
@@ -110,6 +138,7 @@ public class ActionView extends BoxView implements IActionListener {
     private void setupShimmerText() {
         if (shimmerText != null) return;
         shimmerText = new ShimmerTextView(getContext());
+        shimmerText.setText("-");
         shimmerText.setTextColor(mainBackground);
         shimmerText.setReflectionColor(activeTextColor);
         shimmerText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -143,30 +172,22 @@ public class ActionView extends BoxView implements IActionListener {
         return params;
     }
 
-    @Override
-    public void refresh() {
-        post(this::updateView);
-    }
-
-    @Override
-    public synchronized void onActionChanged(Action.Type type) {
-        post(this::updateView);
-    }
-
-    private synchronized void updateView() {
-        String ago = utils.toAgo(
-                Action.date(), getContext());
-        setCaption("since ".concat(ago));
-        if (Action.type() == Halt) {
-            shimmerStop();
-            progressStop();
-        } else {
-            progressStart();
-            shimmerStart();
+    private synchronized void updateView(ActionEvent e) {
+        synchronized (this) {
+            Log.d(TAG, "action: " + e.type());
+            String ago = utils.toAgo(e.date(), getContext());
+            setCaption("since ".concat(ago));
+            if (e.type() == Halt) {
+                shimmerStop();
+                progressStop();
+            } else {
+                progressStart();
+                shimmerStart();
+            }
         }
     }
 
-    public synchronized void shimmerStart() {
+    private void shimmerStart() {
         shimmerText.setText(Action.type().title());
         shimmerText.setPrimaryColor(mainBackground);
         shimmerText.setTextColor(mainBackground);
@@ -174,21 +195,21 @@ public class ActionView extends BoxView implements IActionListener {
         shimmer.start(shimmerText);
     }
 
-    public int actionColor() {
+    private int actionColor() {
         if (Action.type() == ObserveModeEnabling)
             return activeTextColor;
         else
             return activeRedColor;
     }
 
-    private synchronized void shimmerStop() {
+    private void shimmerStop() {
         shimmerText.setText(Halt.title());
         shimmerText.setTextColor(textColorIdling);
         shimmer.cancel();
     }
 
-    public synchronized void progressStart() {
-        int progress = (int) wifiHandler.elapsed();
+    private void progressStart() {
+        int progress = (int) action.elapsed();
         int total = getTotalDuration();
         int duration = (total - progress) * 1000;
         int passed = (100 * progress) / total;

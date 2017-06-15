@@ -2,10 +2,10 @@ package wifeye.app.android.mahorad.com.wifeye.app.state;
 
 public abstract class State implements IState {
 
-    protected StateMachine stateMachine;
+    protected Engine engine;
 
-    public State(StateMachine stateMachine) {
-        this.stateMachine = stateMachine;
+    public State(Engine engine) {
+        this.engine = engine;
     }
 
     @Override

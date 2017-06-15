@@ -1,6 +1,7 @@
 package wifeye.app.android.mahorad.com.wifeye.app;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -10,31 +11,35 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
 import wifeye.app.android.mahorad.com.wifeye.app.constants.Constants;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Signal;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
-import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
-import wifeye.app.android.mahorad.com.wifeye.app.state.StateMachine;
+import wifeye.app.android.mahorad.com.wifeye.app.dagger.annotations.ApplicationContext;
+import wifeye.app.android.mahorad.com.wifeye.app.state.Engine;
 
 public class MainService extends Service {
 
     private static final String TAG = MainServiceBinder.class.getSimpleName();
 
+    private static boolean started;
+
+    private static final ReplaySubject<Boolean> source = ReplaySubject.createWithSize(1);
+    private static final Observable<Boolean> observable = source;
+
     class MainServiceBinder extends Binder {
         public MainServiceBinder getService() {
             return MainServiceBinder.this;
         }
-    }
 
+    }
     private final IBinder binder = new MainServiceBinder();
+
     private ResultReceiver resultReceiver;
 
-    private boolean started;
+    @Inject Engine engine;
 
-    @Inject Wifi wifi;
-    @Inject Signal signal;
-    @Inject Internet internet;
-    @Inject StateMachine stateMachine;
+    @Inject @ApplicationContext
+    Context context;
 
     @Override
     public void onCreate() {
@@ -59,21 +64,10 @@ public class MainService extends Service {
 
     private void start() {
         if (started) return;
-
-        wifi.registerBroadcast();
-        internet.registerBroadcast();
-        signal.startListening();
-        stateMachine.start();
-
+        engine.start(context);
         started = true;
         Log.v(TAG, "started main service");
-        broadcastStartup();
-    }
-
-    private void broadcastStartup() {
-        Intent intent = new Intent(Constants.INTENT_SERVICE_STATE);
-        intent.putExtra(Constants.EXTRAS_SERVICE_STATE, true);
-        sendBroadcast(intent);
+        source.onNext(true);
     }
 
     @Override
@@ -83,21 +77,13 @@ public class MainService extends Service {
 
     private void stop() {
         if (!started) return;
-
-        stateMachine.stop();
-        wifi.unregisterBroadcast();
-        internet.unregisterBroadcast();
-        signal.stopListening();
-
+        engine.stop();
         started = false;
         Log.v(TAG, "stopped main service");
-        broadcastShutdown();
+        source.onNext(false);
     }
 
-    private void broadcastShutdown() {
-        Intent intent = new Intent(Constants.INTENT_SERVICE_STATE);
-        intent.putExtra(Constants.EXTRAS_SERVICE_STATE, false);
-        sendBroadcast(intent);
+    public static Observable<Boolean> observable() {
+        return observable;
     }
-
 }

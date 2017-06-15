@@ -1,117 +1,60 @@
 package wifeye.app.android.mahorad.com.wifeye.app.publishers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.net.NetworkInfo;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Executors;
 
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IWifiListener;
-import wifeye.app.android.mahorad.com.wifeye.app.consumers.IInternetListener;
+import io.reactivex.Observable;
+import wifeye.app.android.mahorad.com.wifeye.app.events.InternetEvent;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.rx.wifi.NetworkStateChangedEvent;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.rx.wifi.RxWifiManager;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
+
+import static android.net.NetworkInfo.DetailedState.CONNECTED;
 
 /**
  * listens to connected ssid names and notifies consumers
  * if the Internet is connected or disconnected.
  */
-public class Internet
-        extends BroadcastReceiver
-        implements IWifiListener {
+public class Internet {
 
     private static String TAG = Internet.class.getSimpleName();
 
-    private static String ssid = null;
-    private static Date date = Calendar.getInstance().getTime();;
-    private final WifiManager wifiManager;
-    private final Wifi wifi;
-    private final Context context;
-    private final Set<IInternetListener> consumers;
+    private static String ssid = "n/a";
+    private static Date date = Utilities.now();
+    private static boolean connected;
 
-    public Internet(Context context, Wifi wifi) {
-        this.context = context;
-        this.wifi = wifi;
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        consumers = new HashSet<>();
+    public static Observable<InternetEvent> observable(Context context) {
+        return RxWifiManager
+                .networkStateChanges(context)
+                .distinctUntilChanged()
+                .map(Internet::toEvent)
+                .distinctUntilChanged();
     }
 
-    @Override
-    public void onWifiStateChanged(Wifi.State state) {
-        if (!wifi.isDisabled()) return;
-        notifyInternetDisconnected();
-    }
-
-    @Override
-    public synchronized void onReceive(Context context, Intent intent) {
-        if (!wifi.isEnabled()) {
-            notifyInternetDisconnected();
-            return;
+    private synchronized static InternetEvent toEvent(NetworkStateChangedEvent e) {
+        NetworkInfo net = e.networkInfo();
+        String ssid = net.getExtraInfo();
+        ssid = !valid(ssid) ? "n/a" : ssid.replace("\"", "");
+        Internet.ssid = ssid;
+        if (Utilities.isNullOrEmpty(Internet.ssid))
+            connected = false;
+        else {
+            boolean c1 = net.isAvailable();
+            boolean c2 = net.isConnected();
+            boolean c3 = net.getDetailedState() == CONNECTED;
+            Internet.connected = c1 && c2 && c3;
         }
-
-        WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-        String bssid = connectionInfo.getBSSID();
-        String hotSpot = (bssid == null
-                ? null
-                : connectionInfo.getSSID());
-        if (!isValidName(hotSpot)) {
-            ssid = null;
-            notifyInternetDisconnected();
-            return;
-        }
-
-        hotSpot = hotSpot.replace("\"", "");
-        if (Utilities.areEqual(ssid, hotSpot)) return;
-        ssid = hotSpot;
-        date = Calendar.getInstance().getTime();
-        notifyInternetGotConnected();
+        date = Utilities.now();
+        return InternetEvent.create(ssid, connected, date);
     }
 
-    private synchronized boolean isValidName(String hotSpot) {
-        if (Utilities.isNullOrEmpty(hotSpot)) return false;
-        if ("0x".equals(hotSpot)) return false;
-        return !hotSpot.contains("unknown");
-    }
-
-    private void notifyInternetGotConnected() {
-        for (final IInternetListener consumer : consumers) {
-            Executors
-                    .newSingleThreadExecutor()
-                    .submit(() -> consumer.onInternetConnected(ssid));
-        }
-    }
-
-    private void notifyInternetDisconnected() {
-        for (final IInternetListener consumer : consumers) {
-            Executors
-                    .newSingleThreadExecutor()
-                    .submit(consumer::onInternetDisconnected);
-        }
-    }
-
-    public void registerBroadcast() {
-        wifi.subscribe(this);
-        IntentFilter intentFilter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        context.registerReceiver(this, intentFilter);
-    }
-
-    public void unregisterBroadcast() {
-        wifi.unsubscribe(this);
-        context.unregisterReceiver(this);
-        consumers.clear();
-    }
-
-    public boolean subscribe(IInternetListener consumer) {
-        return consumers.add(consumer);
-    }
-
-    public boolean unsubscribe(IInternetListener consumer) {
-        return consumers.remove(consumer);
+    private static boolean valid(String ssid) {
+        if (Utilities.isNullOrEmpty(ssid)) return false;
+        if ("0x".equals(ssid)) return false;
+        if ("n/a".equalsIgnoreCase(ssid)) return false;
+        return !ssid.contains("unknown");
     }
 
     public static String ssid() {
@@ -121,6 +64,11 @@ public class Internet
     public static Date date() { return date; }
 
     public static boolean connected() {
-        return ssid != null;
+        return connected;
+    }
+
+
+    public static InternetEvent lastEvent() {
+        return InternetEvent.create(ssid, connected, date);
     }
 }

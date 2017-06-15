@@ -406,7 +406,9 @@ public class BoxView extends RelativeLayout {
         caption.setTextSize(captionSize);
     }
 
-    public void refresh() {
+    public void refresh() {}
 
-    }
+    public void enable() {}
+
+    public void disable() {}
 }

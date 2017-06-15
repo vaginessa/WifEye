@@ -1,9 +1,6 @@
 package wifeye.app.android.mahorad.com.wifeye.gui.mvp;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 
 import javax.inject.Inject;
 
@@ -19,20 +16,8 @@ import wifeye.app.android.mahorad.com.wifeye.gui.dagger.HomeScope;
 
 public class HomePresenter {
 
-    private final CompositeDisposable disposable = new CompositeDisposable();
-
-    private final ServiceStateReceiver receiver = new ServiceStateReceiver();
-    private class ServiceStateReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            boolean enabled = intent
-                    .getExtras()
-                    .getBoolean(Constants.EXTRAS_SERVICE_STATE);
-            view.updateFloatingButton(enabled);
-            if (enabled)
-                view.showSnackbar("Service Enabled.");
-        }
-    }
+    private final CompositeDisposable composite = new CompositeDisposable();
+    private Disposable disposable;
 
     @Inject HomeView view;
     @Inject Utilities utils;
@@ -49,21 +34,21 @@ public class HomePresenter {
     }
 
     public void onCreate() {
-        disposable.add(mainButtonDisposable());
-        disposable.add(mainMenuDisposable());
+        composite.add(mainButtonDisposable());
+        composite.add(mainMenuDisposable());
         view.selectFirstMenuItem();
     }
 
     public void onResume() {
-        registerEngineEvents();
+        observeMainService();
     }
 
     public void onPause() {
-        unregisterEngineEvents();
+        ignoreMainService();
     }
 
     public void onDestroy() {
-        disposable.clear();
+        composite.clear();
     }
 
     public Disposable mainButtonDisposable() {
@@ -109,14 +94,20 @@ public class HomePresenter {
         activity.stopService(intent);
     }
 
-    public void registerEngineEvents() {
-        boolean enabled = utils.isRunning(MainService.class);
-        view.updateFloatingButton(enabled);
-        activity.registerReceiver(receiver,
-                new IntentFilter(Constants.INTENT_SERVICE_STATE));
+    private void observeMainService() {
+        if (isValid(disposable)) return;
+        disposable = MainService
+                .observable()
+                .subscribe(bool -> view.updateFloatingButton(bool));
     }
 
-    public void unregisterEngineEvents() {
-        activity.unregisterReceiver(receiver);
+    private boolean isValid(Disposable d) {
+        return d != null && !d.isDisposed();
+    }
+
+    private void ignoreMainService() {
+        if (disposable.isDisposed())
+            return;
+        disposable.dispose();
     }
 }
