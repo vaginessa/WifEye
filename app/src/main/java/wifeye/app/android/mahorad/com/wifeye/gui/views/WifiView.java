@@ -9,9 +9,6 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.MainService;
-import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.events.WifiEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
@@ -19,15 +16,13 @@ import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Enabled;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.date;
 
-public class WifiView extends BoxView {
+public class WifiView extends AbstractBoxView {
 
     public static final String TAG = WifiView.class.getSimpleName();
 
     private static final String HEADER = "W I F I";
 
     @Inject Utilities utils;
-    private Disposable disposable;
-    private Disposable serviceDisposable;
     private ImageView stateIcon;
 
     public WifiView(Context context) {
@@ -43,52 +38,21 @@ public class WifiView extends BoxView {
     }
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        onFinishedInflation();
-    }
-
-    private void onFinishedInflation() {
-        MainComponent mainComponent =
-                MainApplication.mainComponent();
-        if (mainComponent != null)
-                mainComponent.inject(this);
-
-        serviceDisposable = MainService
-                .observable()
-                .subscribe(e -> {
-                    if (e) enable();
-                    else disable();
-                });
-
-        setHeader(HEADER);
-        setupContents();
+    public void inject() {
+        mainComponent.inject(this);
     }
 
     @Override
-    public void enable() {
-        disposable = Wifi
+    public void attachViewDisposables() {
+        Disposable wifiDisposable = Wifi
                 .observable(getContext())
                 .subscribe(e -> post(() -> updateView(e)));
+        attachDisposable(wifiDisposable);
     }
 
     @Override
-    public void disable() {
-        if (disposable == null)
-            return;
-        if (disposable.isDisposed())
-            return;
-        disposable.dispose();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        disable();
-        serviceDisposable.dispose();
-    }
-
-    private void setupContents() {
+    public void reset() {
+        setHeader(HEADER);
         setupStateIconView();
         setContents(stateIcon);
         setFact("-");

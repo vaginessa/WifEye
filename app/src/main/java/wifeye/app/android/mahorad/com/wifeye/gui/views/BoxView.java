@@ -11,6 +11,7 @@ import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -326,8 +327,13 @@ public class BoxView extends RelativeLayout {
     public void setContents(View view) {
         if (view == null)
             return;
-        contentFrame.removeAllViews();
+        clearContents();
         contentFrame.addView(view);
+    }
+
+    public void clearContents() {
+        contentFrame.removeAllViews();
+        contentFrame.removeAllViewsInLayout();
     }
 
     /* FACT */
@@ -408,7 +414,4 @@ public class BoxView extends RelativeLayout {
 
     public void refresh() {}
 
-    public void enable() {}
-
-    public void disable() {}
 }

@@ -5,25 +5,15 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import java.util.Objects;
-
 import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.MainService;
-import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
 import wifeye.app.android.mahorad.com.wifeye.app.events.LocationEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Location;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-import static wifeye.app.android.mahorad.com.wifeye.app.events.LocationEvent.create;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Location.ctid;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Location.date;
-import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Location.known;
-
-public class LocationView extends BoxView {
+public class LocationView extends AbstractBoxView {
 
     public static final String TAG = LocationView.class.getSimpleName();
 
@@ -37,8 +27,6 @@ public class LocationView extends BoxView {
     private int lite = ContextCompat.getColor(
             getContext(),
             R.color.colorGreen);
-    private Disposable disposable;
-    private Disposable serviceDisposable;
 
     public LocationView(Context context) {
         super(context);
@@ -53,56 +41,25 @@ public class LocationView extends BoxView {
     }
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        finishSignalViewInflation();
-    }
-
-    private void finishSignalViewInflation() {
-        MainComponent mainComponent =
-                MainApplication.mainComponent();
-        if (mainComponent != null)
-                mainComponent.inject(this);
-
-        serviceDisposable = MainService
-                .observable()
-                .subscribe(e -> {
-                    if (e) enable();
-                    else disable();
-                });
-
-        setHeader(HEADER);
-        setupContents();
+    protected void inject() {
+        mainComponent.inject(this);
     }
 
     @Override
-    public void enable() {
-        disposable = Location
+    public void attachViewDisposables() {
+        Disposable locationDisposable = Location
                 .observable(getContext())
                 .subscribe(e -> post(() -> updateView(e)));
+        attachDisposable(locationDisposable);
     }
 
     @Override
-    public void disable() {
-        if (disposable == null)
-            return;
-        if (disposable.isDisposed())
-            return;
-        disposable.dispose();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        disable();
-        serviceDisposable.dispose();
-    }
-
-    private void setupContents() {
+    public void reset() {
+        setHeader(HEADER);
         setupRipplingImage();
         setContents(ripple);
-        setFact("Location identifier");
-        setCaption("Cell Location ID");
+        setFact("-");
+        setCaption("n/a");
     }
 
     private void setupRipplingImage() {
@@ -120,14 +77,12 @@ public class LocationView extends BoxView {
     private void updateView(LocationEvent e) {
         synchronized (this) {
             Log.d(TAG, "location: " + e.ctid() + " " + e.known());
+            if (e.known())
+                ripple.setStrokeColor(lite);
+            else
+                ripple.setStrokeColor(dark);
 
-            post(() -> {
-                if (e.known())
-                    ripple.setStrokeColor(lite);
-                else
-                    ripple.setStrokeColor(dark);
-                ripple.startRippling();
-            });
+            post(() -> ripple.startRippling());
             String ago = utils.toAgo(
                     e.date(), getContext());
             setFact(ago);

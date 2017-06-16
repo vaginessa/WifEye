@@ -1,9 +1,12 @@
 package wifeye.app.android.mahorad.com.wifeye.app.publishers;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.ReplaySubject;
+import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.events.ActionEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.BinaryCountdown;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.UnaryCountdown;
@@ -17,6 +20,8 @@ import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.D
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.Halt;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeDisabling;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Action.Type.ObserveModeEnabling;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet.connected;
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.isDisabled;
 
 public class Action {
 
@@ -29,6 +34,8 @@ public class Action {
 
     private final UnaryCountdown disablingTimer;
     private final BinaryCountdown observingTimer;
+
+    private Disposable serviceDisposable;
 
     private static Type type = Halt;
     private static Date date = Utilities.now();
@@ -60,13 +67,22 @@ public class Action {
         this.wifi = wifi;
         disablingTimer = createDisablingTimer();
         observingTimer = createObservingTimer();
+        observeServiceEvents();
+    }
+
+    private void observeServiceEvents() {
+        if (serviceDisposable != null && !serviceDisposable.isDisposed())
+            serviceDisposable.dispose();
+        serviceDisposable = MainService
+                .observable()
+                .subscribe(e -> { if (!e) halt(); });
     }
 
     private UnaryCountdown createDisablingTimer() {
         return UnaryCountdown
                 .builder()
                 .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
-                .setCompletionAction(wifi::disable)
+                .setCompletionAction(this::completeModeDisable)
                 .build();
     }
 
@@ -75,35 +91,61 @@ public class Action {
                 .builder()
                 .setRunTimes(OBSERVE_REPEAT_COUNT)
                 .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
-                .setMoreDelayedAction(this::enableWifi)
+                .setMoreDelayedAction(this::observeModeEnable)
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
-                .setLessDelayedAction(this::disableWifi)
-                .setCompletionAction(wifi::disable)
+                .setLessDelayedAction(this::observeModeDisable)
+                .setCompletionAction(this::completeModeDisable)
                 .startWithMoreDelayedAction()
                 .build();
     }
 
-    public void disable() {
+    public void runDisabler() {
         synchronized (this) {
-            if (!wifi.isEnabled()) return;
-            if (isDisabling()) return;
+            if (!canDisable()) {
+                halt();
+                return;
+            }
+            if (disabling()) {
+                halt();
+                return;
+            }
             halt();
             notify(DisablingMode);
             disablingTimer.start();
         }
     }
 
-    public void observe() {
+    private boolean canDisable() {
+        return !isDisabled() && !connected();
+    }
+
+    public void runObserver() {
         synchronized (this) {
-            if (isObserving()) return;
+            if (connected()) {
+                halt();
+                return;
+            }
+            if (observing()) {
+                halt();
+                return;
+            }
             halt();
             notify(ObserveModeEnabling);
             observingTimer.start();
         }
     }
 
-    private void enableWifi() {
-        if (wifi.isEnabled()) {
+    private void completeModeDisable() {
+        if (connected()) {
+            halt();
+            return;
+        }
+        wifi.disable();
+        halt();
+    }
+
+    private void observeModeEnable() {
+        if (connected()) {
             halt();
             return;
         }
@@ -111,8 +153,8 @@ public class Action {
         notify(ObserveModeDisabling);
     }
 
-    private void disableWifi() {
-        if (Internet.connected()) {
+    private void observeModeDisable() {
+        if (connected()) {
             halt();
             return;
         }
@@ -120,37 +162,28 @@ public class Action {
         notify(ObserveModeEnabling);
     }
 
-    private boolean isDisabling() {
+    private boolean disabling() {
         return disablingTimer.isActive();
     }
 
-    private boolean isObserving() {
+    private boolean observing() {
         return observingTimer.isActive();
     }
 
     public long elapsed() {
-        if (isDisabling())
+        if (disabling())
             return disablingTimer.elapsed();
-        if (isObserving())
+        if (observing())
             return observingTimer.elapsed();
         return 0;
     }
 
     public void halt() {
         synchronized (this) {
-            stopObservingTimer();
-            stopDisablingTimer();
+            observingTimer.stop();
+            disablingTimer.stop();
+            notify(Halt);
         }
-    }
-
-    private void stopObservingTimer() {
-        observingTimer.stop();
-        notify(Halt);
-    }
-
-    private void stopDisablingTimer() {
-        disablingTimer.stop();
-        notify(Halt);
     }
 
     private void notify(Type type) {

@@ -9,14 +9,13 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
-import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
-import wifeye.app.android.mahorad.com.wifeye.app.MainService;
-import wifeye.app.android.mahorad.com.wifeye.app.dagger.MainComponent;
+import wifeye.app.android.mahorad.com.wifeye.app.events.InternetEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.events.PersistenceEvent;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Internet;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persistence;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
-public class PersistView extends BoxView {
+public class PersistView extends AbstractBoxView {
 
     public static final String TAG = PersistView.class.getSimpleName();
 
@@ -24,8 +23,6 @@ public class PersistView extends BoxView {
 
     @Inject Utilities utils;
     private ImageView stateIcon;
-    private Disposable disposable;
-    private Disposable serviceDisposable;
 
     public PersistView(Context context) {
         super(context);
@@ -40,52 +37,26 @@ public class PersistView extends BoxView {
     }
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        finishSignalViewInflation();
+    protected void inject() {
+        mainComponent.inject(this);
     }
 
-    private void finishSignalViewInflation() {
-        MainComponent mainComponent =
-                MainApplication.mainComponent();
-        if (mainComponent != null)
-                mainComponent.inject(this);
-
-        serviceDisposable = MainService
+    @Override
+    public void attachViewDisposables() {
+        Disposable persistDisposable = Persistence
                 .observable()
-                .subscribe(e -> {
-                    if (e) enable();
-                    else disable();
-                });
+                .subscribe(e -> post(() -> updateCaption(e)));
+        attachDisposable(persistDisposable);
 
+        Disposable internetDisposable = Internet
+                .observable(getContext())
+                .subscribe(e -> post(() -> updateFacts(e)));
+        attachDisposable(internetDisposable);
+    }
+
+    @Override
+    public void reset() {
         setHeader(HEADER);
-        setupContents();
-    }
-
-    @Override
-    public void enable() {
-        disposable = Persistence
-                .observable()
-                .subscribe(e -> post(() -> updateView(e)));
-    }
-
-    @Override
-    public void disable() {
-        if (disposable == null)
-            return;
-        if (disposable.isDisposed())
-            return;
-        disposable.dispose();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        disable();
-        serviceDisposable.dispose();
-    }
-
-    private void setupContents() {
         setupStateIconView();
         setContents(stateIcon);
         setFact("-");
@@ -97,24 +68,24 @@ public class PersistView extends BoxView {
         stateIcon.setImageResource(R.drawable.save);
     }
 
-    private void updateView(PersistenceEvent e) {
+    private void updateFacts(InternetEvent e) {
         synchronized (this) {
-            Log.d(TAG, "persist: " + e.ssid() + " " + e.ctid());
-            setFact(facts(e));
-            String caption = String.format("%s: %s", e.ssid(), e.ctid());
-            setCaption(caption);
+            String fact = "-";
+            if (e.connected()) {
+                int towers = Persistence
+                        .towersOf(e.ssid())
+                        .size();
+                fact = String.format("%d-towers (%s)", towers, e.ssid());
+            }
+            setFact(fact);
         }
     }
 
-    private String facts(PersistenceEvent e) {
-        if (Utilities.isNullOrEmpty(e.ssid()))
-            return "-";
-        int towers = Persistence
-                .towersOf(e.ssid())
-                .size();
-        String plural = towers > 1 ? "s" : "";
-        String ago = utils.toAgo(
-                e.date(), getContext());
-        return String.format("%d Tower%s (%s)", towers, plural, ago);
+    private void updateCaption(PersistenceEvent e) {
+        synchronized (this) {
+            Log.d(TAG, "persist: " + e.ssid() + " " + e.ctid());
+            setCaption(e.ctid());
+        }
     }
+
 }

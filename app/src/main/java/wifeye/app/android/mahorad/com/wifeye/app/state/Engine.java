@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import wifeye.app.android.mahorad.com.wifeye.app.MainApplication;
 import wifeye.app.android.mahorad.com.wifeye.app.events.EngineEvent;
@@ -21,6 +21,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.publishers.Location;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persistence;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static wifeye.app.android.mahorad.com.wifeye.app.state.IState.Type.Initial;
 
 /**
@@ -142,7 +143,6 @@ public class Engine implements IStateMachine, IActuator {
     private void subscribeLocation(Context context) {
         locationDisposable = Location
                 .observable(context)
-                .observeOn(Schedulers.io())
                 .subscribe(this::onLocationEvent);
     }
 
@@ -156,7 +156,6 @@ public class Engine implements IStateMachine, IActuator {
     private void subscribeInternet(Context context) {
         internetDisposable = Internet
                 .observable(context)
-                .observeOn(Schedulers.io())
                 .subscribe(this::onInternetEvent);
     }
 
@@ -178,14 +177,22 @@ public class Engine implements IStateMachine, IActuator {
 
     @Override
     public void disableWifi() {
-        Log.i(TAG, "----> DISABLING WIFI...");
-        action.disable();
+        Executors
+                .newSingleThreadScheduledExecutor()
+                .schedule(() -> {
+                    Log.i(TAG, "----> DISABLING WIFI...");
+                    action.runDisabler();
+                }, 1, SECONDS);
     }
 
     @Override
     public void observeWifi() {
-        Log.i(TAG, "----> OBSERVING WIFI...");
-        action.observe();
+        Executors
+                .newSingleThreadScheduledExecutor()
+                .schedule(() -> {
+                    Log.i(TAG, "----> OBSERVING WIFI...");
+                    action.runObserver();
+                }, 1, SECONDS);
     }
 
     @Override

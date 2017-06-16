@@ -23,23 +23,25 @@ public abstract class Persistence {
     private static final ReplaySubject<PersistenceEvent> source = ReplaySubject.createWithSize(1);
     private static final Observable<PersistenceEvent> observable = source.distinctUntilChanged();
 
+    private static final HashMap<String, Set<String>> db = new HashMap<>();
+
     static {
-//        addFakeValues();
+        addFakeValues();
     }
 
-//    private void addFakeValues() {
-//        HashSet<String> towers = new HashSet<String>() {{
-//            add("[20201,13238893,-1]");
-//            add("[20101,13302242,-1]");
-//            add("[20201,13302242,-1]");
-//            add("[20201,13292922,-1]");
-//            add("[20101,13173328,-1]");
-//            add("[2011,134415638,-1]");
-//            add("[2021,582420,-1]");
-//            add("[20201,13173317,-1]");
-//        }};
-//        db.put("Archer", towers);
-//    }
+    private static void addFakeValues() {
+        HashSet<String> towers = new HashSet<String>() {{
+            add("[20201,13238893,-1]");
+            add("[20101,13302242,-1]");
+            add("[20201,13302242,-1]");
+            add("[20201,13292922,-1]");
+            add("[20101,13173328,-1]");
+            add("[2011,134415638,-1]");
+            add("[2021,582420,-1]");
+            add("[20201,13173317,-1]");
+        }};
+        db.put("Archer", towers);
+    }
 
     public static Observable<PersistenceEvent> observable() {
         return observable;
@@ -60,8 +62,6 @@ public abstract class Persistence {
     public static PersistenceEvent lastEvent() {
         return PersistenceEvent.create(ssid, ctid, date);
     }
-
-    private static final HashMap<String, Set<String>> db = new HashMap<>();
 
     public static void persist(String ssid, final String ctid) {
         if (!isValid(ssid)) return;

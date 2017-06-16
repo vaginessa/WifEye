@@ -140,20 +140,24 @@ public class RoundBar extends View {
 
     //region start/stop methods
     public synchronized void start(float frPercent, float toPercent, int duration) {
-        setProgress(frPercent);
-        objectAnimator = ObjectAnimator.ofFloat(this, "progress", toPercent);
-        objectAnimator.setDuration(duration);
-        objectAnimator.setInterpolator(new LinearInterpolator());
-        objectAnimator.start();
+        synchronized (this) {
+            setProgress(frPercent);
+            objectAnimator = ObjectAnimator.ofFloat(this, "progress", toPercent);
+            objectAnimator.setDuration(duration);
+            objectAnimator.setInterpolator(new LinearInterpolator());
+            objectAnimator.start();
+        }
     }
 
-    public synchronized void stop() {
-        if (objectAnimator == null)
-            return;
-        objectAnimator.removeAllListeners();
-        objectAnimator.end();
-        objectAnimator.cancel();
-        objectAnimator = null;
+    public void stop() {
+        synchronized (this) {
+            if (objectAnimator == null)
+                return;
+            objectAnimator.removeAllListeners();
+            objectAnimator.end();
+            objectAnimator.cancel();
+            objectAnimator = null;
+        }
     }
 
     public boolean isRunning() {

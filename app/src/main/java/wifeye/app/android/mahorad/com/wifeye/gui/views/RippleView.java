@@ -116,6 +116,7 @@ public class RippleView extends RelativeLayout {
     public void setStrokeColor(int color) {
         this.strokeColor = color;
         paint.setColor(color);
+        initializeView();
     }
 
     public void setStrokeWidth(float width) {

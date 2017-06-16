@@ -11,6 +11,7 @@ import wifeye.app.android.mahorad.com.wifeye.app.events.WifiEvent;
 import wifeye.app.android.mahorad.com.wifeye.app.publishers.rx.wifi.RxWifiManager;
 import wifeye.app.android.mahorad.com.wifeye.app.utilities.Utilities;
 
+import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Disabled;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Enabled;
 import static wifeye.app.android.mahorad.com.wifeye.app.publishers.Wifi.State.Unknown;
 
@@ -70,22 +71,21 @@ public class Wifi {
     }
 
     public void enable() {
-        if (isEnabled()) return;
         wifiManager.setWifiEnabled(true);
         Log.d(TAG, "[[ enabling wifi... ]]");
     }
 
     public void disable() {
-        if (Internet.ssid() != null)
-            return;
         wifiManager.setWifiEnabled(false);
         Log.d(TAG, "[[ disabling wifi... ]]");
     }
 
-    public boolean isEnabled() {
-        boolean enabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED);
-        Log.d(TAG, String.format("[[ wifiManager %b, this.wifiEvent %b ]]", enabled, state == Enabled));
-        return enabled;
+    public static boolean isEnabled() {
+        return state == Enabled;
+    }
+
+    public static boolean isDisabled() {
+        return state == Disabled;
     }
 
     public static State state() {
