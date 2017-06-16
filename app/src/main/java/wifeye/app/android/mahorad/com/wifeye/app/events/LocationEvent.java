@@ -17,15 +17,19 @@ public abstract class LocationEvent {
 
     public abstract boolean known();
 
-    @NonNull
-    public abstract Date date();
+    private Date date;
+    public final Date date() {
+        return date;
+    }
 
     @CheckResult
     @NonNull
     public static LocationEvent create(@NonNull String ctid, boolean known, @NonNull Date date) {
         Preconditions.checkNotNull(ctid, "ctid == null");
         Preconditions.checkNotNull(date, "date == null");
-        return new AutoValue_LocationEvent(ctid, known, date);
+        LocationEvent e = new AutoValue_LocationEvent(ctid, known);
+        e.date = date;
+        return e;
     }
 
 }

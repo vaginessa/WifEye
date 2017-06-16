@@ -16,14 +16,18 @@ public abstract class EngineEvent {
     @NonNull
     public abstract Type type();
 
-    @NonNull
-    public abstract Date date();
+    private Date date;
+    public final Date date() {
+        return date;
+    }
 
     @CheckResult
     @NonNull
     public static EngineEvent create(@NonNull Type type, @NonNull Date date) {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(date);
-        return new AutoValue_EngineEvent(type, date);
+        EngineEvent e = new AutoValue_EngineEvent(type);
+        e.date = date;
+        return e;
     }
 }

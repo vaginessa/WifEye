@@ -8,6 +8,7 @@ import com.google.auto.value.AutoValue;
 import java.util.Date;
 
 import dagger.internal.Preconditions;
+import wifeye.app.android.mahorad.com.wifeye.app.publishers.Persistence;
 
 @AutoValue
 public abstract class PersistenceEvent {
@@ -18,8 +19,10 @@ public abstract class PersistenceEvent {
     @NonNull
     public abstract String ctid();
 
-    @NonNull
-    public abstract Date date();
+    private Date date;
+    public final Date date() {
+        return date;
+    }
 
     @CheckResult
     @NonNull
@@ -27,6 +30,8 @@ public abstract class PersistenceEvent {
         Preconditions.checkNotNull(ssid, "ssid == null");
         Preconditions.checkNotNull(ctid, "ctid == null");
         Preconditions.checkNotNull(date, "date == null");
-        return new AutoValue_PersistenceEvent(ssid, ctid, date);
+        PersistenceEvent e = new AutoValue_PersistenceEvent(ssid, ctid);
+        e.date = date;
+        return e;
     }
 }

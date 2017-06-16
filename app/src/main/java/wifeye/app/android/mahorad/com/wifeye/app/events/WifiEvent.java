@@ -16,15 +16,18 @@ public abstract class WifiEvent {
     @NonNull
     public abstract State state();
 
-    @NonNull
-    public abstract Date date();
+    private Date date;
+    public final Date date() {
+        return date;
+    }
 
     @CheckResult
     @NonNull
     public static WifiEvent create(@NonNull State state, @NonNull Date date) {
         Preconditions.checkNotNull(state);
         Preconditions.checkNotNull(date);
-        return new AutoValue_WifiEvent(state, date);
-
+        WifiEvent e = new AutoValue_WifiEvent(state);
+        e.date = date;
+        return e;
     }
 }
