@@ -1,10 +1,10 @@
 package wifeye.app.android.mahorad.com.wifeye.app.publishers;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.ReplaySubject;
 import wifeye.app.android.mahorad.com.wifeye.app.MainService;
 import wifeye.app.android.mahorad.com.wifeye.app.events.ActionEvent;
@@ -39,6 +39,10 @@ public class Action {
 
     private static Type type = Halt;
     private static Date date = Utilities.now();
+
+    private long elapsed;
+    private Consumer<Long> observerConsumer = tick -> elapsed = tick;
+    private Consumer<Long> disablerConsumer = tick -> elapsed = tick;
 
     public enum Type {
 
@@ -79,24 +83,32 @@ public class Action {
     }
 
     private UnaryCountdown createDisablingTimer() {
-        return UnaryCountdown
+        UnaryCountdown disabler = UnaryCountdown
                 .builder()
                 .setDuration(WIFI_DISABLE_TIMEOUT, SECONDS)
+                .setCondition(Wifi::isEnabled)
                 .setCompletionAction(this::completeModeDisable)
                 .build();
+        disabler.subscribe(disablerConsumer);
+        return disabler;
     }
 
+    private long s;
     private BinaryCountdown createObservingTimer() {
-        return BinaryCountdown
+        BinaryCountdown observer = BinaryCountdown
                 .builder()
                 .setRunTimes(OBSERVE_REPEAT_COUNT)
                 .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                 .setMoreDelayedAction(this::observeModeEnable)
+                .setMoreDelayedCondition(Wifi::isDisabled)
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
                 .setLessDelayedAction(this::observeModeDisable)
+                .setLessDelayedCondition(Wifi::isEnabled)
                 .setCompletionAction(this::completeModeDisable)
                 .startWithMoreDelayedAction()
                 .build();
+        observer.subscribe(observerConsumer);
+        return observer;
     }
 
     public void runDisabler() {
@@ -105,10 +117,7 @@ public class Action {
                 halt();
                 return;
             }
-            if (disabling()) {
-                halt();
-                return;
-            }
+            if (disabling()) return;
             halt();
             notify(DisablingMode);
             disablingTimer.start();
@@ -125,10 +134,7 @@ public class Action {
                 halt();
                 return;
             }
-            if (observing()) {
-                halt();
-                return;
-            }
+            if (observing()) return;
             halt();
             notify(ObserveModeEnabling);
             observingTimer.start();
@@ -171,24 +177,26 @@ public class Action {
     }
 
     public long elapsed() {
-        if (disabling())
-            return disablingTimer.elapsed();
-        if (observing())
-            return observingTimer.elapsed();
-        return 0;
+        return elapsed;
     }
 
     public void halt() {
         synchronized (this) {
-            observingTimer.stop();
-            disablingTimer.stop();
+            stopTimers();
             notify(Halt);
         }
     }
 
-    private void notify(Type type) {
+    private void stopTimers() {
+        observingTimer.stop();
+        disablingTimer.stop();
+    }
+
+    private static synchronized void notify(Type type) {
+        if (type != Action.type) {
+            Action.date = Utilities.now();
+        }
         Action.type = type;
-        Action.date = Utilities.now();
         source.onNext(ActionEvent.create(type, date));
     }
 

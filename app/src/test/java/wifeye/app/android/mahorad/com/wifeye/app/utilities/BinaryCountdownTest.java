@@ -29,7 +29,7 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
         await().atMost(4, SECONDS)
@@ -46,17 +46,18 @@ public class BinaryCountdownTest {
         timer = BinaryCountdown
                 .builder()
                 .setRunTimes(1)
-                .setLessDelayedLength(1, SECONDS)
-                .setMoreDelayedLength(2, SECONDS)
+                .setLessDelayedLength(2, SECONDS)
+                .setMoreDelayedLength(4, SECONDS)
                 .setLessDelayedAction(() -> lessDelayedNumber++)
                 .setMoreDelayedAction(() -> moreDelayedNumber = moreDelayedNumber / 0)
                 .setCompletionAction(() -> isCompleted = true)
                 .setExceptionAction(() -> exceptionNumber++)
                 .startWithMoreDelayedAction()
                 .build();
+        timer.subscribe(System.out::println);
         timer.start();
 
-        await().atMost(4, SECONDS)
+        await().atMost(10, SECONDS)
                .until(() -> !timer.isActive());
 
         assertEquals(1, lessDelayedNumber);
@@ -75,10 +76,10 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
-        await().atMost(7, SECONDS)
+        await().atMost(20, SECONDS)
                 .until(() -> isCompleted);
 
         assertEquals(2, lessDelayedNumber);
@@ -98,7 +99,7 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
         await().atMost(4, SECONDS)
@@ -120,7 +121,7 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
         await().atMost(6, SECONDS)
@@ -145,7 +146,7 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithMoreDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
         await().atMost(4, SECONDS)
@@ -178,7 +179,7 @@ public class BinaryCountdownTest {
                 .setCompletionAction(() -> isCompleted = true)
                 .startWithLessDelayedAction()
                 .build();
-
+        timer.subscribe(System.out::println);
         timer.start();
 
         await().atMost(2, SECONDS)

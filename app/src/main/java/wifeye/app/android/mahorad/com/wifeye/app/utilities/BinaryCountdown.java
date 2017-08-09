@@ -3,6 +3,9 @@ package wifeye.app.android.mahorad.com.wifeye.app.utilities;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.functions.BooleanSupplier;
+import io.reactivex.functions.Consumer;
+
 public class BinaryCountdown {
 
     private static final int MORE_DELAY = 1;
@@ -18,11 +21,13 @@ public class BinaryCountdown {
     private int lessDelayedLength;
     private TimeUnit lessDelayedUnit;
     private Runnable lessDelayedAction;
+    private BooleanSupplier lessDelayedCondition;
 
     private final UnaryCountdown moreDelayedCountdown;
     private int moreDelayedLength;
     private TimeUnit moreDelayedUnit;
     private Runnable moreDelayedAction;
+    private BooleanSupplier moreDelayedCondition;
 
     private Runnable exceptionAction;
     private Runnable completionAction;
@@ -34,11 +39,13 @@ public class BinaryCountdown {
         lessDelayedLength = builder.lessDelayedLength();
         lessDelayedUnit = builder.lessDelayedUnit();
         lessDelayedAction = builder.lessDelayedAction();
+        lessDelayedCondition = builder.lessDelayedCondition();
         lessDelayedCountdown = createLessDelayedTimer();
 
         moreDelayedLength = builder.moreDelayedLength();
         moreDelayedUnit = builder.moreDelayedUnit();
         moreDelayedAction = builder.moreDelayedAction();
+        moreDelayedCondition = builder.moreDelayedCondition();
         moreDelayedCountdown = createMoreDelayedTimer();
 
         exceptionAction = builder.exceptionAction();
@@ -49,6 +56,7 @@ public class BinaryCountdown {
         return UnaryCountdown
                 .builder()
                 .setDuration(moreDelayedLength, moreDelayedUnit)
+                .setCondition(moreDelayedCondition)
                 .setCompletionAction(() -> {
                     try {
                         moreDelayedAction.run();
@@ -65,6 +73,7 @@ public class BinaryCountdown {
         return UnaryCountdown
                 .builder()
                 .setDuration(lessDelayedLength, lessDelayedUnit)
+                .setCondition(lessDelayedCondition)
                 .setCompletionAction(() -> {
                     try {
                         lessDelayedAction.run();
@@ -137,12 +146,14 @@ public class BinaryCountdown {
         return lessDelayedCountdown.isActive();
     }
 
-    public long elapsed() {
-        switch (runningCountdownTimer) {
-            case  1: return moreDelayedCountdown.elapsed();
-            case -1: return lessDelayedCountdown.elapsed();
-            default: return 0;
-        }
+    public void subscribe(Consumer<Long> consumer) {
+        moreDelayedCountdown.subscribe(consumer);
+        lessDelayedCountdown.subscribe(consumer);
+    }
+
+    public void ubsubscribe(Consumer<Long> consumer) {
+        moreDelayedCountdown.unsubscribe(consumer);
+        lessDelayedCountdown.unsubscribe(consumer);
     }
 
     public static BinaryCountdownBuilder builder() {

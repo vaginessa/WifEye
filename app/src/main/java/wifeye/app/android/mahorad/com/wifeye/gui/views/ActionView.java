@@ -14,6 +14,7 @@ import com.romainpiel.shimmer.ShimmerTextView;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import wifeye.app.android.mahorad.com.wifeye.R;
 import wifeye.app.android.mahorad.com.wifeye.app.events.ActionEvent;
@@ -71,7 +72,8 @@ public class ActionView extends AbstractBoxView {
     public void attachViewDisposables() {
         Disposable actionDisposable = Action
                 .observable()
-                .subscribe(e -> post(() -> updateView(e)));
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::updateView);
         attachDisposable(actionDisposable);
     }
 
@@ -146,7 +148,7 @@ public class ActionView extends AbstractBoxView {
     private synchronized void updateView(ActionEvent e) {
         synchronized (this) {
             Log.d(TAG, "action: " + e.type());
-            String ago = utils.toAgo(e.date(), getContext());
+            String ago = utils.toAgo(Action.date(), getContext());
             setCaption("since ".concat(ago));
             if (e.type() == Halt) {
                 shimmerStop();
@@ -180,12 +182,12 @@ public class ActionView extends AbstractBoxView {
     }
 
     private void progressStart(ActionEvent e) {
-        int progress = (int) action.elapsed();
+        int elapsed = (int) action.elapsed();
         int total = getTotalDuration(e);
-        int duration = (total - progress) * 1000;
-        int passed = (100 * progress) / total;
+        int duration = (total - elapsed) * 1000;
+        int percentage = (100 * elapsed) / total;
         roundBar.setForegroundColor(actionColor(e));
-        roundBar.start(passed, 100, duration);
+        roundBar.start(percentage, 100, duration);
     }
 
     public synchronized void progressStop() {

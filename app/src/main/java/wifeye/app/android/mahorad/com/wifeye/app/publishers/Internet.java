@@ -34,19 +34,23 @@ public class Internet {
     }
 
     private synchronized static InternetEvent toEvent(NetworkStateChangedEvent e) {
+        boolean c1, c2 = true, c3 = true;
         NetworkInfo net = e.networkInfo();
         String ssid = net.getExtraInfo();
         ssid = !valid(ssid) ? "n/a" : ssid.replace("\"", "");
-        Internet.ssid = ssid;
         if (Utilities.isNullOrEmpty(Internet.ssid))
-            connected = false;
+            c1 = false;
         else {
-            boolean c1 = net.isAvailable();
-            boolean c2 = net.isConnected();
-            boolean c3 = net.getDetailedState() == CONNECTED;
-            Internet.connected = c1 && c2 && c3;
+            c1 = net.isAvailable();
+            c2 = net.isConnected();
+            c3 = net.getDetailedState() == CONNECTED;
         }
-        date = Utilities.now();
+
+        if (!ssid.equals(Internet.ssid)) {
+            date = Utilities.now();
+        }
+        Internet.ssid = ssid;
+        Internet.connected = c1 && c2 && c3;
         return InternetEvent.create(ssid, connected, date);
     }
 
@@ -66,7 +70,6 @@ public class Internet {
     public static boolean connected() {
         return connected;
     }
-
 
     public static InternetEvent lastEvent() {
         return InternetEvent.create(ssid, connected, date);

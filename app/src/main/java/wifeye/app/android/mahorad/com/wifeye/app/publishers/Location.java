@@ -27,13 +27,18 @@ public class Location {
                 .map(Location::toEvent);
     }
 
-    private static LocationEvent toEvent(CellLocation location) {
-        ctid = (location == null ? "" : location.toString());
-        known = Utilities.isNullOrEmpty(ctid) ||
+    private synchronized static LocationEvent toEvent(CellLocation location) {
+        String ctid = (location == null ? "" : location.toString());
+        boolean known = Utilities.isNullOrEmpty(ctid) ||
                 (Internet.connected()
                         ? Persistence.exist(Internet.ssid(), ctid)
                         : Persistence.exist(ctid));
-        date = Utilities.now();
+
+        if (!ctid.equals(Location.ctid)) {
+            Location.date = Utilities.now();
+        }
+        Location.ctid = ctid;
+        Location.known = known;
         return LocationEvent.create(ctid, known, date);
     }
 

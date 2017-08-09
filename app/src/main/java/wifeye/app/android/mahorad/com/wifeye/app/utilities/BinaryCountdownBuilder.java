@@ -2,6 +2,8 @@ package wifeye.app.android.mahorad.com.wifeye.app.utilities;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.functions.BooleanSupplier;
+
 public class BinaryCountdownBuilder {
 
     private static final int MINIMUM_LESS_DELAYED_LENGTH = 1;
@@ -15,10 +17,12 @@ public class BinaryCountdownBuilder {
     private int lessDelayedLength = MINIMUM_LESS_DELAYED_LENGTH;
     private TimeUnit lessDelayedUnit;
     private Runnable lessDelayedAction = NONE;
+    private BooleanSupplier lessDelayedCondition;
 
     private int moreDelayedLength = MINIMUM_MORE_DELAYED_LENGTH;
     private TimeUnit moreDelayedUnit;
     private Runnable moreDelayedAction = NONE;
+    private BooleanSupplier moreDelayedCondition;
 
     private Runnable exceptionAction = NONE;
     private Runnable completionAction = NONE;
@@ -51,7 +55,21 @@ public class BinaryCountdownBuilder {
         return this;
     }
 
+    public BinaryCountdownBuilder setLessDelayedCondition(BooleanSupplier cond) {
+        if (cond == null)
+            return this;
+        lessDelayedCondition = cond;
+        return this;
+    }
+
     public BinaryCountdownBuilder setMoreDelayedAction(Runnable r) {
+        if (r == null)
+            return this;
+        moreDelayedAction = r;
+        return this;
+    }
+
+    public BinaryCountdownBuilder setMoreDelayedCondition(Runnable r) {
         if (r == null)
             return this;
         moreDelayedAction = r;
@@ -98,6 +116,8 @@ public class BinaryCountdownBuilder {
         return lessDelayedAction;
     }
 
+    public BooleanSupplier lessDelayedCondition() { return  lessDelayedCondition; }
+
     public int moreDelayedLength() {
         return moreDelayedLength;
     }
@@ -109,6 +129,8 @@ public class BinaryCountdownBuilder {
     public Runnable moreDelayedAction() {
         return moreDelayedAction;
     }
+
+    public BooleanSupplier moreDelayedCondition() { return moreDelayedCondition; }
 
     public Runnable exceptionAction() {
         return exceptionAction;

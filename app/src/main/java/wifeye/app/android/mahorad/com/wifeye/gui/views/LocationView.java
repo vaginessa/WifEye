@@ -83,7 +83,7 @@ public class LocationView extends AbstractBoxView {
                 ripple.setStrokeColor(dark);
 
             post(() -> ripple.startRippling());
-            String ago = utils.toAgo(e.date(), getContext());
+            String ago = utils.toAgo(Location.date(), getContext());
             setFact(ago);
             setCaption(e.ctid().equals("") ? "n/a" : e.ctid());
         }

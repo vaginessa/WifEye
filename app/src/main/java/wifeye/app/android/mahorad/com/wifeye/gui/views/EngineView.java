@@ -62,7 +62,7 @@ public class EngineView extends AbstractBoxView {
     private void updateView(EngineEvent e) {
         synchronized (this) {
             setFact(e.type().title());
-            String ago = utils.toAgo(e.date(), getContext());
+            String ago = utils.toAgo(Engine.date(), getContext());
             setCaption(ago);
             stateIcon.setImageResource(getIcon(e.type()));
         }

@@ -2,6 +2,8 @@ package wifeye.app.android.mahorad.com.wifeye.app.utilities;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.functions.BooleanSupplier;
+
 public class UnaryCountdownBuilder {
 
     private static final int MINIMUM_DURATION = 1;
@@ -12,6 +14,8 @@ public class UnaryCountdownBuilder {
 
     private Runnable exceptionAction = NONE;
     private Runnable completedAction = NONE;
+
+    private BooleanSupplier condition;
 
     public UnaryCountdownBuilder setDuration(int duration, TimeUnit unit) {
         this.duration = Math.max(duration, MINIMUM_DURATION);
@@ -35,6 +39,13 @@ public class UnaryCountdownBuilder {
         return this;
     }
 
+    public UnaryCountdownBuilder setCondition(BooleanSupplier condition) {
+        if (condition == null)
+            return this;
+        this.condition = condition;
+        return this;
+    }
+
     public UnaryCountdown build() {
         return new UnaryCountdown(this);
     }
@@ -55,4 +66,7 @@ public class UnaryCountdownBuilder {
         return timeUnit;
     }
 
+    public BooleanSupplier condition() {
+        return condition;
+    }
 }

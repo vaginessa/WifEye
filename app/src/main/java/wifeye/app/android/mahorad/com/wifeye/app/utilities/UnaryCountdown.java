@@ -1,12 +1,16 @@
 package wifeye.app.android.mahorad.com.wifeye.app.utilities;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BooleanSupplier;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * An RxJava based countdown timer which performs
@@ -15,16 +19,18 @@ import io.reactivex.schedulers.Schedulers;
 public class UnaryCountdown {
 
     private Runnable completedAction;
+    private BooleanSupplier condition;
 
-    private Observable<Long> observable;
-    private Disposable disposable;
+    private Disposable timer;
     private Scheduler scheduler;
 
     private int duration;
     private TimeUnit unit;
     private boolean isActive;
 
-    private volatile AtomicLong elapsed = new AtomicLong(0);
+    private PublishSubject<Long> elapsed = PublishSubject.create();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private HashMap<Consumer<Long>, Disposable> consumers = new HashMap<>();
 
     public UnaryCountdown(UnaryCountdownBuilder builder) {
         if (builder == null)
@@ -33,33 +39,65 @@ public class UnaryCountdown {
         unit = builder.timeUnit();
 
         completedAction = builder.completionAction();
+        condition = builder.condition();
     }
 
     public synchronized void start() {
         if (isActive) return;
         isActive = true;
         scheduler = Schedulers.newThread();
-        disposable = Observable
+        updateSubscriptions();
+        timer = Observable
                 .interval(1, unit, scheduler)
-                .doOnNext(n -> elapsed.set(n + 1))
-                .takeWhile(n -> isActive && ++n < duration)
+                .doOnNext(n -> elapsed.onNext(n))
+                .takeWhile(this::canContinue)
                 .doOnComplete(() -> {
+                    if (!isActive) return;
                     completedAction.run();
                     stop();
                 })
                 .subscribe();
     }
 
-    public synchronized long elapsed() {
-        return elapsed.get();
+    private boolean canContinue(Long n) throws Exception {
+        boolean canTake = isActive && ++n < duration;
+        if (!canTake) return false;
+        return condition == null || condition.getAsBoolean();
+    }
+
+    private void updateSubscriptions() {
+        Observable
+                .fromIterable(consumers.keySet())
+                .subscribe(this::subscribe);
+    }
+
+    public void subscribe(Consumer<Long> consumer) {
+        if (consumer == null) return;
+        if (hasUnused(consumer)) return;
+        Disposable disposable = elapsed.subscribe(consumer);
+        consumers.put(consumer, disposable);
+        compositeDisposable.add(disposable);
+    }
+
+    private boolean hasUnused(Consumer<Long> consumer) {
+        boolean exists = consumers.containsKey(consumer);
+        return exists && !consumers.get(consumer).isDisposed();
+    }
+
+    public void unsubscribe(Consumer<Long> consumer) {
+        if (consumer == null) return;
+        if (!consumers.containsKey(consumer)) return;
+        Disposable disposable = consumers.get(consumer);
+        consumers.remove(consumer);
+        compositeDisposable.remove(disposable);
     }
 
     public synchronized void stop() {
         if (!isActive) return;
         scheduler.shutdown();
-        disposable.dispose();
-        observable = null;
-        disposable = null;
+        timer.dispose();
+        compositeDisposable.clear();
+        timer = null;
         scheduler = null;
         isActive = false;
     }

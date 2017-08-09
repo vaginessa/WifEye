@@ -69,7 +69,7 @@ public class WifiView extends AbstractBoxView {
             Log.d(TAG, "wifi: " + e.state());
             boolean enabled = (e.state() == Enabled);
             setFact(enabled ? "enabled" : "disabled");
-            String ago = utils.toAgo(e.date(), getContext());
+            String ago = utils.toAgo(Wifi.date(), getContext());
             setCaption(ago);
             int icon = enabled
                     ? R.drawable.wifi_on

@@ -65,7 +65,7 @@ public class InternetView extends AbstractBoxView {
         synchronized (this) {
             Log.d(TAG, e.ssid() + " " + e.connected());
             setFact(e.ssid());
-            String ago = utils.toAgo(e.date(), getContext());
+            String ago = utils.toAgo(Internet.date(), getContext());
             setCaption(ago);
             int icon = e.connected()
                     ? R.drawable.has_ssid

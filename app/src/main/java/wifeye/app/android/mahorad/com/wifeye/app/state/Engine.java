@@ -33,7 +33,7 @@ public class Engine implements IStateMachine, IActuator {
 
     private static final String TAG = Engine.class.getSimpleName();
 
-    private static final ReplaySubject<EngineEvent> source = ReplaySubject.create();
+    private static final ReplaySubject<EngineEvent> source = ReplaySubject.createWithSize(1);
     private static final Observable<EngineEvent> observable = source.distinctUntilChanged();
 
     private static IState.Type state = Initial;
@@ -115,9 +115,11 @@ public class Engine implements IStateMachine, IActuator {
         notify(state);
     }
 
-    private void notify(final IState state) {
+    private static synchronized void notify(final IState state) {
+        if (state.type() != Engine.state) {
+            Engine.date = Utilities.now();
+        }
         Engine.state = state.type();
-        Engine.date = Utilities.now();
         source.onNext(EngineEvent.create(state.type(), date));
     }
 

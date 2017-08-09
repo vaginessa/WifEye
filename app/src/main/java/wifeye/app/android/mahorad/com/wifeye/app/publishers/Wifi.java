@@ -64,8 +64,10 @@ public class Wifi {
                 .map(Wifi::toEvent);
     }
 
-    private static WifiEvent toEvent(State state) {
-        Wifi.date = Utilities.now();
+    private synchronized static WifiEvent toEvent(State state) {
+        if (state != Wifi.state()) {
+            Wifi.date = Utilities.now();
+        }
         Wifi.state = state;
         return WifiEvent.create(Wifi.state, Wifi.date());
     }
@@ -76,6 +78,7 @@ public class Wifi {
     }
 
     public void disable() {
+        if (Internet.connected()) return;
         wifiManager.setWifiEnabled(false);
         Log.d(TAG, "[[ disabling wifi... ]]");
     }
