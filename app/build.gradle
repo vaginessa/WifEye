@@ -1,0 +1,85 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "mahorad.com.wifeye"
+        minSdkVersion 23
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // android support
+    implementation 'com.android.support:appcompat-v7:26.0.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // logging
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    // rxandroid
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // rxjava
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+
+    // rxbinding
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    // dependency injection
+    implementation 'com.google.dagger:dagger:2.10'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+
+    // butter-knife
+    implementation 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+
+    // permission management
+    implementation 'com.auron:permission-manage:1.1.6'
+
+    // single font
+    implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
+
+    // shimmer text
+    implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
+
+    // pretty time
+    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+
+    // auto value
+    provided "com.google.auto.value:auto-value:1.2"
+    annotationProcessor "com.google.auto.value:auto-value:1.2"
+
+    // awaitility
+    implementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
+
+    // junit
+    testImplementation 'junit:junit:4.12'
+
+    // espresso
+    androidTestImplementation 'com.android.support.test:runner:1.0.0'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
+
+    // robolectric
+    testImplementation group: 'org.robolectric', name: 'robolectric', version: '3.4.2'
+
+    // assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
+
+}
