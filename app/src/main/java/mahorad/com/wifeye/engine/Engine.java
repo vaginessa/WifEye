@@ -136,12 +136,14 @@ public class Engine implements
 //        return date;
 //    }
 //
-//    public void start(Context context) {
+    public void start(Context context) {
+        if (context == null)
+            throw new NullPointerException();
 //        if (internetDisposable != null || locationDisposable != null)
 //            return;
 //        subscribeLocation(context);
 //        subscribeInternet(context);
-//    }
+    }
 //
 //    private void subscribeLocation(Context context) {
 //        locationDisposable = Location
@@ -169,14 +171,14 @@ public class Engine implements
 //            internetDisconnected();
 //    }
 //
-//    public void stop() {
+    public void stop() {
 //        if (locationDisposable != null)
 //            locationDisposable.dispose();
 //        if (internetDisposable != null)
 //            internetDisposable.dispose();
 //        locationDisposable = null;
 //        internetDisposable = null;
-//    }
+    }
 //
     @Override
     public void disableWifi() {
