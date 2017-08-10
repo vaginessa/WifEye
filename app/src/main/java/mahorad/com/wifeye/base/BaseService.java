@@ -1,19 +1,33 @@
 package mahorad.com.wifeye.base;
 
 import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 
-/**
- * Created by mahan on 2017-08-09.
- */
+import mahorad.com.wifeye.di.component.DaggerServiceComponent;
+import mahorad.com.wifeye.di.component.ServiceComponent;
+import mahorad.com.wifeye.di.module.ServiceModule;
 
-public class BaseService extends Service {
+public abstract class BaseService extends Service {
 
-    @Nullable
+    private ServiceComponent component;
+
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public void onCreate() {
+        super.onCreate();
+        initializeComponent();
+        injectDependencies();
     }
+
+    protected void initializeComponent() {
+        component = DaggerServiceComponent
+                .builder()
+                .serviceModule(new ServiceModule(this))
+                .build();
+    }
+
+    public ServiceComponent component() {
+        return component;
+    }
+
+    protected abstract void injectDependencies();
+
 }
