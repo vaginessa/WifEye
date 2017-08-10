@@ -38,9 +38,6 @@ public class EngineService extends BaseService {
     @Inject
     Engine engine;
 
-    @Inject
-    Context context;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,7 +63,7 @@ public class EngineService extends BaseService {
 
     private void start() {
         if (started) return;
-        engine.start(context);
+        engine.start(this);
         started = true;
         Log.v(TAG, "started main service");
         state.onNext(true);
