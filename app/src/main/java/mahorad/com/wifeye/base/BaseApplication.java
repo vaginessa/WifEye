@@ -21,6 +21,7 @@ public class BaseApplication extends Application {
         super.onCreate();
         initializeComponent();
         injectDependencies();
+        CalligraphyConfig.initDefault(calligraphyConfig);
     }
 
     private void initializeComponent() {

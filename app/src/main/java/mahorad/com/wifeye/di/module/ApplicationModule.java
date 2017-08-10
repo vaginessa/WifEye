@@ -5,6 +5,7 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.scope.PerApplication;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -33,11 +34,10 @@ public class ApplicationModule {
     @Provides
     @PerApplication
     CalligraphyConfig provideCalligraphyDefaultConfig() {
-        return null;
-//        return new CalligraphyConfig.Builder()
-//                .setDefaultFontPath("fonts/HelveticaNeue-Light.otf")
-//                .setFontAttrId(R.attr.fontPath)
-//                .build();
+        return new CalligraphyConfig.Builder()
+                .setDefaultFontPath("font/helvetica_neue_light.otf")
+                .setFontAttrId(R.attr.fontPath)
+                .build();
     }
 
 }
