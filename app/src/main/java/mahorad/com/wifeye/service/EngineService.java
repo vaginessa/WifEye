@@ -14,6 +14,8 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.Constants;
 import mahorad.com.wifeye.base.BaseService;
+import mahorad.com.wifeye.di.qualifier.ApplicationContext;
+import mahorad.com.wifeye.engine.Engine;
 
 public class EngineService extends BaseService {
 
@@ -33,10 +35,11 @@ public class EngineService extends BaseService {
 
     private ResultReceiver resultReceiver;
 
-//    @Inject Engine engine;
-//
-//    @Inject @ApplicationContext
-//    Context context;
+    @Inject
+    Engine engine;
+
+    @Inject
+    Context context;
 
     @Override
     public void onCreate() {
@@ -63,7 +66,7 @@ public class EngineService extends BaseService {
 
     private void start() {
         if (started) return;
-//        engine.start(context);
+        engine.start(context);
         started = true;
         Log.v(TAG, "started main service");
         state.onNext(true);
@@ -76,7 +79,7 @@ public class EngineService extends BaseService {
 
     private void stop() {
         if (!started) return;
-//        engine.stop();
+        engine.stop();
         started = false;
         Log.v(TAG, "stopped main service");
         state.onNext(false);
