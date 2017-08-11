@@ -1,6 +1,5 @@
 package mahorad.com.wifeye.service;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -14,7 +13,6 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.Constants;
 import mahorad.com.wifeye.base.BaseService;
-import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.engine.Engine;
 
 public class EngineService extends BaseService {

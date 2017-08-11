@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BoxView">
+        <attr name="isSquare" format="boolean" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="borderRadius" format="float" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderThickness" format="integer" />
+        <attr name="headerColor" format="color" />
+        <attr name="headerSpacing" format="float" />
+        <attr name="factColor" format="color" />
+        <attr name="captionColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundBar">
+        <attr name="roundBarProgress" format="integer" />
+        <attr name="roundBarFgColor" format="color" />
+        <attr name="roundBarBgColor" format="color" />
+        <attr name="roundBarFgWidth" format="dimension" />
+        <attr name="roundBarBgWidth" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="RippleView">
+        <attr name="rb_color" format="color" />
+        <attr name="rb_strokeWidth" format="dimension"/>
+        <attr name="rb_radius" format="dimension"/>
+        <attr name="rb_duration" format="integer"/>
+        <attr name="rb_rippleAmount" format="integer"/>
+        <attr name="rb_scale" format="float"/>
+        <attr name="rb_type" format="enum">
+            <enum name="fillRipple" value="0"/>
+            <enum name="strokeRipple" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

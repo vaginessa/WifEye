@@ -2,13 +2,13 @@ package mahorad.com.wifeye.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import mahorad.com.wifeye.di.component.ActivityComponent;
 import mahorad.com.wifeye.di.component.DaggerActivityComponent;
 import mahorad.com.wifeye.di.module.ActivityModule;
+import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends ActivityManagePermission {
 
     private ActivityComponent component;
 

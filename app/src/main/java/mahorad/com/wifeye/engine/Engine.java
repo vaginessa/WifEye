@@ -137,8 +137,6 @@ public class Engine implements
 //    }
 //
     public void start(Context context) {
-        if (context == null)
-            throw new NullPointerException();
 //        if (internetDisposable != null || locationDisposable != null)
 //            return;
 //        subscribeLocation(context);
