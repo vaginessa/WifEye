@@ -1,4 +1,4 @@
-package mahorad.com.wifeye;
+package mahorad.com.wifeye.util;
 
 import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 

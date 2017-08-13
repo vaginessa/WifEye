@@ -1,7 +1,6 @@
 package mahorad.com.wifeye.ui.overview;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,8 +25,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.base.BaseActivity;
-import mahorad.com.wifeye.di.qualifier.ApplicationContext;
-import mahorad.com.wifeye.di.scope.PerApplication;
 import mahorad.com.wifeye.service.EngineService;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -38,9 +35,6 @@ public class OverviewActivity extends BaseActivity {
 
     @Inject
     OverviewFragment overview;
-
-    @Inject @ApplicationContext
-    Context context;
 
     @Inject
     OverviewViewModel viewModel;

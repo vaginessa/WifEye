@@ -1,6 +1,5 @@
 package mahorad.com.wifeye.base;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,13 +11,12 @@ import mahorad.com.wifeye.di.component.ActivityComponent;
 import mahorad.com.wifeye.di.component.ApplicationComponent;
 import mahorad.com.wifeye.di.component.DaggerActivityComponent;
 import mahorad.com.wifeye.di.module.ActivityModule;
-import mahorad.com.wifeye.di.module.ApplicationModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.service.EngineService;
 import permission.auron.com.marshmallowpermissionhelper.ActivityManagePermission;
 import permission.auron.com.marshmallowpermissionhelper.PermissionResult;
 
-import static mahorad.com.wifeye.Constants.PERMISSIONS;
+import static mahorad.com.wifeye.util.Constants.PERMISSIONS;
 import static mahorad.com.wifeye.util.Utils.isRunning;
 import static mahorad.com.wifeye.util.Utils.openPermissions;
 
@@ -26,7 +24,8 @@ public abstract class BaseActivity extends ActivityManagePermission {
 
     private ActivityComponent component;
 
-//    @Inject @ApplicationContext
+    @Inject
+    @ApplicationContext
     Context context;
 
     @Override
