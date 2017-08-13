@@ -6,7 +6,7 @@ import mahorad.com.wifeye.di.scope.PerService;
 import mahorad.com.wifeye.service.EngineService;
 
 @PerService
-@Component(modules = { ServiceModule.class }, dependencies = {  })
+@Component(modules = { ServiceModule.class }, dependencies = { ApplicationComponent.class })
 public interface ServiceComponent {
 
     void inject(EngineService service);

@@ -14,8 +14,11 @@ import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.util.Constants;
 import mahorad.com.wifeye.base.BaseService;
 import mahorad.com.wifeye.engine.Engine;
+import timber.log.Timber;
 
 public class EngineService extends BaseService {
+
+    private static final String TAG = EngineService.class.getSimpleName();
 
     class EngineServiceBinder extends Binder {
         public EngineServiceBinder getService() {
@@ -23,15 +26,13 @@ public class EngineService extends BaseService {
         }
     }
 
-    private static final String TAG = EngineService.class.getSimpleName();
+    private final IBinder binder = new EngineServiceBinder();
+
+    private ResultReceiver resultReceiver;
 
     private static boolean started;
 
     private static final ReplaySubject<Boolean> state = ReplaySubject.createWithSize(1);
-
-    private final IBinder binder = new EngineServiceBinder();
-
-    private ResultReceiver resultReceiver;
 
     @Inject
     Engine engine;
@@ -63,7 +64,7 @@ public class EngineService extends BaseService {
         if (started) return;
         engine.start(this);
         started = true;
-        Log.v(TAG, "started main service");
+        Timber.tag(TAG).v("started main service");
         state.onNext(true);
     }
 
@@ -76,7 +77,7 @@ public class EngineService extends BaseService {
         if (!started) return;
         engine.stop();
         started = false;
-        Log.v(TAG, "stopped main service");
+        Timber.tag(TAG).v("stopped main service");
         state.onNext(false);
     }
 

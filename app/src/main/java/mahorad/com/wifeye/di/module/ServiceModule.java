@@ -4,6 +4,7 @@ import android.app.Service;
 
 import dagger.Module;
 import dagger.Provides;
+import mahorad.com.wifeye.di.scope.PerApplication;
 import mahorad.com.wifeye.di.scope.PerService;
 import mahorad.com.wifeye.engine.Engine;
 
@@ -14,12 +15,6 @@ public class ServiceModule {
 
     public ServiceModule(Service service) {
         this.service = service;
-    }
-
-    @Provides
-    @PerService
-    public Engine engine() {
-        return new Engine();
     }
 
 
