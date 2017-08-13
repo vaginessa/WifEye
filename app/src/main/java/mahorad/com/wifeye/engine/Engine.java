@@ -1,27 +1,6 @@
 package mahorad.com.wifeye.engine;
 
 import android.content.Context;
-import android.util.Log;
-
-import java.util.Date;
-import java.util.concurrent.Executors;
-
-import javax.inject.Inject;
-
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.ReplaySubject;
-import mahorad.com.wifeye.engine.state.IState;
-import mahorad.com.wifeye.engine.state.StateConnected;
-import mahorad.com.wifeye.engine.state.StateDisconnected;
-import mahorad.com.wifeye.engine.state.StateInitial;
-import mahorad.com.wifeye.engine.state.StateKnownArea;
-import mahorad.com.wifeye.engine.state.StateRouterArea;
-import mahorad.com.wifeye.engine.state.StateUnknownArea;
-import mahorad.com.wifeye.util.Utilities;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static mahorad.com.wifeye.engine.state.IState.Type.Initial;
 
 /**
  * A state machine and an actuator.
@@ -35,10 +14,10 @@ public class Engine implements
 //    private static final String TAG = Engine.class.getSimpleName();
 //
 //    private static final ReplaySubject<EngineEvent> source = ReplaySubject.createWithSize(1);
-//    private static final Observable<EngineEvent> observable = source.distinctUntilChanged();
+//    private static final Observable<EngineEvent> stateObservable = source.distinctUntilChanged();
 //
 //    private static IState.Type state = Initial;
-//    private static Date date = Utilities.now();
+//    private static Date date = Utils.now();
 //
 //    private final IState initial = new StateInitial(this);
 //    private final IState connected = new StateConnected(this);
@@ -118,14 +97,14 @@ public class Engine implements
 //
 //    private static synchronized void notify(final IState state) {
 //        if (state.type() != Engine.state) {
-//            Engine.date = Utilities.now();
+//            Engine.date = Utils.now();
 //        }
 //        Engine.state = state.type();
 //        source.onNext(EngineEvent.create(state.type(), date));
 //    }
 //
-//    public static Observable<EngineEvent> observable() {
-//        return observable;
+//    public static Observable<EngineEvent> stateObservable() {
+//        return stateObservable;
 //    }
 //
 //    public static IState.Type state() {
@@ -145,7 +124,7 @@ public class Engine implements
 //
 //    private void subscribeLocation(Context context) {
 //        locationDisposable = Location
-//                .observable(context)
+//                .stateObservable(context)
 //                .subscribe(this::onLocationEvent);
 //    }
 //
@@ -158,7 +137,7 @@ public class Engine implements
 //
 //    private void subscribeInternet(Context context) {
 //        internetDisposable = Internet
-//                .observable(context)
+//                .stateObservable(context)
 //                .subscribe(this::onInternetEvent);
 //    }
 //

@@ -80,7 +80,7 @@ public class EngineService extends BaseService {
         state.onNext(false);
     }
 
-    public static Observable<Boolean> observable() {
+    public static Observable<Boolean> stateObservable() {
         return state;
     }
 }

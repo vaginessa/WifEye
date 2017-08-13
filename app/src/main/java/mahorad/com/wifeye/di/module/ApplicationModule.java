@@ -19,17 +19,18 @@ public class ApplicationModule {
         this.application = application;
     }
 
-    @Provides
-    @ApplicationContext
-    public Context context() {
-        return application;
-    }
-
 //    @Provides
 //    @PerApplication
 //    public Application application() {
 //        return application;
 //    }
+
+    @Provides
+    @PerApplication
+    @ApplicationContext
+    public Context context() {
+        return application;
+    }
 
     @Provides
     @PerApplication

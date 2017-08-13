@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Utilities {
+public class Utils {
 
     public static boolean isRunning(Context context, Class<?> serviceClass) {
         if (serviceClass == null) return false;
@@ -37,7 +37,7 @@ public class Utilities {
         return manager.getRunningServices(Integer.MAX_VALUE);
     }
 
-    public String toAgo(final Date date, Context context){
+    public static String toAgo(final Date date, Context context){
         return new PrettyTime(getLocale(context)).format(date);
     }
 
@@ -45,7 +45,7 @@ public class Utilities {
         return Calendar.getInstance().getTime();
     }
 
-    public Locale getLocale(Context context) {
+    public static Locale getLocale(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             return context
                     .getResources()
@@ -62,7 +62,7 @@ public class Utilities {
         return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
-    public Uri getResourceUri(int id, Context context) {
+    public static Uri getResourceUri(int id, Context context) {
         Resources res = context.getResources();
         return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                 + "://" + res.getResourcePackageName(id)
@@ -70,7 +70,7 @@ public class Utilities {
                 + "/" + res.getResourceEntryName(id));
     }
 
-    public int dip2px(float dpValue, Context context) {
+    public static int dip2px(float dpValue, Context context) {
         float scale = context
                 .getResources()
                 .getDisplayMetrics()
@@ -78,7 +78,7 @@ public class Utilities {
         return (int) (dpValue * scale + 0.5f);
     }
 
-    public void openPermissions(Context context) {
+    public static void openPermissions(Context context) {
         Intent intent = new Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.fromParts("package", context.getPackageName(), null));

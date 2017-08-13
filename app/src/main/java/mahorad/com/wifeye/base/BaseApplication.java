@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import mahorad.com.wifeye.di.component.ApplicationComponent;
 import mahorad.com.wifeye.di.component.DaggerApplicationComponent;
 import mahorad.com.wifeye.di.module.ApplicationModule;
+import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class BaseApplication extends Application {
@@ -22,6 +23,7 @@ public class BaseApplication extends Application {
         initializeComponent();
         injectDependencies();
         CalligraphyConfig.initDefault(calligraphyConfig);
+        Timber.plant(new Timber.DebugTree());
     }
 
     private void initializeComponent() {

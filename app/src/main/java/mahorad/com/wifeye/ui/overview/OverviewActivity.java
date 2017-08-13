@@ -16,10 +16,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.jakewharton.rxbinding2.view.RxView;
+
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.base.BaseActivity;
+import mahorad.com.wifeye.di.qualifier.ApplicationContext;
+import mahorad.com.wifeye.di.scope.PerApplication;
 import mahorad.com.wifeye.service.EngineService;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -28,7 +36,17 @@ import static mahorad.com.wifeye.R.color.colorPrimary;
 
 public class OverviewActivity extends BaseActivity {
 
-    private final OverviewFragment overview = new OverviewFragment();
+    @Inject
+    OverviewFragment overview;
+
+    @Inject @ApplicationContext
+    Context context;
+
+    @Inject
+    OverviewViewModel viewModel;
+
+    @Inject
+    CompositeDisposable disposables;
 
     private ColorStateList greens;
     private ColorStateList accent;
@@ -52,9 +70,29 @@ public class OverviewActivity extends BaseActivity {
         ButterKnife.bind(this);
         initUserInterface();
         selectFirstMenuItem();
+    }
 
-        Intent intent = new Intent(this, EngineService.class);
-        startService(intent);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        disposables.add(engineState());
+    }
+
+    private Disposable engineState() {
+        return EngineService
+                .stateObservable()
+                .subscribe(this::updateFloatingButton);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disposables.clear();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void initUserInterface() {
@@ -81,6 +119,7 @@ public class OverviewActivity extends BaseActivity {
     }
 
     private void setupFloatingButton() {
+        RxView.clicks(actionButton).subscribe(o -> toggleService());
         actionButton.setSelected(false);
         greens = new ColorStateList(
                 new int[][] { new int[0] },
@@ -143,6 +182,7 @@ public class OverviewActivity extends BaseActivity {
                 .make(actionButton, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
+
     @Override
     public void onBackPressed() {
         if (isDrawerOpen()) {

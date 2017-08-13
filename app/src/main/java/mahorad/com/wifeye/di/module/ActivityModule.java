@@ -7,8 +7,12 @@ import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
 import mahorad.com.wifeye.di.qualifier.ActivityContext;
+import mahorad.com.wifeye.di.scope.PerActivity;
+import mahorad.com.wifeye.di.scope.PerApplication;
+import mahorad.com.wifeye.ui.overview.OverviewFragment;
+import mahorad.com.wifeye.ui.overview.OverviewViewModel;
 
-@Module(includes = {/* include modules to fulfill its required dependencies */})
+@Module(includes = {  })
 public class ActivityModule {
 
     private AppCompatActivity activity;
@@ -17,21 +21,34 @@ public class ActivityModule {
         this.activity = activity;
     }
 
-    @Provides
-    @ActivityContext
-    public Context context() {
-        return activity;
-    }
-
 //    @Provides
+//    @PerActivity
 //    public AppCompatActivity activity() {
 //        return activity;
 //    }
 
     @Provides
+    @PerActivity
+    @ActivityContext
+    public Context context() {
+        return activity;
+    }
+
+    @Provides
+    @PerActivity
     CompositeDisposable compositeDisposable() {
         return new CompositeDisposable();
     }
 
+    @Provides
+    @PerActivity
+    OverviewFragment overviewFragment() {
+        return new OverviewFragment();
+    }
 
+    @Provides
+    @PerActivity
+    OverviewViewModel overviewViewModel() {
+        return new OverviewViewModel();
+    }
 }
