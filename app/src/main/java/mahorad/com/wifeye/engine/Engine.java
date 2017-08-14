@@ -5,9 +5,12 @@ import android.content.Context;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.base.BaseApplication;
-import mahorad.com.wifeye.broadcast.manager.rx.wifi.RxWifiManager;
+import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
+import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.qualifier.engine.CloseRangeState;
 import mahorad.com.wifeye.di.qualifier.engine.ConnectedState;
@@ -60,11 +63,16 @@ public class Engine implements IActuator {
     @ApplicationContext
     Context context;
 
+    @Inject
+    CompositeDisposable compositeDisposable;
+
+    private boolean started;
     private IState currentState = initial;
 
     public void start() {
+        if (started) return;
+        started = true;
         injectDependencies();
-
     }
 
     private void injectDependencies() {
@@ -73,32 +81,55 @@ public class Engine implements IActuator {
                 .inject(this);
     }
 
-    public void stop() {
+    private Disposable subscribeInternet() {
+        return RxInternetMonitor
+                .internetStateChanges(context)
+                .subscribe(e -> {
+                    if (e.connected()) {
+                        internetConnected(e.ssid());
+                    } else {
+                        internetDisconnected();
+                    }
+                });
     }
 
-    //    @Override
-//    public synchronized void internetConnected(String ssid) {
-//        Log.i(TAG, String.format("--| EVENT: connected to %s |", ssid));
-//        currentState.onInternetConnected();
-//    }
-//
-//    @Override
-//    public synchronized void internetDisconnected() {
-//        Log.i(TAG, String.format("--| EVENT: disconnected |"));
-//        currentState.onInternetDisconnects();
-//    }
-//
-//    @Override
-//    public synchronized void receivedKnownTowerId() {
-//        Log.i(TAG, String.format("--| EVENT: known ctid |"));
-//        currentState.onReceivedKnownTowerId();
-//    }
-//
-//    @Override
-//    public synchronized void receivedUnknownTowerId(String ctid) {
-//        Log.i(TAG, String.format("--| EVENT: unknown ctid %s |", ctid));
-//        currentState.onReceivedUnknownTowerId();
-//    }
+    private Disposable subscribeCellTower() {
+        return RxCellTowerMonitor
+                .cellTowerIdChanges(context)
+                .subscribe(e -> {
+                    if (e.known()) {
+                        receivedKnownTowerId();
+                    } else {
+                        receivedUnknownTowerId(e.ctid());
+                    }
+                });
+    }
+
+    public void stop() {
+        if (!started) return;
+        started = false;
+        compositeDisposable.clear();
+    }
+
+    public synchronized void internetConnected(String ssid) {
+        Timber.tag(TAG).i("--| EVENT: connected to %s |", ssid);
+        currentState.onInternetConnected();
+    }
+
+    public synchronized void internetDisconnected() {
+        Timber.tag(TAG).i("--| EVENT: disconnected |");
+        currentState.onInternetDisconnects();
+    }
+
+    public synchronized void receivedKnownTowerId() {
+        Timber.tag(TAG).i("--| EVENT: known ctid |");
+        currentState.onReceivedKnownTowerId();
+    }
+
+    public synchronized void receivedUnknownTowerId(String ctid) {
+        Timber.tag(TAG).i("--| EVENT: unknown ctid %s |", ctid);
+        currentState.onReceivedUnknownTowerId();
+    }
 
     /* used by states */
     public void toConnectedState() {

@@ -5,6 +5,7 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.scope.PerApplication;
@@ -41,5 +42,8 @@ public class ApplicationModule {
                 .build();
     }
 
-
+    @Provides
+    CompositeDisposable compositeDisposable() {
+        return new CompositeDisposable();
+    }
 }
