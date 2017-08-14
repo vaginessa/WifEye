@@ -68,7 +68,7 @@ public abstract class RxPersistManager {
     }
 
     private static synchronized void notify(String ssid, String ctid) {
-        source.onNext(PersistenceChangedEvent.create(ssid, ctid, now()));
+        source.onNext(PersistenceChangedEvent.create(ssid, ctid));
     }
 
     public static Observable<PersistenceChangedEvent> persistenceChanges() {

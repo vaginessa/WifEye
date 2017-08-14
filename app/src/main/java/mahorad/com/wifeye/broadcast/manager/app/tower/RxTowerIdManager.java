@@ -46,7 +46,7 @@ public class RxTowerIdManager {
                 (event.connected()
                         ? RxPersistManager.exist(event.ssid(), ctid)
                         : RxPersistManager.exist(ctid));
-        return CellTowerIdChangedEvent.create(ctid, known, Utils.now());
+        return CellTowerIdChangedEvent.create(ctid, known);
     }
 
 }

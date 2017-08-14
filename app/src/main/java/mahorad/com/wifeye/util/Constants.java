@@ -4,6 +4,12 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 
 public class Constants {
 
+    public static final int WIFI_STATE_DISABLING = 0;
+    public static final int WIFI_STATE_DISABLED = 1;
+    public static final int WIFI_STATE_ENABLING = 2;
+    public static final int WIFI_STATE_ENABLED = 3;
+    public static final int WIFI_STATE_UNKNOWN = 4;
+
     public static final int OBSERVE_REPEAT_COUNT = 10;
     public static final int WIFI_ENABLE_TIMEOUT = 90;
     public static final int WIFI_DISABLE_TIMEOUT = 45;

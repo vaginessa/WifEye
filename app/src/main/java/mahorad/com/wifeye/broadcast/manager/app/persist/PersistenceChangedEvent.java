@@ -18,19 +18,12 @@ public abstract class PersistenceChangedEvent {
     @NonNull
     public abstract String ctid();
 
-    private Date date;
-    public final Date date() {
-        return date;
-    }
-
     @CheckResult
     @NonNull
-    public static PersistenceChangedEvent create(@NonNull String ssid, @NonNull String ctid, @NonNull Date date) {
+    public static PersistenceChangedEvent create(@NonNull String ssid, @NonNull String ctid) {
         Preconditions.checkNotNull(ssid, "ssid == null");
         Preconditions.checkNotNull(ctid, "ctid == null");
-        Preconditions.checkNotNull(date, "date == null");
         PersistenceChangedEvent e = new AutoValue_PersistenceChangedEvent(ssid, ctid);
-        e.date = date;
         return e;
     }
 }

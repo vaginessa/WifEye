@@ -17,18 +17,11 @@ public abstract class InternetStateChangedEvent {
 
     public abstract boolean connected();
 
-    private Date date;
-    public final Date date() {
-        return date;
-    }
-
     @CheckResult
     @NonNull
-    public static InternetStateChangedEvent create(@NonNull String ssid, boolean connected, Date date) {
+    public static InternetStateChangedEvent create(@NonNull String ssid, boolean connected) {
         Preconditions.checkNotNull(ssid, "ssid == null");
-        Preconditions.checkNotNull(date, "date == null");
         InternetStateChangedEvent e = new AutoValue_InternetStateChangedEvent(ssid, connected);
-        e.date = date;
         return e;
     }
 }

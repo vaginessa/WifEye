@@ -20,18 +20,11 @@ public abstract class CellTowerIdChangedEvent {
 
     public abstract boolean known();
 
-    private Date date;
-    public final Date date() {
-        return date;
-    }
-
     @CheckResult
     @NonNull
-    public static CellTowerIdChangedEvent create(@NonNull String ctid, boolean known, @NonNull Date date) {
+    public static CellTowerIdChangedEvent create(@NonNull String ctid, boolean known) {
         Preconditions.checkNotNull(ctid, "ctid == null");
-        Preconditions.checkNotNull(date, "date == null");
         CellTowerIdChangedEvent e = new AutoValue_CellTowerIdChangedEvent(ctid, known);
-        e.date = date;
         return e;
     }
 

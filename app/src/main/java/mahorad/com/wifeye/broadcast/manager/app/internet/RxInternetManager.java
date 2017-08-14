@@ -17,12 +17,12 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by mahan on 2017-08-13.
  */
+
 public class RxInternetManager {
 
     private static String TAG = RxInternetManager.class.getSimpleName();
 
     private static String ssid = "n/a";
-    private static Date date = Utils.now();
     private static boolean connected;
 
     public static Observable<InternetStateChangedEvent> internetStateChanges(@NonNull Context context) {
@@ -47,12 +47,9 @@ public class RxInternetManager {
             c3 = net.getDetailedState() == CONNECTED;
         }
 
-        if (!ssid.equals(RxInternetManager.ssid)) {
-            date = Utils.now();
-        }
         RxInternetManager.ssid = ssid;
         RxInternetManager.connected = c1 && c2 && c3;
-        return InternetStateChangedEvent.create(ssid, connected, date);
+        return InternetStateChangedEvent.create(ssid, connected);
     }
 
     private static boolean valid(String ssid) {
