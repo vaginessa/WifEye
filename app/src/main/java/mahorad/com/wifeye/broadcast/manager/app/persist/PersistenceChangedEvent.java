@@ -29,7 +29,7 @@ public abstract class PersistenceChangedEvent {
         Preconditions.checkNotNull(ssid, "ssid == null");
         Preconditions.checkNotNull(ctid, "ctid == null");
         Preconditions.checkNotNull(date, "date == null");
-        PersistenceChangedEvent e = new AutoValue_PersistenceChangesEvent(ssid, ctid);
+        PersistenceChangedEvent e = new AutoValue_PersistenceChangedEvent(ssid, ctid);
         e.date = date;
         return e;
     }
