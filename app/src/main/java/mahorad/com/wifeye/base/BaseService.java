@@ -19,11 +19,9 @@ public abstract class BaseService extends Service {
     }
 
     protected void initializeComponent() {
-        ApplicationComponent applicationComponent =
-                ((BaseApplication) getApplication()).component();
         component = DaggerServiceComponent
                 .builder()
-                .applicationComponent(applicationComponent)
+                .applicationComponent(BaseApplication.component())
                 .serviceModule(new ServiceModule(this))
                 .build();
     }

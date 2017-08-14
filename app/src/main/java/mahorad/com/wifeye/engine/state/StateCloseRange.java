@@ -2,20 +2,20 @@ package mahorad.com.wifeye.engine.state;
 
 import mahorad.com.wifeye.engine.Engine;
 
-public class StateInitial extends State {
+public class StateCloseRange extends State {
 
-    public StateInitial(Engine engine) {
+    public StateCloseRange(Engine engine) {
         super(engine);
     }
 
     @Override
     public Type type() {
-        return Type.Initial;
+        return Type.CloseRange;
     }
 
     @Override
     public void onInternetConnected() {
-        engine.toConnectedState();
+        engine.haltWifiActions();
     }
 
     @Override
@@ -24,14 +24,11 @@ public class StateInitial extends State {
     }
 
     @Override
-    public void onReceivedKnownTowerId() {
-        engine.toNearbyAreaState();
-        engine.observeWifi();
-    }
+    public void onReceivedKnownTowerId() {/*do nothing*/}
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toRemoteAreaState();
+        engine.persist();
     }
 
 }

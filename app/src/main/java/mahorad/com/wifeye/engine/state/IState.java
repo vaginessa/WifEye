@@ -4,12 +4,12 @@ public interface IState {
 
     enum Type {
 
-        Initial("Initial"),
-        Connected("router reach"),
-        DisConnected("disconnected"),
-        UnknownArea("unknown region"),
-        KnownArea("nearby area"),
-        RouterArea("router reach");
+        Initial("initial"),
+        Connected("router range"),
+        Disconnected("disconnected"),
+        RemoteArea("remote area"),
+        NearbyArea("nearby area"),
+        CloseRange("close range");
 
         private final String title;
 

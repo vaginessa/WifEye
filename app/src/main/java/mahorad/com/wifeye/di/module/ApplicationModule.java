@@ -8,10 +8,9 @@ import dagger.Provides;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.scope.PerApplication;
-import mahorad.com.wifeye.engine.Engine;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-@Module(includes = {/* include modules to fulfill its required dependencies */})
+@Module(includes = {  })
 public class ApplicationModule {
 
     private final Application application;
@@ -42,10 +41,5 @@ public class ApplicationModule {
                 .build();
     }
 
-    @Provides
-    @PerApplication
-    public Engine engine() {
-        return new Engine();
-    }
 
 }

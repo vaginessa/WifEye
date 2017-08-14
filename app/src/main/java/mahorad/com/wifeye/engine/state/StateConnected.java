@@ -15,7 +15,7 @@ public class StateConnected extends State {
 
     @Override
     public void onInternetConnected() {
-        engine.haltWifiAct(); // stopMainService any ongoing timeouts
+        engine.haltWifiActions(); // stopMainService any ongoing timeouts
         engine.persist(); // persist another SSIDs perhaps
     }
 
@@ -27,12 +27,12 @@ public class StateConnected extends State {
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.toRouterAreaState();
+        engine.toCloseRangeState();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toRouterAreaState();
+        engine.toCloseRangeState();
         engine.persist(); // persist the location
     }
 

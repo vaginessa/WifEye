@@ -62,7 +62,7 @@ public class EngineService extends BaseService {
 
     private void start() {
         if (started) return;
-        engine.start(this);
+        engine.start();
         started = true;
         Timber.tag(TAG).v("started main service");
         state.onNext(true);

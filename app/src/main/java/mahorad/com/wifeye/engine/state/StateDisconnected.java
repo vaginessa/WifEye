@@ -10,13 +10,13 @@ public class StateDisconnected extends State {
 
     @Override
     public Type type() {
-        return Type.DisConnected;
+        return Type.Disconnected;
     }
 
     @Override
     public void onInternetConnected() {
         engine.toConnectedState();
-        engine.haltWifiAct();
+        engine.haltWifiActions();
         engine.persist();
     }
 
@@ -25,13 +25,13 @@ public class StateDisconnected extends State {
 
     @Override
     public void onReceivedKnownTowerId() {
-        engine.toKnownAreaState();
+        engine.toNearbyAreaState();
         engine.observeWifi();
     }
 
     @Override
     public void onReceivedUnknownTowerId() {
-        engine.toUnknownAreaState();
+        engine.toRemoteAreaState();
         engine.disableWifi();
     }
 

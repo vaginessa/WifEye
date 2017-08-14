@@ -6,7 +6,7 @@ interface IActuator {
 
     void observeWifi();
 
-    void haltWifiAct();
+    void haltWifiActions();
 
     void persist();
 }

@@ -15,7 +15,7 @@ public class BaseApplication extends Application {
     @Inject
     CalligraphyConfig calligraphyConfig;
 
-    private ApplicationComponent component;
+    private static ApplicationComponent component;
 
     @Override
     public void onCreate() {
@@ -37,7 +37,7 @@ public class BaseApplication extends Application {
         component.inject(this);
     }
 
-    public ApplicationComponent component() {
+    public static ApplicationComponent component() {
         return component;
     }
 }

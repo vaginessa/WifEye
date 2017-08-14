@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 import mahorad.com.wifeye.di.component.ActivityComponent;
-import mahorad.com.wifeye.di.component.ApplicationComponent;
 import mahorad.com.wifeye.di.component.DaggerActivityComponent;
 import mahorad.com.wifeye.di.module.ActivityModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
@@ -36,11 +35,9 @@ public abstract class BaseActivity extends ActivityManagePermission {
     }
 
     protected void initializeComponent() {
-        ApplicationComponent applicationComponent =
-                ((BaseApplication) getApplication()).component();
         component = DaggerActivityComponent
                 .builder()
-                .applicationComponent(applicationComponent)
+                .applicationComponent(BaseApplication.component())
                 .activityModule(new ActivityModule(this))
                 .build();
     }
