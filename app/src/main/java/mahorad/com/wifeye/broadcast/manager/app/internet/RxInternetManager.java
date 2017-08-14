@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 
-import java.util.Date;
-
 import io.reactivex.Observable;
 import mahorad.com.wifeye.broadcast.manager.rx.wifi.NetworkStateChangedEvent;
 import mahorad.com.wifeye.broadcast.manager.rx.wifi.RxWifiManager;

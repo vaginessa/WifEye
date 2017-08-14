@@ -18,6 +18,7 @@ import static dagger.internal.Preconditions.checkNotNull;
 /**
  * Created by mahan on 2017-08-13.
  */
+
 public class RxTowerIdManager {
 
     private static Disposable internetChanges;

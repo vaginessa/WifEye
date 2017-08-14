@@ -10,11 +10,11 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
-import static mahorad.com.wifeye.util.Utils.now;
 
 /**
  * Created by mahan on 2017-08-13.
  */
+
 public abstract class RxPersistManager {
 
     public static final String TAG = RxPersistManager.class.getSimpleName();

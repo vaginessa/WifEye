@@ -5,9 +5,11 @@ import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 
-import java.util.Date;
-
 import dagger.internal.Preconditions;
+
+/**
+ * Created by mahan on 2017-08-13.
+ */
 
 @AutoValue
 public abstract class InternetStateChangedEvent {
