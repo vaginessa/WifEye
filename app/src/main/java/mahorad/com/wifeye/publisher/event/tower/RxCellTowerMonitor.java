@@ -7,10 +7,10 @@ import android.telephony.CellLocation;
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import mahorad.com.wifeye.data.Persistence;
+import mahorad.com.wifeye.publisher.broadcast.telephony.RxTelephonyManager;
 import mahorad.com.wifeye.publisher.event.internet.InternetStateChangedEvent;
 import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
-import mahorad.com.wifeye.publisher.event.persistence.RxPersistenceMonitor;
-import mahorad.com.wifeye.publisher.broadcast.telephony.RxTelephonyManager;
 import mahorad.com.wifeye.util.Utils;
 
 import static dagger.internal.Preconditions.checkNotNull;
@@ -45,8 +45,8 @@ public class RxCellTowerMonitor {
         String ctid = (location == null ? "" : location.toString());
         boolean known = Utils.isNullOrEmpty(ctid) ||
                 (event.connected()
-                        ? RxPersistenceMonitor.exist(event.ssid(), ctid)
-                        : RxPersistenceMonitor.exist(ctid));
+                        ? Persistence.exist(event.ssid(), ctid)
+                        : Persistence.exist(ctid));
         return CellTowerIdChangedEvent.create(ctid, known);
     }
 

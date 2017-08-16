@@ -9,12 +9,12 @@ public class StateInitial extends State {
     }
 
     @Override
-    public Type type() {
-        return Type.Initial;
+    public StateType type() {
+        return StateType.Initial;
     }
 
     @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(String ssid) {
         engine.toConnectedState();
     }
 
@@ -24,13 +24,13 @@ public class StateInitial extends State {
     }
 
     @Override
-    public void onReceivedKnownTowerId() {
+    public void onReceivedKnownTowerId(String ctid) {
         engine.toNearbyAreaState();
         engine.observeWifi();
     }
 
     @Override
-    public void onReceivedUnknownTowerId() {
+    public void onReceivedUnknownTowerId(String ctid) {
         engine.toRemoteAreaState();
     }
 

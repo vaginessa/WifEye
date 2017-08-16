@@ -2,34 +2,14 @@ package mahorad.com.wifeye.engine.state;
 
 public interface IState {
 
-    enum Type {
+    StateType type();
 
-        Initial("initial"),
-        Connected("router range"),
-        Disconnected("disconnected"),
-        RemoteArea("remote area"),
-        NearbyArea("nearby area"),
-        CloseRange("close range");
-
-        private final String title;
-
-        Type(String title) {
-            this.title = title;
-        }
-
-        public String title() {
-            return title;
-        }
-    }
-
-    Type type();
-
-    void onInternetConnected();
+    void onInternetConnected(String ssid);
 
     void onInternetDisconnects();
 
-    void onReceivedKnownTowerId();
+    void onReceivedKnownTowerId(String ctid);
 
-    void onReceivedUnknownTowerId();
+    void onReceivedUnknownTowerId(String ctid);
     
 }

@@ -9,6 +9,7 @@ import mahorad.com.wifeye.di.module.EngineModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.scope.PerApplication;
 import mahorad.com.wifeye.engine.Engine;
+import mahorad.com.wifeye.engine.wifi.WifiHandler;
 
 @PerApplication
 @Component(modules = { ApplicationModule.class, EngineModule.class }, dependencies = { /**/ })
@@ -23,4 +24,5 @@ public interface ApplicationComponent {
 
     void inject(Engine engine);
 
+    void inject(WifiHandler h);
 }

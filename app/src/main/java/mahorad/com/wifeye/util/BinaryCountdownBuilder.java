@@ -69,10 +69,10 @@ public class BinaryCountdownBuilder {
         return this;
     }
 
-    public BinaryCountdownBuilder setMoreDelayedCondition(Runnable r) {
-        if (r == null)
+    public BinaryCountdownBuilder setMoreDelayedCondition(BooleanSupplier cond) {
+        if (cond == null)
             return this;
-        moreDelayedAction = r;
+        moreDelayedCondition = cond;
         return this;
     }
 

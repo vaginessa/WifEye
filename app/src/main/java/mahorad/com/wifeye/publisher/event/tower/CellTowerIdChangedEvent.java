@@ -23,8 +23,7 @@ public abstract class CellTowerIdChangedEvent {
     @NonNull
     public static CellTowerIdChangedEvent create(@NonNull String ctid, boolean known) {
         Preconditions.checkNotNull(ctid, "ctid == null");
-        CellTowerIdChangedEvent e = new AutoValue_CellTowerIdChangedEvent(ctid, known);
-        return e;
+        return new AutoValue_CellTowerIdChangedEvent(ctid, known);
     }
 
 }

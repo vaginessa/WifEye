@@ -9,6 +9,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.scope.PerApplication;
+import mahorad.com.wifeye.engine.wifi.WifiHandler;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 @Module(includes = {  })
@@ -45,5 +46,11 @@ public class ApplicationModule {
     @Provides
     CompositeDisposable compositeDisposable() {
         return new CompositeDisposable();
+    }
+
+    @Provides
+    @PerApplication
+    WifiHandler wifiActionHandler(@ApplicationContext Context context) {
+        return new WifiHandler(context);
     }
 }

@@ -4,11 +4,12 @@ import android.content.Context;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.base.BaseApplication;
+import mahorad.com.wifeye.data.Persistence;
+import mahorad.com.wifeye.engine.wifi.WifiHandler;
+import mahorad.com.wifeye.publisher.event.engine.RxEngineStateMonitor;
 import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
@@ -22,18 +23,16 @@ import mahorad.com.wifeye.engine.state.IState;
 import mahorad.com.wifeye.util.Utils;
 import timber.log.Timber;
 
-import static mahorad.com.wifeye.engine.EngineStateChangedEvent.create;
+import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
 /**
  * A state machine and an actuator.
  * It keeps the system state as well as allowing
  * different states to make the right action.
  */
-public class Engine implements IActuator {
+public class Engine {
 
     private static final String TAG = Engine.class.getSimpleName();
-
-    private static final ReplaySubject<EngineStateChangedEvent> stateChanges = ReplaySubject.createWithSize(1);
 
     @Inject
     @InitialState
@@ -64,15 +63,25 @@ public class Engine implements IActuator {
     Context context;
 
     @Inject
+    WifiHandler wifiHandler;
+
+    @Inject
     CompositeDisposable compositeDisposable;
 
     private boolean started;
-    private IState currentState = initial;
+    private IState currentState;
+
+    private static String ssid;
+    private static String ctid;
 
     public void start() {
         if (started) return;
         started = true;
         injectDependencies();
+        wifiHandler.start();
+        currentState = initial;
+        compositeDisposable.add(subscribeCellTower());
+        compositeDisposable.add(subscribeInternet());
     }
 
     private void injectDependencies() {
@@ -98,7 +107,7 @@ public class Engine implements IActuator {
                 .cellTowerIdChanges(context)
                 .subscribe(e -> {
                     if (e.known()) {
-                        receivedKnownTowerId();
+                        receivedKnownTowerId(e.ctid());
                     } else {
                         receivedUnknownTowerId(e.ctid());
                     }
@@ -109,11 +118,13 @@ public class Engine implements IActuator {
         if (!started) return;
         started = false;
         compositeDisposable.clear();
+        wifiHandler.stop();
     }
 
     public synchronized void internetConnected(String ssid) {
+        this.ssid = ssid;
         Timber.tag(TAG).i("--| EVENT: connected to %s |", ssid);
-        currentState.onInternetConnected();
+        currentState.onInternetConnected(ssid);
     }
 
     public synchronized void internetDisconnected() {
@@ -121,14 +132,16 @@ public class Engine implements IActuator {
         currentState.onInternetDisconnects();
     }
 
-    public synchronized void receivedKnownTowerId() {
-        Timber.tag(TAG).i("--| EVENT: known ctid |");
-        currentState.onReceivedKnownTowerId();
+    public synchronized void receivedKnownTowerId(String ctid) {
+        this.ctid = ctid;
+        Timber.tag(TAG).i("--| EVENT: known ctid %s |", ctid);
+        currentState.onReceivedKnownTowerId(ctid);
     }
 
     public synchronized void receivedUnknownTowerId(String ctid) {
+        this.ctid = ctid;
         Timber.tag(TAG).i("--| EVENT: unknown ctid %s |", ctid);
-        currentState.onReceivedUnknownTowerId();
+        currentState.onReceivedUnknownTowerId(ctid);
     }
 
     /* used by states */
@@ -156,30 +169,32 @@ public class Engine implements IActuator {
         if (currentState == state)
             return;
         currentState = state;
-        EngineStateChangedEvent e = create(currentState.type(), Utils.now());
-        stateChanges.onNext(e);
-        Timber.tag(TAG).i("ENGINE STATE CHANGED TO : %S", currentState.toString());
-    }
-
-    public static Observable<EngineStateChangedEvent> stateChangeObservable() {
-        return stateChanges.hide();
+        RxEngineStateMonitor.notify(currentState.type());
+        Timber.tag(TAG).i("ENGINE STATE CHANGED TO : %s", currentState.toString());
     }
 
     /* wifi actions */
-    @Override
     public void disableWifi() {
+        wifiHandler.runDisabler();
     }
 
-    @Override
     public void observeWifi() {
+        wifiHandler.runObserver();
     }
 
-    @Override
     public void haltWifiActions() {
+        wifiHandler.halt();
     }
 
-    @Override
-    public void persist() {
+    public void persistSsid(String ssid) {
+        if (isNullOrEmpty(ctid))
+            return;
+        Persistence.persist(ssid, ctid);
+    }
 
+    public void persistCtid(String ctid) {
+        if (isNullOrEmpty(ssid))
+            return;
+        Persistence.persist(ssid, ctid);
     }
 }

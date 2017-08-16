@@ -174,7 +174,7 @@ public class OverviewActivity extends BaseActivity {
     public void showSnackbar(String message) {
         Snackbar
                 .make(actionButton, message, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+                .setAction("WifiAction", null).show();
     }
 
     @Override

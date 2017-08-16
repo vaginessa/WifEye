@@ -9,28 +9,28 @@ public class StateDisconnected extends State {
     }
 
     @Override
-    public Type type() {
-        return Type.Disconnected;
+    public StateType type() {
+        return StateType.Disconnected;
     }
 
     @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(String ssid) {
         engine.toConnectedState();
         engine.haltWifiActions();
-        engine.persist();
+        engine.persistSsid(ssid);
     }
 
     @Override
     public void onInternetDisconnects() {/*do nothing*/}
 
     @Override
-    public void onReceivedKnownTowerId() {
+    public void onReceivedKnownTowerId(String ctid) {
         engine.toNearbyAreaState();
         engine.observeWifi();
     }
 
     @Override
-    public void onReceivedUnknownTowerId() {
+    public void onReceivedUnknownTowerId(String ctid) {
         engine.toRemoteAreaState();
         engine.disableWifi();
     }

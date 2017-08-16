@@ -9,12 +9,12 @@ public class StateCloseRange extends State {
     }
 
     @Override
-    public Type type() {
-        return Type.CloseRange;
+    public StateType type() {
+        return StateType.CloseRange;
     }
 
     @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(String ssid) {
         engine.haltWifiActions();
     }
 
@@ -24,11 +24,11 @@ public class StateCloseRange extends State {
     }
 
     @Override
-    public void onReceivedKnownTowerId() {/*do nothing*/}
+    public void onReceivedKnownTowerId(String ctid) {/*do nothing*/}
 
     @Override
-    public void onReceivedUnknownTowerId() {
-        engine.persist();
+    public void onReceivedUnknownTowerId(String ctid) {
+        engine.persistCtid(ctid);
     }
 
 }

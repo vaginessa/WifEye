@@ -9,27 +9,27 @@ public class StateNearbyArea extends State {
     }
 
     @Override
-    public Type type() {
-        return Type.NearbyArea;
+    public StateType type() {
+        return StateType.NearbyArea;
     }
 
     @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(String ssid) {
         engine.toConnectedState();
         engine.haltWifiActions();
-        engine.persist();
+        engine.persistSsid(ssid);
     }
 
     @Override
     public void onInternetDisconnects() {/*do nothing*/}
 
     @Override
-    public void onReceivedKnownTowerId() {
+    public void onReceivedKnownTowerId(String ctid) {
         engine.observeWifi();
     }
 
     @Override
-    public void onReceivedUnknownTowerId() {
+    public void onReceivedUnknownTowerId(String ctid) {
         engine.toRemoteAreaState();
     }
 

@@ -20,6 +20,9 @@ public class RxWifiStateMonitor {
     public Observable<Boolean> wifiStateChanges(@NonNull Context context) {
         checkNotNull(context, "context == null");
         return RxWifiManager
+//                how to publish on a new thread
+//                .toFlowable(BackpressureStrategy.LATEST)
+//                .observeOn(Schedulers.io())
                 .wifiStateChanges(context)
                 .filter(i ->
                         i == WIFI_STATE_DISABLED ||

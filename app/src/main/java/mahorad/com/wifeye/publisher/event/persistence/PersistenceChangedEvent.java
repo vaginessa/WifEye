@@ -25,7 +25,6 @@ public abstract class PersistenceChangedEvent {
     public static PersistenceChangedEvent create(@NonNull String ssid, @NonNull String ctid) {
         Preconditions.checkNotNull(ssid, "ssid == null");
         Preconditions.checkNotNull(ctid, "ctid == null");
-        PersistenceChangedEvent e = new AutoValue_PersistenceChangedEvent(ssid, ctid);
-        return e;
+        return new AutoValue_PersistenceChangedEvent(ssid, ctid);
     }
 }

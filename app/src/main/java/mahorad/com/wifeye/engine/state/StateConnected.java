@@ -9,14 +9,14 @@ public class StateConnected extends State {
     }
 
     @Override
-    public Type type() {
-        return Type.Connected;
+    public StateType type() {
+        return StateType.Connected;
     }
 
     @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(String ssid) {
         engine.haltWifiActions(); // stopMainService any ongoing timeouts
-        engine.persist(); // persist another SSIDs perhaps
+        engine.persistSsid(ssid); // persist another SSIDs perhaps
     }
 
     @Override
@@ -26,14 +26,14 @@ public class StateConnected extends State {
     }
 
     @Override
-    public void onReceivedKnownTowerId() {
+    public void onReceivedKnownTowerId(String ctid) {
         engine.toCloseRangeState();
     }
 
     @Override
-    public void onReceivedUnknownTowerId() {
+    public void onReceivedUnknownTowerId(String ctid) {
         engine.toCloseRangeState();
-        engine.persist(); // persist the location
+        engine.persistCtid(ctid); // persist the location
     }
 
 }

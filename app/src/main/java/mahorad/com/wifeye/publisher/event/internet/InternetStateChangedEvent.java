@@ -23,7 +23,6 @@ public abstract class InternetStateChangedEvent {
     @NonNull
     public static InternetStateChangedEvent create(@NonNull String ssid, boolean connected) {
         Preconditions.checkNotNull(ssid, "ssid == null");
-        InternetStateChangedEvent e = new AutoValue_InternetStateChangedEvent(ssid, connected);
-        return e;
+        return new AutoValue_InternetStateChangedEvent(ssid, connected);
     }
 }
