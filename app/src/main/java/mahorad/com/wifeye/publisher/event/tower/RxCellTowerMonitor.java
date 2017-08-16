@@ -2,7 +2,8 @@ package mahorad.com.wifeye.publisher.event.tower;
 
 
 import android.content.Context;
-import android.telephony.CellLocation;
+
+import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
@@ -11,9 +12,10 @@ import mahorad.com.wifeye.data.Persistence;
 import mahorad.com.wifeye.publisher.broadcast.telephony.RxTelephonyManager;
 import mahorad.com.wifeye.publisher.event.internet.InternetStateChangedEvent;
 import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
-import mahorad.com.wifeye.util.Utils;
 
 import static dagger.internal.Preconditions.checkNotNull;
+import static mahorad.com.wifeye.util.Constants.UNKNOWN_CTID;
+import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
 /**
  * Created by mahan on 2017-08-13.
@@ -30,8 +32,14 @@ public class RxCellTowerMonitor {
         return RxTelephonyManager
                 .cellLocationChanges(context)
                 .distinctUntilChanged()
+                .map(Object::toString)
+                .filter(RxCellTowerMonitor::isValid)
                 .map(RxCellTowerMonitor::toEvent)
                 .doOnDispose(() -> internetChanges.dispose());
+    }
+
+    private static boolean isValid(String ctid) {
+        return !isNullOrEmpty(ctid) && !Objects.equals(ctid, UNKNOWN_CTID);
     }
 
     private static void subscribeInternetStateChanges(Context context) {
@@ -41,12 +49,10 @@ public class RxCellTowerMonitor {
                 .subscribe(e -> event = e);
     }
 
-    private static CellTowerIdChangedEvent toEvent(CellLocation location) {
-        String ctid = (location == null ? "" : location.toString());
-        boolean known = Utils.isNullOrEmpty(ctid) ||
-                (event.connected()
+    private static CellTowerIdChangedEvent toEvent(String ctid) {
+        boolean known = event.connected()
                         ? Persistence.exist(event.ssid(), ctid)
-                        : Persistence.exist(ctid));
+                        : Persistence.exist(ctid);
         return CellTowerIdChangedEvent.create(ctid, known);
     }
 

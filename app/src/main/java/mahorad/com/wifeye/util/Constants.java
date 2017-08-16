@@ -14,6 +14,8 @@ public class Constants {
     public static final int WIFI_ENABLE_TIMEOUT = 90;
     public static final int WIFI_DISABLE_TIMEOUT = 45;
 
+    public static final String UNKNOWN_CTID = "[-1,-1,-1]";
+
     public static String[] PERMISSIONS = {
             PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
             PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE,
