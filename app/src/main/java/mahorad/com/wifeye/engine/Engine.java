@@ -182,7 +182,7 @@ public class Engine {
     }
 
     public void haltWifiActions() {
-        wifiHandler.halt();
+        wifiHandler.haltActions();
     }
 
     public void persistSsid(String ssid) {

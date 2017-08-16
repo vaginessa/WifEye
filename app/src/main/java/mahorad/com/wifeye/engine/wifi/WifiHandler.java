@@ -10,6 +10,7 @@ import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionMonitor;
 import mahorad.com.wifeye.util.BinaryCountdown;
 import mahorad.com.wifeye.util.UnaryCountdown;
+import timber.log.Timber;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mahorad.com.wifeye.util.Constants.OBSERVE_REPEAT_COUNT;
@@ -21,6 +22,8 @@ import static mahorad.com.wifeye.util.Constants.WIFI_ENABLE_TIMEOUT;
  */
 
 public class WifiHandler {
+
+    private static final String TAG = WifiHandler.class.getSimpleName();
 
     private final UnaryCountdown disablingTimer;
     private final BinaryCountdown observingTimer;
@@ -73,16 +76,16 @@ public class WifiHandler {
 
     private void completionAction() {
         if (connected) {
-            halt();
+            haltActions();
             return;
         }
         WifiDevice.disable();
-        halt();
+        haltActions();
     }
 
     private void observeModeEnable() {
         if (connected) {
-            halt();
+            haltActions();
             return;
         }
         WifiDevice.enable();
@@ -91,7 +94,7 @@ public class WifiHandler {
 
     private void observeModeDisable() {
         if (connected) {
-            halt();
+            haltActions();
             return;
         }
         WifiDevice.disable();
@@ -101,6 +104,7 @@ public class WifiHandler {
     public void start() {
         if (isStarted) return;
         isStarted = true;
+        Timber.tag(TAG).d("starting wifi handler");
         injectDependencies();
         internetStateDisposable = RxInternetMonitor
                 .internetStateChanges(context)
@@ -114,13 +118,16 @@ public class WifiHandler {
 
     public void runDisabler() {
         synchronized (this) {
+            Timber.tag(TAG).d("running disabler?");
             if (!canDisable()) {
-                halt();
+                Timber.tag(TAG).d("wifi already disabled or internet already connected");
+                haltActions();
                 return;
             }
             if (disabling()) return;
-            halt();
+            haltActions();
             notify(WifiAction.DisablingMode);
+            Timber.tag(TAG).d("starting disabler timer");
             disablingTimer.start();
         }
     }
@@ -131,13 +138,16 @@ public class WifiHandler {
 
     public void runObserver() {
         synchronized (this) {
+            Timber.tag(TAG).d("running observer?");
             if (connected) {
-                halt();
+                Timber.tag(TAG).d("internet already connected");
+                haltActions();
                 return;
             }
             if (observing()) return;
-            halt();
+            haltActions();
             notify(WifiAction.ObserveModeEnabling);
+            Timber.tag(TAG).d("starting observer timer");
             observingTimer.start();
         }
     }
@@ -153,12 +163,14 @@ public class WifiHandler {
     public void stop() {
         if (!isStarted) return;
         isStarted = false;
+        Timber.tag(TAG).d("stopping wifi handler");
         internetStateDisposable.dispose();
-        halt();
+        haltActions();
     }
 
-    public void halt() {
+    public void haltActions() {
         synchronized (this) {
+            Timber.tag(TAG).d("halting wifi actions");
             stopTimers();
             notify(WifiAction.Halt);
         }

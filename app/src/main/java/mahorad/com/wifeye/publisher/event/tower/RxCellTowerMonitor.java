@@ -23,8 +23,10 @@ import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
 public class RxCellTowerMonitor {
 
+    private static final String TAG = RxCellTowerMonitor.class.getSimpleName();
+
     private static Disposable internetChanges;
-    private static InternetStateChangedEvent event;
+    private static InternetStateChangedEvent internet;
 
     public static Observable<CellTowerIdChangedEvent> cellTowerIdChanges(@NonNull Context context) {
         checkNotNull(context, "context == null");
@@ -46,12 +48,12 @@ public class RxCellTowerMonitor {
         if (internetChanges != null) return;
         internetChanges = RxInternetMonitor
                 .internetStateChanges(context)
-                .subscribe(e -> event = e);
+                .subscribe(e -> internet = e);
     }
 
     private static CellTowerIdChangedEvent toEvent(String ctid) {
-        boolean known = event.connected()
-                        ? Persistence.exist(event.ssid(), ctid)
+        boolean known = internet.connected()
+                        ? Persistence.exist(internet.ssid(), ctid)
                         : Persistence.exist(ctid);
         return CellTowerIdChangedEvent.create(ctid, known);
     }

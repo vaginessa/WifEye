@@ -1,12 +1,11 @@
 package mahorad.com.wifeye.data;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import mahorad.com.wifeye.publisher.event.persistence.RxPersistenceMonitor;
+import timber.log.Timber;
 
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
@@ -39,9 +38,18 @@ public class Persistence {
     }
 
     public static void persist(String ssid, final String ctid) {
-        if (!isValid(ssid)) return;
-        if (!isValid(ctid)) return;
-        if (exist(ssid, ctid)) return;
+        if (!isValid(ssid)) {
+            Timber.tag(TAG).d("invalid ssid %s", ssid);
+            return;
+        }
+        if (!isValid(ctid)) {
+            Timber.tag(TAG).d("invalid ctid %s", ctid);
+            return;
+        }
+        if (exist(ssid, ctid)) {
+            Timber.tag(TAG).d("%s, %s exists", ssid, ctid);
+            return;
+        }
         doPersist(ssid, ctid);
     }
 
@@ -56,10 +64,11 @@ public class Persistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
+            Timber.tag(TAG).d("PERSISTED CTID %s -> SSID %s", ctid, ssid);
             RxPersistenceMonitor.notify(ssid, ctid);
-            Log.d(TAG, String.format("PERSISTED CTID %s -> SSID %s", ctid, ssid));
         } else {
             db.get(ssid).add(ctid);
+            Timber.tag(TAG).d("PERSISTED CTID %s -> SSID %s", ctid, ssid);
             RxPersistenceMonitor.notify(ssid, ctid);
         }
     }
