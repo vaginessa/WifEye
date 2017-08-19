@@ -1,18 +1,19 @@
 package mahorad.com.wifeye.engine.wifi;
 
-import android.content.Context;
-
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import mahorad.com.wifeye.base.BaseApplication;
-import mahorad.com.wifeye.di.qualifier.ApplicationContext;
-import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionMonitor;
+import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionTimerMonitor;
 import mahorad.com.wifeye.util.BinaryCountdown;
 import mahorad.com.wifeye.util.UnaryCountdown;
 import timber.log.Timber;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static mahorad.com.wifeye.engine.wifi.WifiAction.DisablingMode;
+import static mahorad.com.wifeye.engine.wifi.WifiAction.Halt;
+import static mahorad.com.wifeye.engine.wifi.WifiAction.ObserveModeDisabling;
+import static mahorad.com.wifeye.engine.wifi.WifiAction.ObserveModeEnabling;
+import static mahorad.com.wifeye.engine.wifi.WifiDevice.isEnabled;
 import static mahorad.com.wifeye.util.Constants.OBSERVE_REPEAT_COUNT;
 import static mahorad.com.wifeye.util.Constants.WIFI_DISABLE_TIMEOUT;
 import static mahorad.com.wifeye.util.Constants.WIFI_ENABLE_TIMEOUT;
@@ -25,23 +26,16 @@ public class WifiHandler {
 
     private static final String TAG = WifiHandler.class.getSimpleName();
 
+    private static final Object sync = new Object();
+
     private final UnaryCountdown disablingTimer;
     private final BinaryCountdown observingTimer;
 
-    private static WifiAction wifiAction = WifiAction.Halt;
-
-    private long elapsed;
     private boolean isStarted;
-    private boolean connected;
-    private Disposable internetStateDisposable;
 
-    private Consumer<Long> observerConsumer = tick -> elapsed = tick;
-    private Consumer<Long> disablerConsumer = tick -> elapsed = tick;
+    private Consumer<Long> tickConsumer = RxWifiActionTimerMonitor::notify;
 
-    private Context context;
-
-    public WifiHandler(@ApplicationContext Context context) {
-        this.context = context;
+    public WifiHandler() {
         disablingTimer = createDisablingTimer();
         observingTimer = createObservingTimer();
     }
@@ -53,7 +47,7 @@ public class WifiHandler {
                 .setCondition(WifiDevice::isEnabled)
                 .setCompletionAction(this::completionAction)
                 .build();
-        disabler.subscribe(disablerConsumer);
+        disabler.subscribe(tickConsumer);
         return disabler;
     }
 
@@ -63,42 +57,30 @@ public class WifiHandler {
                 .setRunTimes(OBSERVE_REPEAT_COUNT)
                 .setMoreDelayedLength(WIFI_ENABLE_TIMEOUT, SECONDS)
                 .setMoreDelayedAction(this::observeModeEnable)
-                .setMoreDelayedCondition(() -> !WifiDevice.isEnabled())
+                .setMoreDelayedCondition(() -> !isEnabled())
                 .setLessDelayedLength(WIFI_DISABLE_TIMEOUT, SECONDS)
                 .setLessDelayedAction(this::observeModeDisable)
-                .setLessDelayedCondition(() -> WifiDevice.isEnabled())
+                .setLessDelayedCondition(() -> isEnabled())
                 .setCompletionAction(this::completionAction)
                 .startWithMoreDelayedAction()
                 .build();
-        observer.subscribe(observerConsumer);
+        observer.subscribe(tickConsumer);
         return observer;
     }
 
     private void completionAction() {
-        if (connected) {
-            haltActions();
-            return;
-        }
         WifiDevice.disable();
         haltActions();
     }
 
     private void observeModeEnable() {
-        if (connected) {
-            haltActions();
-            return;
-        }
         WifiDevice.enable();
-        notify(WifiAction.ObserveModeDisabling);
+        notify(ObserveModeDisabling);
     }
 
     private void observeModeDisable() {
-        if (connected) {
-            haltActions();
-            return;
-        }
         WifiDevice.disable();
-        notify(WifiAction.ObserveModeEnabling);
+        notify(ObserveModeEnabling);
     }
 
     public void start() {
@@ -106,10 +88,6 @@ public class WifiHandler {
         isStarted = true;
         Timber.tag(TAG).d("starting wifi handler");
         injectDependencies();
-        internetStateDisposable = RxInternetMonitor
-                .internetStateChanges(context)
-                .subscribe(e -> connected = e.connected());
-
     }
 
     private void injectDependencies() {
@@ -117,36 +95,22 @@ public class WifiHandler {
     }
 
     public void runDisabler() {
-        synchronized (this) {
+        synchronized (sync) {
             Timber.tag(TAG).d("running disabler?");
-            if (!canDisable()) {
-                Timber.tag(TAG).d("wifi already disabled or internet already connected");
-                haltActions();
-                return;
-            }
-            if (disabling()) return;
+            if (disabling() || !isEnabled()) return;
             haltActions();
-            notify(WifiAction.DisablingMode);
+            notify(DisablingMode);
             Timber.tag(TAG).d("starting disabler timer");
             disablingTimer.start();
         }
     }
 
-    private boolean canDisable() {
-        return WifiDevice.isEnabled() && !connected;
-    }
-
     public void runObserver() {
-        synchronized (this) {
+        synchronized (sync) {
             Timber.tag(TAG).d("running observer?");
-            if (connected) {
-                Timber.tag(TAG).d("internet already connected");
-                haltActions();
-                return;
-            }
             if (observing()) return;
             haltActions();
-            notify(WifiAction.ObserveModeEnabling);
+            notify(ObserveModeEnabling);
             Timber.tag(TAG).d("starting observer timer");
             observingTimer.start();
         }
@@ -164,15 +128,14 @@ public class WifiHandler {
         if (!isStarted) return;
         isStarted = false;
         Timber.tag(TAG).d("stopping wifi handler");
-        internetStateDisposable.dispose();
         haltActions();
     }
 
     public void haltActions() {
-        synchronized (this) {
+        synchronized (sync) {
             Timber.tag(TAG).d("halting wifi actions");
             stopTimers();
-            notify(WifiAction.Halt);
+            notify(Halt);
         }
     }
 
@@ -181,9 +144,10 @@ public class WifiHandler {
         disablingTimer.stop();
     }
 
-    private static synchronized void notify(WifiAction wifiAction) {
-        WifiHandler.wifiAction = wifiAction;
-        RxWifiActionMonitor.notify(wifiAction);
+    private static void notify(WifiAction wifiAction) {
+        synchronized (sync) {
+            RxWifiActionMonitor.notify(wifiAction);
+        }
     }
 
 }
