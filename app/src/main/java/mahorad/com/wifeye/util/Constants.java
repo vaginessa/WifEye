@@ -4,6 +4,10 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 
 public class Constants {
 
+
+    public static final String NOT_ANY = "n/a";
+    public static final String BLANK = "-";
+
     public static final int WIFI_STATE_DISABLING = 0;
     public static final int WIFI_STATE_DISABLED = 1;
     public static final int WIFI_STATE_ENABLING = 2;
