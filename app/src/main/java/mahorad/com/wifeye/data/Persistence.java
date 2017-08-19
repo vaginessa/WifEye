@@ -1,13 +1,16 @@
 package mahorad.com.wifeye.data;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import mahorad.com.wifeye.publisher.event.persistence.EventType;
 import mahorad.com.wifeye.publisher.event.persistence.RxPersistenceMonitor;
 import timber.log.Timber;
 
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
+import static mahorad.com.wifeye.util.Utils.now;
 
 /**
  * Created by mahan on 2017-08-14.
@@ -18,6 +21,8 @@ public class Persistence {
     public static final String TAG = Persistence.class.getSimpleName();
 
     private static final HashMap<String, Set<String>> db = new HashMap<>();
+
+    private static final HashMap<EventType, Date> history = new HashMap<>();
 
     static {
         addFakeValues();
@@ -95,5 +100,11 @@ public class Persistence {
         return false;
     }
 
+    public static void persist(EventType event) {
+        history.put(event, now());
+    }
 
+    public static Date getLatest(EventType event) {
+        return history.get(event);
+    }
 }
