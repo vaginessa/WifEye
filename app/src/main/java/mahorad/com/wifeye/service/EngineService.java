@@ -5,12 +5,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
+import mahorad.com.wifeye.publisher.event.persistence.Chronograph;
 import mahorad.com.wifeye.util.Constants;
 import mahorad.com.wifeye.base.BaseService;
 import mahorad.com.wifeye.engine.Engine;
@@ -32,10 +34,13 @@ public class EngineService extends BaseService {
 
     private static boolean started;
 
-    private static final ReplaySubject<Boolean> state = ReplaySubject.createWithSize(1);
+    private static final ReplaySubject<Boolean> source = ReplaySubject.createWithSize(1);
 
     @Inject
     Engine engine;
+
+    @Inject
+    Chronograph chronograph;
 
     @Override
     public void onCreate() {
@@ -62,10 +67,11 @@ public class EngineService extends BaseService {
 
     private void start() {
         if (started) return;
-        engine.start();
         started = true;
+        chronograph.start();
+        engine.start();
         Timber.tag(TAG).v("started main service");
-        state.onNext(true);
+        source.onNext(true);
     }
 
     @Override
@@ -75,13 +81,17 @@ public class EngineService extends BaseService {
 
     private void stop() {
         if (!started) return;
-        engine.stop();
         started = false;
+        chronograph.stop();
+        engine.stop();
         Timber.tag(TAG).v("stopped main service");
-        state.onNext(false);
+        source.onNext(false);
     }
 
-    public static Observable<Boolean> stateObservable() {
-        return state;
+    public static Flowable<Boolean> stateChanges() {
+        return source
+                .distinctUntilChanged()
+                .toFlowable(BackpressureStrategy.LATEST)
+                .observeOn(Schedulers.newThread());
     }
 }

@@ -1,6 +1,9 @@
 package mahorad.com.wifeye.publisher.event.persistence;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.util.Utils;
 
@@ -22,8 +25,11 @@ public abstract class RxPersistenceMonitor {
         source.onNext(PersistenceChangedEvent.create(ssid, ctid));
     }
 
-    public static Observable<PersistenceChangedEvent> persistenceChanges() {
-        return source.distinctUntilChanged();
+    public static Flowable<PersistenceChangedEvent> persistenceChanges() {
+        return source
+                .distinctUntilChanged()
+                .toFlowable(BackpressureStrategy.LATEST)
+                .observeOn(Schedulers.newThread());
     }
 
 

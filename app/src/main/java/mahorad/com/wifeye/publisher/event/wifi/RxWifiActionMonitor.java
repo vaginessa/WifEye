@@ -1,6 +1,8 @@
 package mahorad.com.wifeye.publisher.event.wifi;
 
-import io.reactivex.Observable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.engine.wifi.WifiAction;
 
@@ -20,7 +22,10 @@ public class RxWifiActionMonitor {
         source.onNext(action);
     }
 
-    public static Observable<WifiAction> wifiActionChanges() {
-        return source.distinctUntilChanged();
+    public static Flowable<WifiAction> wifiActionChanges() {
+        return source
+                .distinctUntilChanged()
+                .toFlowable(BackpressureStrategy.LATEST)
+                .observeOn(Schedulers.newThread());
     }
 }
