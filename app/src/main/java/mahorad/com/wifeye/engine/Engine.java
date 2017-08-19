@@ -77,6 +77,7 @@ public class Engine {
         if (started) return;
         started = true;
         injectDependencies();
+
         wifiHandler.start();
         currentState = initial;
         compositeDisposable.add(subscribeCellTower());

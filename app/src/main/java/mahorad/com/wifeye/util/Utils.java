@@ -59,7 +59,9 @@ public class Utils {
     }
 
     public static WifiManager getWifiManager(Context context) {
-        return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        return (WifiManager) context
+                .getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE);
     }
 
     public static Uri getResourceUri(int id, Context context) {
