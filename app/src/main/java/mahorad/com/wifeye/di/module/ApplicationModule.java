@@ -50,7 +50,8 @@ public class ApplicationModule {
 
     @Provides
     @PerApplication
-    WifiHandler wifiActionHandler(@ApplicationContext Context context) {
-        return new WifiHandler(context);
+    WifiHandler wifiActionHandler() {
+        return new WifiHandler();
     }
+
 }
