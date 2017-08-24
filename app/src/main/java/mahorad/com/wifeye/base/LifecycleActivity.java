@@ -1,9 +1,10 @@
+package mahorad.com.wifeye.base;
+
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.trello.rxlifecycle2.LifecycleProvider;
 import com.trello.rxlifecycle2.LifecycleTransformer;
@@ -14,7 +15,11 @@ import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class LifecycleActivity extends ActivityManagePermission implements LifecycleProvider<ActivityEvent> {
+/**
+ * Created by Mahan Rad on 2017-08-24.
+ */
+
+public class LifecycleActivity extends PermitActivity implements LifecycleProvider<ActivityEvent> {
 
     private final BehaviorSubject<ActivityEvent> lifecycleSubject = BehaviorSubject.create();
 

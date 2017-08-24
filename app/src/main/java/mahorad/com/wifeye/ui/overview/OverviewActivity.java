@@ -1,6 +1,7 @@
 package mahorad.com.wifeye.ui.overview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static mahorad.com.wifeye.R.color.colorGreen;
 import static mahorad.com.wifeye.R.color.colorPrimary;
+import static mahorad.com.wifeye.util.Constants.PERMISSIONS;
+import static mahorad.com.wifeye.util.Utils.isRunning;
+import static mahorad.com.wifeye.util.Utils.openPermissions;
 
 public class OverviewActivity extends BaseActivity {
 
@@ -124,6 +128,39 @@ public class OverviewActivity extends BaseActivity {
         accent = new ColorStateList(
                 new int[][] { new int[0] },
                 new int[]   { ResourcesCompat.getColor(getResources(), colorPrimary, null) });
+    }
+
+    public void toggleService() {
+        if (isRunning(this, EngineService.class)) {
+            stopEngineService();
+        } else {
+            request(PERMISSIONS);
+        }
+    }
+
+    @Override
+    protected void onPermissionsGranted() {
+        startEngineService();
+    }
+
+    @Override
+    protected void onPermissionsDenied() {
+        finishAffinity();
+    }
+
+    @Override
+    protected void onPermissionsBanned() {
+        openPermissions(this);
+    }
+
+    public void startEngineService() {
+        Intent intent = new Intent(this, EngineService.class);
+        startService(intent);
+    }
+
+    public void stopEngineService() {
+        Intent intent = new Intent(this, EngineService.class);
+        stopService(intent);
     }
 
     public void selectFirstMenuItem() {
