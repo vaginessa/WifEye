@@ -3,6 +3,7 @@ package mahorad.com.wifeye.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import mahorad.com.wifeye.base.activity.LifecycleActivity;
 import mahorad.com.wifeye.di.component.ActivityComponent;
 import mahorad.com.wifeye.di.component.DaggerActivityComponent;
 import mahorad.com.wifeye.di.module.ActivityModule;

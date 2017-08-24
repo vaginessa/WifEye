@@ -1,4 +1,4 @@
-package mahorad.com.wifeye.base;
+package mahorad.com.wifeye.base.activity;
 
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
