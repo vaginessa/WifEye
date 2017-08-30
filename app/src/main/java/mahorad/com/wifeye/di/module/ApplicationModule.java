@@ -58,41 +58,28 @@ public abstract class ApplicationModule {
         return new Engine();
     }
 
-    @Provides
+    @Binds
     @InitialState
-    static IState initial(Engine engine) {
-        return new StateInitial(engine);
-    }
+    abstract IState initial(StateInitial state);
 
-    @Provides
+    @Binds
     @ConnectedState
-    static IState connected(Engine engine) {
-        return new StateConnected(engine);
-    }
+    abstract IState connected(StateConnected state);
 
-    @Provides
+    @Binds
     @DisconnectedState
-    static IState disconnected(Engine engine) {
-        return new StateDisconnected(engine);
-    }
+    abstract IState disconnected(StateDisconnected state);
 
-    @Provides
+    @Binds
     @NearbyAreaState
-    static IState nearbyArea(Engine engine) {
-        return new StateNearbyArea(engine);
-    }
+    abstract IState nearbyArea(StateNearbyArea state);
 
-    @Provides
+    @Binds
     @RemoteAreaState
-    static IState remoteArea(Engine engine) {
-        return new StateRemoteArea(engine);
-    }
+    abstract IState remoteArea(StateRemoteArea state);
 
-    @Provides
+    @Binds
     @CloseRangeState
-    static IState closeRange(Engine engine) {
-        return new StateCloseRange(engine);
-    }
-
+    abstract IState closeRange(StateCloseRange state);
 
 }
