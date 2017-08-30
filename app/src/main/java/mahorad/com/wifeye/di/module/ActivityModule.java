@@ -7,7 +7,7 @@ import dagger.Module;
  */
 
 @Module
-public abstract class BaseActivityModule {
+public abstract class ActivityModule {
 
 //    common activities dependencies here
 

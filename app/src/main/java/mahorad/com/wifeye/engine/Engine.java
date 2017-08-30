@@ -6,8 +6,9 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import mahorad.com.wifeye.base.BaseApplication;
 import mahorad.com.wifeye.data.Persistence;
+import mahorad.com.wifeye.di.component.DaggerServiceComponent;
+import mahorad.com.wifeye.di.module.ServiceModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.qualifier.engine.CloseRangeState;
 import mahorad.com.wifeye.di.qualifier.engine.ConnectedState;
@@ -78,11 +79,19 @@ public class Engine {
     public void start() {
         if (started) return;
         started = true;
-        BaseApplication.component().inject(this);
+        injectDependencies();
         wifiHandler.start();
         currentState = initial;
         compositeDisposable.add(subscribeCellTower());
         compositeDisposable.add(subscribeInternet());
+    }
+
+    private void injectDependencies() {
+        DaggerServiceComponent
+                .builder()
+                .baseServiceModule(new ServiceModule())
+                .build()
+                .inject(this);
     }
 
     private Disposable subscribeInternet() {
