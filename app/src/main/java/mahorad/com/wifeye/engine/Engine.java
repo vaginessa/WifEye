@@ -23,6 +23,7 @@ import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
 import timber.log.Timber;
 
+import static mahorad.com.wifeye.base.BaseApplication.component;
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
 /**
@@ -89,7 +90,8 @@ public class Engine {
     private void injectDependencies() {
         DaggerServiceComponent
                 .builder()
-                .baseServiceModule(new ServiceModule())
+                .applicationComponent(component())
+                .serviceModule(new ServiceModule())
                 .build()
                 .inject(this);
     }
