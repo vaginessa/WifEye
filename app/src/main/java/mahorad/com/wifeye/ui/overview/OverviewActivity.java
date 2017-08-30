@@ -239,8 +239,4 @@ public class OverviewActivity extends BaseActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    @Override
-    protected void injectDependencies() {
-        component().inject(this);
-    }
 }

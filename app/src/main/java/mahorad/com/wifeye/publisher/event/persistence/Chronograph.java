@@ -3,8 +3,11 @@ package mahorad.com.wifeye.publisher.event.persistence;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import javax.inject.Inject;
+
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.publisher.event.engine.RxEngineStateMonitor;
 import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
@@ -29,7 +32,8 @@ public class Chronograph {
 
     private Context context;
 
-    public Chronograph(Context context) {
+    @Inject
+    public Chronograph(@ApplicationContext Context context) {
         this.context = context;
     }
 

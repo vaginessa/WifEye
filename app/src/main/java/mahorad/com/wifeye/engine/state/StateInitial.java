@@ -1,9 +1,12 @@
 package mahorad.com.wifeye.engine.state;
 
+import javax.inject.Inject;
+
 import mahorad.com.wifeye.engine.Engine;
 
 public class StateInitial extends State {
 
+    @Inject
     public StateInitial(Engine engine) {
         super(engine);
     }

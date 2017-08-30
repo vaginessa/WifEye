@@ -1,18 +1,28 @@
 package mahorad.com.wifeye.engine.wifi;
 
+import android.content.Context;
 import android.net.wifi.WifiManager;
 
-import mahorad.com.wifeye.base.BaseApplication;
+import javax.inject.Inject;
+
+import mahorad.com.wifeye.di.qualifier.ApplicationContext;
+import mahorad.com.wifeye.util.Utils;
 import timber.log.Timber;
 
-import static mahorad.com.wifeye.util.Utils.getWifiManager;
+/**
+ * Created by Mahan Rad on 2017-08-24.
+ */
 
 public class WifiDevice {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    private static WifiManager wifiManager = getWifiManager(
-            BaseApplication.component().context());
+    static WifiManager wifiManager;
+
+    @Inject
+    public WifiDevice(@ApplicationContext Context context) {
+        wifiManager = Utils.getWifiManager(context);
+    }
 
     public static void enable() {
         wifiManager.setWifiEnabled(true);

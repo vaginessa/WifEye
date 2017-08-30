@@ -3,34 +3,25 @@ package mahorad.com.wifeye.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import mahorad.com.wifeye.base.activity.LifecycleActivity;
-import mahorad.com.wifeye.di.component.ActivityComponent;
-import mahorad.com.wifeye.di.component.DaggerActivityComponent;
-import mahorad.com.wifeye.di.module.ActivityModule;
+import mahorad.com.wifeye.navigate.Navigator;
+
+/**
+ * Created by Mahan Rad on 2017-08-24.
+ */
 
 public abstract class BaseActivity extends LifecycleActivity {
 
-    private ActivityComponent component;
+    @Inject
+    protected Navigator navigator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        initializeComponent();
-        injectDependencies();
     }
-
-    protected void initializeComponent() {
-        component = DaggerActivityComponent
-                .builder()
-                .applicationComponent(BaseApplication.component())
-                .activityModule(new ActivityModule(this))
-                .build();
-    }
-
-    public ActivityComponent component() {
-        return component;
-    }
-
-    protected abstract void injectDependencies();
 
 }

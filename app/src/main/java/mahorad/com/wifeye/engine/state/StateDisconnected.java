@@ -1,9 +1,12 @@
 package mahorad.com.wifeye.engine.state;
 
+import javax.inject.Inject;
+
 import mahorad.com.wifeye.engine.Engine;
 
 public class StateDisconnected extends State {
 
+    @Inject
     public StateDisconnected(Engine engine) {
         super(engine);
     }

@@ -1,28 +1,31 @@
 package mahorad.com.wifeye.di.component;
 
-import android.content.Context;
+import android.app.Application;
 
+import javax.inject.Singleton;
+
+import dagger.BindsInstance;
 import dagger.Component;
 import mahorad.com.wifeye.base.BaseApplication;
 import mahorad.com.wifeye.di.module.ApplicationModule;
-import mahorad.com.wifeye.di.module.EngineModule;
-import mahorad.com.wifeye.di.qualifier.ApplicationContext;
-import mahorad.com.wifeye.di.scope.PerApplication;
+import mahorad.com.wifeye.di.module.InjectorsModule;
 import mahorad.com.wifeye.engine.Engine;
-import mahorad.com.wifeye.engine.wifi.WifiHandler;
 
-@PerApplication
-@Component(modules = { ApplicationModule.class, EngineModule.class }, dependencies = { /**/ })
+@Singleton
+@Component(modules = { ApplicationModule.class, InjectorsModule.class, })
 public interface ApplicationComponent {
 
-    @ApplicationContext
-    Context context();
+    @Component.Builder
+    interface Builder {
 
-    Engine engine();
+        @BindsInstance
+        Builder application(Application application);
 
-    void inject(BaseApplication app);
+        ApplicationComponent build();
+    }
+
+    void inject(BaseApplication baseApplication);
 
     void inject(Engine engine);
 
-    void inject(WifiHandler h);
 }

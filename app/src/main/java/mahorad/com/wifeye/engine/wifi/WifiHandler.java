@@ -1,7 +1,8 @@
 package mahorad.com.wifeye.engine.wifi;
 
+import javax.inject.Inject;
+
 import io.reactivex.functions.Consumer;
-import mahorad.com.wifeye.base.BaseApplication;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionTimerMonitor;
 import mahorad.com.wifeye.util.BinaryCountdown;
@@ -35,6 +36,7 @@ public class WifiHandler {
 
     private Consumer<Long> tickConsumer = RxWifiActionTimerMonitor::notify;
 
+    @Inject
     public WifiHandler() {
         disablingTimer = createDisablingTimer();
         observingTimer = createObservingTimer();
@@ -87,11 +89,6 @@ public class WifiHandler {
         if (isStarted) return;
         isStarted = true;
         Timber.tag(TAG).d("starting wifi handler");
-        injectDependencies();
-    }
-
-    private void injectDependencies() {
-        BaseApplication.component().inject(this);
     }
 
     public void runDisabler() {

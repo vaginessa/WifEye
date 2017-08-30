@@ -47,11 +47,6 @@ public class EngineService extends BaseService {
         super.onCreate();
     }
 
-    @Override
-    protected void injectDependencies() {
-        component().inject(this);
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

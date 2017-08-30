@@ -2,34 +2,18 @@ package mahorad.com.wifeye.base;
 
 import android.app.Service;
 
-import mahorad.com.wifeye.di.component.ApplicationComponent;
-import mahorad.com.wifeye.di.component.DaggerServiceComponent;
-import mahorad.com.wifeye.di.component.ServiceComponent;
-import mahorad.com.wifeye.di.module.ServiceModule;
+import dagger.android.AndroidInjection;
+
+/**
+ * Created by Mahan Rad on 2017-08-24.
+ */
 
 public abstract class BaseService extends Service {
 
-    private ServiceComponent component;
-
     @Override
     public void onCreate() {
+        AndroidInjection.inject(this);
         super.onCreate();
-        initializeComponent();
-        injectDependencies();
     }
-
-    protected void initializeComponent() {
-        component = DaggerServiceComponent
-                .builder()
-                .applicationComponent(BaseApplication.component())
-                .serviceModule(new ServiceModule(this))
-                .build();
-    }
-
-    public ServiceComponent component() {
-        return component;
-    }
-
-    protected abstract void injectDependencies();
 
 }

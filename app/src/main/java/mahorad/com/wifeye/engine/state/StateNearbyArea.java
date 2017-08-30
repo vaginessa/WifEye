@@ -1,9 +1,12 @@
 package mahorad.com.wifeye.engine.state;
 
+import javax.inject.Inject;
+
 import mahorad.com.wifeye.engine.Engine;
 
 public class StateNearbyArea extends State {
 
+    @Inject
     public StateNearbyArea(Engine engine) {
         super(engine);
     }

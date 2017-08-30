@@ -1,9 +1,12 @@
 package mahorad.com.wifeye.engine.state;
 
+import javax.inject.Inject;
+
 import mahorad.com.wifeye.engine.Engine;
 
 public class StateCloseRange extends State {
 
+    @Inject
     public StateCloseRange(Engine engine) {
         super(engine);
     }

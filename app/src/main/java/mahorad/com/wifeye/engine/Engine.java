@@ -73,21 +73,16 @@ public class Engine {
     private static String ssid;
     private static String ctid;
 
+    public Engine() {}
+
     public void start() {
         if (started) return;
         started = true;
-        injectDependencies();
-
+        BaseApplication.component().inject(this);
         wifiHandler.start();
         currentState = initial;
         compositeDisposable.add(subscribeCellTower());
         compositeDisposable.add(subscribeInternet());
-    }
-
-    private void injectDependencies() {
-        BaseApplication
-                .component()
-                .inject(this);
     }
 
     private Disposable subscribeInternet() {
