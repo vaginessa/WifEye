@@ -59,9 +59,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     // rxBinding
     implementation "com.jakewharton.rxbinding2:rxbinding:$rxBindingVersion"
-    // rxLifecycle
-    implementation "com.trello.rxlifecycle2:rxlifecycle:$rxLifecycleVersion"
-    implementation "com.trello.rxlifecycle2:rxlifecycle-components:$rxLifecycleVersion"
 
     // dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
