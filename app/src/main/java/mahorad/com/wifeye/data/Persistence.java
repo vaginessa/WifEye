@@ -44,15 +44,15 @@ public class Persistence {
 
     public static void persist(String ssid, final String ctid) {
         if (!isValid(ssid)) {
-            Timber.tag(TAG).d("invalid ssid %s", ssid);
+            Timber.tag(TAG).v("invalid ssid %s", ssid);
             return;
         }
         if (!isValid(ctid)) {
-            Timber.tag(TAG).d("invalid ctid %s", ctid);
+            Timber.tag(TAG).v("invalid ctid %s", ctid);
             return;
         }
         if (exist(ssid, ctid)) {
-            Timber.tag(TAG).d("%s, %s exists", ssid, ctid);
+            Timber.tag(TAG).v("%s, %s exists", ssid, ctid);
             return;
         }
         doPersist(ssid, ctid);
@@ -69,11 +69,11 @@ public class Persistence {
             db.put(ssid, new HashSet<String>() {{
                 add(ctid);
             }});
-            Timber.tag(TAG).d("PERSISTED CTID %s -> SSID %s", ctid, ssid);
+            Timber.tag(TAG).v("PERSISTED CTID %s -> SSID %s", ctid, ssid);
             RxPersistenceMonitor.notify(ssid, ctid);
         } else {
             db.get(ssid).add(ctid);
-            Timber.tag(TAG).d("PERSISTED CTID %s -> SSID %s", ctid, ssid);
+            Timber.tag(TAG).v("PERSISTED CTID %s -> SSID %s", ctid, ssid);
             RxPersistenceMonitor.notify(ssid, ctid);
         }
     }
