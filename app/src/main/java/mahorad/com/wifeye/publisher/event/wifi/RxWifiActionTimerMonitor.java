@@ -4,6 +4,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
+import timber.log.Timber;
 
 /**
  * Created by mahan on 2017-08-18.
@@ -17,6 +18,7 @@ public class RxWifiActionTimerMonitor {
 
     public static void notify(Long tick) {
         if (tick < 0) return;
+        Timber.tag(TAG).w("TICK: %d", tick);
         source.onNext(tick);
     }
 
