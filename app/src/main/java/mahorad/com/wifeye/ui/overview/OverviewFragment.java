@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import mahorad.com.wifeye.R;
+import static mahorad.com.wifeye.R.layout.fragment_overview;
 
 public class OverviewFragment extends Fragment {
 
@@ -15,9 +15,7 @@ public class OverviewFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View frame = inflater.inflate(
-                R.layout.fragment_overview, container, false);
-
+        View frame = inflater.inflate(fragment_overview, container, false);
         return frame;
     }
 

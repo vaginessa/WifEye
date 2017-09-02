@@ -69,6 +69,7 @@ public class OverviewActivity extends BaseActivity {
         setContentView(R.layout.activity_overview);
         ButterKnife.bind(this);
         initUserInterface();
+        if (savedInstanceState != null) return;
         selectFirstMenuItem();
     }
 
