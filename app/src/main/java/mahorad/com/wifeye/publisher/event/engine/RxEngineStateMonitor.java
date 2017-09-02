@@ -3,7 +3,7 @@ package mahorad.com.wifeye.publisher.event.engine;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.engine.state.StateType;
 import timber.log.Timber;
 
@@ -15,7 +15,7 @@ public class RxEngineStateMonitor {
 
     private static final String TAG = RxEngineStateMonitor.class.getSimpleName();
 
-    private static ReplaySubject<StateType> source = ReplaySubject.create();
+    private static BehaviorSubject<StateType> source = BehaviorSubject.create();
 
     public static synchronized void notify(StateType type) {
         if (type == null)

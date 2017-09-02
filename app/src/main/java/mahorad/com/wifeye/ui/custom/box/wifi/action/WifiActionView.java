@@ -17,7 +17,7 @@ import mahorad.com.wifeye.engine.wifi.WifiAction;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionTimerMonitor;
 import mahorad.com.wifeye.ui.custom.box.AbstractBoxView;
-import mahorad.com.wifeye.ui.custom.progress.RoundBar;
+import mahorad.com.wifeye.ui.custom.progress.CircleProgressBar;
 import timber.log.Timber;
 
 import static android.graphics.Typeface.BOLD;
@@ -34,6 +34,7 @@ import static mahorad.com.wifeye.publisher.event.persistence.EventType.WifiActio
 import static mahorad.com.wifeye.util.Constants.BLANK;
 import static mahorad.com.wifeye.util.Constants.WIFI_DISABLE_TIMEOUT;
 import static mahorad.com.wifeye.util.Constants.WIFI_ENABLE_TIMEOUT;
+import static mahorad.com.wifeye.util.Constants.WIFI_HALT_DURATION;
 import static mahorad.com.wifeye.util.Utils.toAgo;
 
 /**
@@ -50,7 +51,7 @@ public class WifiActionView extends AbstractBoxView {
     private LinearLayout contentsLayout;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
-    private RoundBar progressBar;
+    private CircleProgressBar progressBar;
 
     private int activeTextColor = getColor(getContext(), R.color.boxActiveTextColor);
     private int mainBackground = getColor(getContext(), R.color.colorMainBackground);
@@ -81,7 +82,7 @@ public class WifiActionView extends AbstractBoxView {
                 .timerTickChanges()
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
-                .subscribe(this::startProgressBar);
+                .subscribe(l -> setProgress(l + 2));
     }
 
     @NonNull
@@ -91,15 +92,14 @@ public class WifiActionView extends AbstractBoxView {
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
                 .subscribe(e -> {
+                    Timber.tag(TAG).v("received action %s", e);
                     action = e;
                     refresh();
                 });
     }
 
     @Override
-    protected void onClick(Object o) {
-        stopProgressBar();
-    }
+    protected void onClick(Object o) {}
 
     /********** SETUP **********/
 
@@ -120,13 +120,11 @@ public class WifiActionView extends AbstractBoxView {
 
     private void setupProgressBar() {
         if (progressBar != null) return;
-        progressBar = new RoundBar(getContext(), null);
-        progressBar.setForegroundColor(activeTextColor);
+        progressBar = new CircleProgressBar(getContext(), null);
         progressBar.setBackgroundColor(mainBackground);
         float progressBarWidth = getResources().getDimension(R.dimen.progressBarWidth);
-        progressBar.setForegroundWidth(progressBarWidth);
-        float backgroundWidth = getResources().getDimension(R.dimen.backgroundProgressBarWidth);
-        progressBar.setBackgroundWidth(backgroundWidth);
+        progressBar.setMinimumWidth((int) progressBarWidth);
+        progressBar.setStrokeWidth((int) progressBarWidth);
         progressBar.setLayoutParams(getProgressBarLayoutParams());
     }
 
@@ -189,36 +187,40 @@ public class WifiActionView extends AbstractBoxView {
             stopProgressBar();
             stopShimmerText();
         } else {
+            setProgress(1L);
             startShimmerText();
         }
     }
 
     public void stopProgressBar() {
         Timber.tag(TAG).v("stopping progress bar");
-        progressBar.stop();
+        progressBar.setProgressWithAnimation(0);
         progressBar.clearAnimation();
         progressBar.animate().cancel();
-        progressBar.setProgress(0);
+    }
+
+    private void setProgress(Long passed) {
+        progressBar.setStrokeColor(actionColor());
+        int progress = calculateProgress(passed);
+        progressBar.setProgressWithAnimation(progress);
+    }
+
+    private int calculateProgress(long passed) {
+        int duration = actionDuration();
+        if (duration == WIFI_HALT_DURATION) return 0;
+        int progress = (100 * (int) passed) / duration;
+        Timber.tag(TAG).v("--> passed %d, progress %d", passed, progress);
+        return progress;
     }
 
     private void stopShimmerText() {
+        if (!shimmerText.isShimmering()) return;
         Timber.tag(TAG).v("stopping shimmer text");
         shimmerText.setTextColor(textColorIdling);
         shimmer.cancel();
     }
 
-    private void startProgressBar(Long passed) {
-        if (progressBar.isRunning()) return;
-        int elapsed = passed.intValue();
-        int total = getTotalActionDuration();
-        int remainder = (total - elapsed) * 1000;
-        int percentage = (100 * elapsed) / total;
-        progressBar.setForegroundColor(actionColor());
-        Timber.tag(TAG).w("starting progress bar");
-        progressBar.start(percentage, 100, remainder);
-    }
-
-    private int getTotalActionDuration() {
+    private int actionDuration() {
         switch (action) {
             case ObserveModeEnabling:
                 return WIFI_ENABLE_TIMEOUT;
@@ -226,11 +228,12 @@ public class WifiActionView extends AbstractBoxView {
             case ObserveModeDisabling:
                 return WIFI_DISABLE_TIMEOUT;
             default:
-                return 1;
+                return WIFI_HALT_DURATION;
         }
     }
 
     private void startShimmerText() {
+        Timber.tag(TAG).v("starting shimmer text");
         shimmerText.setText(action.title());
         shimmerText.setPrimaryColor(mainBackground);
         shimmerText.setTextColor(mainBackground);

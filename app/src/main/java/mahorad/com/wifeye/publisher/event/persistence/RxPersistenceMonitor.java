@@ -2,10 +2,8 @@ package mahorad.com.wifeye.publisher.event.persistence;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.ReplaySubject;
-import mahorad.com.wifeye.util.Utils;
+import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
@@ -18,7 +16,7 @@ public abstract class RxPersistenceMonitor {
 
     public static final String TAG = RxPersistenceMonitor.class.getSimpleName();
 
-    private static final ReplaySubject<PersistenceChangedEvent> source = ReplaySubject.createWithSize(1);
+    private static final BehaviorSubject<PersistenceChangedEvent> source = BehaviorSubject.create();
 
     public static synchronized void notify(String ssid, String ctid) {
         if (isNullOrEmpty(ssid) || isNullOrEmpty(ctid))

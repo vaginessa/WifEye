@@ -3,7 +3,7 @@ package mahorad.com.wifeye.publisher.event.wifi;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
 /**
@@ -14,7 +14,7 @@ public class RxWifiActionTimerMonitor {
 
     private static final String TAG = RxWifiActionTimerMonitor.class.getSimpleName();
 
-    private static final ReplaySubject<Long> source = ReplaySubject.createWithSize(1);
+    private static final BehaviorSubject<Long> source = BehaviorSubject.create();
 
     public static void notify(Long tick) {
         if (tick < 0) return;

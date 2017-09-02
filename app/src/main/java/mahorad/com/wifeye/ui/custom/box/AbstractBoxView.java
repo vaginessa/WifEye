@@ -1,7 +1,9 @@
 package mahorad.com.wifeye.ui.custom.box;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.jakewharton.rxbinding2.view.RxView;
@@ -21,7 +23,9 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 public abstract class AbstractBoxView extends BoxView implements BaseView {
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private static final String TAG = AbstractBoxView.class.getSimpleName();
+
+    private CompositeDisposable disposables;
 
     public AbstractBoxView(Context context) {
         super(context);
@@ -39,9 +43,12 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     protected void onFinishInflate() {
         super.onFinishInflate();
         onSetup();
-        RxView.clicks(this).subscribe(this::onClick);
+        if (disposables != null) return;
+        Timber.tag(TAG).i("layout inflated");
+        disposables = new CompositeDisposable();
         disposables.add(refreshDisposable());
         attachViewDisposables();
+        RxView.clicks(this).subscribe(this::onClick);
     }
 
     private Disposable refreshDisposable() {
@@ -64,7 +71,10 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        Timber.tag(TAG).i("detached from window");
         disposables.clear();
+        disposables.dispose();
+        disposables = null;
     }
 
     @Override

@@ -42,7 +42,6 @@ public class WifiHandler {
     public WifiHandler() {
         disablingTimer = createDisablingTimer();
         observingTimer = createObservingTimer();
-        haltActions();
     }
 
     private UnaryCountdown createDisablingTimer() {
@@ -91,14 +90,15 @@ public class WifiHandler {
     public void start() {
         if (isStarted) return;
         isStarted = true;
-        Timber.tag(TAG).v("starting wifi handler");
+        haltActions();
+        Timber.tag(TAG).v("started wifi handler");
     }
 
     public void runDisabler() {
         synchronized (sync) {
             Timber.tag(TAG).v("running disabler?");
             if (disabling() || !wifiDevice.isEnabled()) return;
-            haltActions();
+            stopTimers();
             notify(DisablingMode);
             Timber.tag(TAG).v("starting disabler timer");
             disablingTimer.start();
@@ -109,7 +109,7 @@ public class WifiHandler {
         synchronized (sync) {
             Timber.tag(TAG).v("running observer?");
             if (observing()) return;
-            haltActions();
+            stopTimers();
             notify(ObserveModeEnabling);
             Timber.tag(TAG).v("starting observer timer");
             observingTimer.start();

@@ -11,11 +11,11 @@ import javax.inject.Inject;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.ReplaySubject;
-import mahorad.com.wifeye.publisher.event.persistence.Chronograph;
-import mahorad.com.wifeye.util.Constants;
+import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.base.BaseService;
 import mahorad.com.wifeye.engine.Engine;
+import mahorad.com.wifeye.publisher.event.persistence.Chronograph;
+import mahorad.com.wifeye.util.Constants;
 import timber.log.Timber;
 
 public class EngineService extends BaseService {
@@ -34,7 +34,7 @@ public class EngineService extends BaseService {
 
     private static boolean started;
 
-    private static final ReplaySubject<Boolean> source = ReplaySubject.createWithSize(1);
+    private static final BehaviorSubject<Boolean> source = BehaviorSubject.create();
 
     @Inject
     Engine engine;

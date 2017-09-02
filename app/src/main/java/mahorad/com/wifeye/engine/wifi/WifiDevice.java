@@ -35,7 +35,8 @@ public class WifiDevice {
     }
 
     public boolean isEnabled() {
-        Timber.tag(TAG).v("[[ isWifiEnabled?... ]]");
-        return wifiManager.isWifiEnabled();
+        boolean isEnabled = wifiManager.isWifiEnabled();
+        Timber.tag(TAG).v("[[ isWifiEnabled? %b ]]", isEnabled);
+        return isEnabled;
     }
 }

@@ -17,6 +17,7 @@ public class Constants {
     public static final int OBSERVE_REPEAT_COUNT = 10;
     public static final int WIFI_ENABLE_TIMEOUT = 90;
     public static final int WIFI_DISABLE_TIMEOUT = 45;
+    public static final int WIFI_HALT_DURATION = 1;
 
     public static final String UNKNOWN_CTID = "[-1,-1,-1]";
 
