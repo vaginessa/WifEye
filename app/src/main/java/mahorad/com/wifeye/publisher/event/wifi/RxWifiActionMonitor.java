@@ -5,6 +5,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.engine.wifi.WifiAction;
+import timber.log.Timber;
 
 /**
  * Created by mahan on 2017-08-14.
@@ -19,6 +20,7 @@ public class RxWifiActionMonitor {
     public static synchronized void notify(WifiAction action) {
         if (action == null)
             return;
+        Timber.tag(TAG).w("ACTION: %s", action);
         source.onNext(action);
     }
 
