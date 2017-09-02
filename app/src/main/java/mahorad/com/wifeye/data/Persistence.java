@@ -30,6 +30,7 @@ public class Persistence {
 
     private static void addFakeValues() {
         HashSet<String> towers = new HashSet<String>() {{
+            add("[20201,13299132,82]");
             add("[20201,13238893,-1]");
             add("[20101,13302242,-1]");
             add("[20201,13302242,-1]");
