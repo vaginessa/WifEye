@@ -20,7 +20,7 @@ public class RxWifiActionMonitor {
     public static synchronized void notify(WifiAction action) {
         if (action == null)
             return;
-        Timber.tag(TAG).w("ACTION: %s", action);
+        Timber.tag(TAG).d("ACTION: %s", action);
         source.onNext(action);
     }
 

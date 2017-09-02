@@ -18,7 +18,7 @@ public class RxWifiActionTimerMonitor {
 
     public static void notify(Long tick) {
         if (tick < 0) return;
-        Timber.tag(TAG).w("TICK: %d", tick);
+        Timber.tag(TAG).d("TICK: %d", tick);
         source.onNext(tick);
     }
 

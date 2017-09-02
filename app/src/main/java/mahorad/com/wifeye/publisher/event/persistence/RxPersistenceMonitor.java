@@ -6,6 +6,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.util.Utils;
+import timber.log.Timber;
 
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
@@ -22,6 +23,7 @@ public abstract class RxPersistenceMonitor {
     public static synchronized void notify(String ssid, String ctid) {
         if (isNullOrEmpty(ssid) || isNullOrEmpty(ctid))
             return;
+        Timber.tag(TAG).d("PERSIST: ssid: %s, ctid: %s", ssid, ctid);
         source.onNext(PersistenceChangedEvent.create(ssid, ctid));
     }
 

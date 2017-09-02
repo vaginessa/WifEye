@@ -5,6 +5,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.ReplaySubject;
 import mahorad.com.wifeye.engine.state.StateType;
+import timber.log.Timber;
 
 /**
  * Created by mahan on 2017-08-14.
@@ -19,6 +20,7 @@ public class RxEngineStateMonitor {
     public static synchronized void notify(StateType type) {
         if (type == null)
             return;
+        Timber.tag(TAG).d("ENGINE STATE: %s", type);
         source.onNext(type);
     }
 
