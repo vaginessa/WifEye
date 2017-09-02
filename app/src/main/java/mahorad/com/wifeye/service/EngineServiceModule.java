@@ -2,7 +2,6 @@ package mahorad.com.wifeye.service;
 
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
 import mahorad.com.wifeye.di.qualifier.engine.CloseRangeState;
 import mahorad.com.wifeye.di.qualifier.engine.ConnectedState;
 import mahorad.com.wifeye.di.qualifier.engine.DisconnectedState;
@@ -10,7 +9,6 @@ import mahorad.com.wifeye.di.qualifier.engine.InitialState;
 import mahorad.com.wifeye.di.qualifier.engine.NearbyAreaState;
 import mahorad.com.wifeye.di.qualifier.engine.RemoteAreaState;
 import mahorad.com.wifeye.di.scope.PerService;
-import mahorad.com.wifeye.engine.Engine;
 import mahorad.com.wifeye.engine.state.IState;
 import mahorad.com.wifeye.engine.state.StateCloseRange;
 import mahorad.com.wifeye.engine.state.StateConnected;
@@ -25,12 +23,6 @@ import mahorad.com.wifeye.engine.state.StateRemoteArea;
 
 @Module
 public abstract class EngineServiceModule {
-
-    @PerService
-    @Provides
-    static Engine engine() {
-        return new Engine();
-    }
 
     @PerService
     @Binds

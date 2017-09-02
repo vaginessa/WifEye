@@ -17,24 +17,25 @@ public class WifiDevice {
 
     private static final String TAG = WifiDevice.class.getSimpleName();
 
-    static WifiManager wifiManager;
+    WifiManager wifiManager;
 
     @Inject
     public WifiDevice(@ApplicationContext Context context) {
         wifiManager = Utils.getWifiManager(context);
     }
 
-    public static void enable() {
+    public void enable() {
         wifiManager.setWifiEnabled(true);
-        Timber.tag(TAG).d( "[[ >>> enabling wifi... ]]");
+        Timber.tag(TAG).v( "[[ enabling wifi... ]]");
     }
 
-    public static void disable() {
+    public void disable() {
         wifiManager.setWifiEnabled(false);
-        Timber.tag(TAG).d("[[ <<< disabling wifi... ]]");
+        Timber.tag(TAG).v("[[ disabling wifi... ]]");
     }
 
-    public static boolean isEnabled() {
+    public boolean isEnabled() {
+        Timber.tag(TAG).v("[[ isWifiEnabled?... ]]");
         return wifiManager.isWifiEnabled();
     }
 }

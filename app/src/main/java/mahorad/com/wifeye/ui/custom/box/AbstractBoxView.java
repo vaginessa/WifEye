@@ -6,10 +6,14 @@ import android.util.AttributeSet;
 
 import com.jakewharton.rxbinding2.view.RxView;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.base.BaseView;
-import mahorad.com.wifeye.service.EngineService;
+import timber.log.Timber;
+
+import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * Created by mahan on 2017-08-18.
@@ -17,8 +21,7 @@ import mahorad.com.wifeye.service.EngineService;
 
 public abstract class AbstractBoxView extends BoxView implements BaseView {
 
-    private CompositeDisposable boxViewDisposables = new CompositeDisposable();
-    private Disposable serviceStateChanges;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     public AbstractBoxView(Context context) {
         super(context);
@@ -35,24 +38,19 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        RxView.clicks(this).subscribe(this::onClick);
-        boxViewDisposables.add(serviceStateDisposable());
         onSetup();
+        RxView.clicks(this).subscribe(this::onClick);
+        disposables.add(refreshDisposable());
+        attachViewDisposables();
     }
 
-    protected Disposable serviceStateDisposable() {
-        return EngineService
-                .stateChanges()
-                .subscribe(this::onServiceStateChanged);
-    }
-
-    private void onServiceStateChanged(boolean started) {
-        if (started)
-            attachViewDisposables();
-        else {
-            detachViewDisposables();
-            onReset();
-        }
+    private Disposable refreshDisposable() {
+        return Observable
+                .interval(1, MINUTES)
+                .doOnError(Timber::e)
+                .observeOn(mainThread())
+                .doOnNext(l -> refresh())
+                .subscribe();
     }
 
     protected abstract void onClick(Object o);
@@ -60,16 +58,13 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     public abstract void attachViewDisposables();
 
     protected void attachDisposable(Disposable d) {
-        boxViewDisposables.add(d);
+        disposables.add(d);
     }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        detachViewDisposables();
-    }
-
-    private void detachViewDisposables() {
-        boxViewDisposables.clear();
+        disposables.clear();
     }
 
     @Override
@@ -78,7 +73,6 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
         setupContent();
         setupFact();
         setupCaption();
-        setupLayout();
     }
 
     protected abstract void setupHeader();
@@ -89,44 +83,21 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
 
     protected abstract void setupCaption();
 
-    protected abstract void setupLayout();
-
     @Override
     @CallSuper
-    public void refresh(Object event) {
-        refreshHeader(event);
-        refreshContent(event);
-        refreshFact(event);
-        refreshCaption(event);
+    public void refresh() {
+        refreshHeader();
+        refreshContent();
+        refreshFact();
+        refreshCaption();
     }
 
-    protected abstract void refreshHeader(Object event);
+    protected abstract void refreshHeader();
 
-    protected abstract void refreshFact(Object event);
+    protected abstract void refreshFact();
 
-    protected abstract void refreshContent(Object event);
+    protected abstract void refreshContent();
 
-    protected abstract void refreshCaption(Object event);
-
-    @Override
-    @CallSuper
-    public void onReset() {
-        resetHeader();
-        resetContent();
-        resetFact();
-        resetCaption();
-        resetLayout();
-    }
-
-    protected abstract void resetHeader();
-
-    protected abstract void resetContent();
-
-    protected abstract void resetFact();
-
-    protected abstract void resetCaption();
-
-    protected abstract void resetLayout();
-
+    protected abstract void refreshCaption();
 
 }

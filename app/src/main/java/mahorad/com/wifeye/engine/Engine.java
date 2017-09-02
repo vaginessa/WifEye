@@ -8,7 +8,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.data.Persistence;
 import mahorad.com.wifeye.di.component.DaggerServiceComponent;
-import mahorad.com.wifeye.di.module.ServiceModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
 import mahorad.com.wifeye.di.qualifier.engine.CloseRangeState;
 import mahorad.com.wifeye.di.qualifier.engine.ConnectedState;
@@ -70,7 +69,7 @@ public class Engine {
     CompositeDisposable compositeDisposable;
 
     private boolean started;
-    private IState currentState;
+    private volatile IState currentState;
 
     private static String ssid;
     private static String ctid;
@@ -91,7 +90,6 @@ public class Engine {
         DaggerServiceComponent
                 .builder()
                 .applicationComponent(component())
-                .serviceModule(new ServiceModule())
                 .build()
                 .inject(this);
     }
@@ -100,24 +98,26 @@ public class Engine {
         return RxInternetMonitor
                 .internetStateChanges(context)
                 .subscribe(e -> {
+                    Timber.tag(TAG).d("RxInternetMonitor: ssid: %s, connected %b", e.ssid(), e.connected());
                     if (e.connected()) {
                         internetConnected(e.ssid());
                     } else {
                         internetDisconnected();
                     }
-                });
+                }, Timber::e);
     }
 
     private Disposable subscribeCellTower() {
         return RxCellTowerMonitor
                 .cellTowerIdChanges(context)
                 .subscribe(e -> {
+                    Timber.tag(TAG).d("RxCellTowerMonitor: ctid: %s, known %b", e.ctid(), e.known());
                     if (e.known()) {
                         receivedKnownTowerId(e.ctid());
                     } else {
                         receivedUnknownTowerId(e.ctid());
                     }
-                });
+                }, Timber::e);
     }
 
     public void stop() {
@@ -127,26 +127,26 @@ public class Engine {
         wifiHandler.stop();
     }
 
-    public synchronized void internetConnected(String ssid) {
+    public void internetConnected(String ssid) {
         this.ssid = ssid;
-        Timber.tag(TAG).i("--| EVENT: connected to %s |", ssid);
+        Timber.tag(TAG).v("EVENT: connected to %s", ssid);
         currentState.onInternetConnected(ssid);
     }
 
-    public synchronized void internetDisconnected() {
-        Timber.tag(TAG).i("--| EVENT: disconnected |");
+    public void internetDisconnected() {
+        Timber.tag(TAG).v("EVENT: disconnected");
         currentState.onInternetDisconnects();
     }
 
-    public synchronized void receivedKnownTowerId(String ctid) {
+    public void receivedKnownTowerId(String ctid) {
         this.ctid = ctid;
-        Timber.tag(TAG).i("--| EVENT: known ctid %s |", ctid);
+        Timber.tag(TAG).v("EVENT: known ctid %s", ctid);
         currentState.onReceivedKnownTowerId(ctid);
     }
 
-    public synchronized void receivedUnknownTowerId(String ctid) {
+    public void receivedUnknownTowerId(String ctid) {
         this.ctid = ctid;
-        Timber.tag(TAG).i("--| EVENT: unknown ctid %s |", ctid);
+        Timber.tag(TAG).v("EVENT: unknown ctid %s", ctid);
         currentState.onReceivedUnknownTowerId(ctid);
     }
 
@@ -171,24 +171,26 @@ public class Engine {
         setState(closeRange);
     }
 
-    private synchronized void setState(IState state) {
+    private void setState(IState state) {
         if (currentState == state)
             return;
         currentState = state;
         RxEngineStateMonitor.notify(currentState.type());
-        Timber.tag(TAG).i("ENGINE STATE CHANGED TO : %s", currentState.toString());
     }
 
     /* wifi actions */
     public void disableWifi() {
+        Timber.tag(TAG).v("ACTION: Disable");
         wifiHandler.runDisabler();
     }
 
     public void observeWifi() {
+        Timber.tag(TAG).v("ACTION: Observe");
         wifiHandler.runObserver();
     }
 
     public void haltWifiActions() {
+        Timber.tag(TAG).v("ACTION: Halt...");
         wifiHandler.haltActions();
     }
 

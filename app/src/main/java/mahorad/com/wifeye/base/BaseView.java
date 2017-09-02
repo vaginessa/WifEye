@@ -8,8 +8,6 @@ public interface BaseView {
 
     void onSetup();
 
-    void refresh(Object event);
-
-    void onReset();
+    void refresh();
 
 }

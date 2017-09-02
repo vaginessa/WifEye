@@ -22,14 +22,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.base.BaseActivity;
 import mahorad.com.wifeye.service.EngineService;
+import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static mahorad.com.wifeye.R.color.colorGreen;
 import static mahorad.com.wifeye.R.color.colorPrimary;
 import static mahorad.com.wifeye.util.Constants.PERMISSIONS;
@@ -80,8 +81,8 @@ public class OverviewActivity extends BaseActivity {
     private Disposable engineState() {
         return EngineService
                 .stateChanges()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .doOnError(Timber::e)
+                .observeOn(mainThread())
                 .subscribe(this::updateFloatingButton);
     }
 

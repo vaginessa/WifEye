@@ -12,6 +12,7 @@ import mahorad.com.wifeye.base.BaseApplication;
 import mahorad.com.wifeye.di.module.ApplicationModule;
 import mahorad.com.wifeye.di.module.InjectorsModule;
 import mahorad.com.wifeye.di.qualifier.ApplicationContext;
+import mahorad.com.wifeye.engine.Engine;
 
 @Singleton
 @Component(modules = { ApplicationModule.class, InjectorsModule.class, })
@@ -32,4 +33,6 @@ public interface ApplicationComponent {
     Context applicationContext();
 
     CompositeDisposable disposable();
+
+    Engine engine();
 }

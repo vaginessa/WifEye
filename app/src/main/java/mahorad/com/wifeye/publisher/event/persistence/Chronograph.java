@@ -13,6 +13,7 @@ import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
 import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiActionMonitor;
 import mahorad.com.wifeye.publisher.event.wifi.RxWifiStateMonitor;
+import timber.log.Timber;
 
 import static mahorad.com.wifeye.data.Persistence.persist;
 import static mahorad.com.wifeye.publisher.event.persistence.EventType.CellTower;
@@ -50,6 +51,7 @@ public class Chronograph {
     private Disposable wifiStateDates() {
         return RxWifiStateMonitor
                 .wifiStateChanges(context)
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(WifiState));
     }
 
@@ -57,6 +59,7 @@ public class Chronograph {
     private Disposable wifiActionDates() {
         return RxWifiActionMonitor
                 .wifiActionChanges()
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(WifiAction));
     }
 
@@ -64,6 +67,7 @@ public class Chronograph {
     private Disposable internetDates() {
         return RxInternetMonitor
                 .internetStateChanges(context)
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(Internet));
     }
 
@@ -71,6 +75,7 @@ public class Chronograph {
     private Disposable cellTowerDates() {
         return RxCellTowerMonitor
                 .cellTowerIdChanges(context)
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(CellTower));
     }
 
@@ -78,6 +83,7 @@ public class Chronograph {
     private Disposable engineStateDates() {
         return RxEngineStateMonitor
                 .engineStateChanges()
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(EngineState));
     }
 
@@ -85,6 +91,7 @@ public class Chronograph {
     private Disposable persistenceDates() {
         return RxPersistenceMonitor
                 .persistenceChanges()
+                .doOnError(Timber::e)
                 .subscribe(b -> persist(Persistence));
     }
 
