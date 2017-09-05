@@ -17,7 +17,7 @@ public class RxEngineStateMonitor {
 
     private static BehaviorSubject<StateType> source = BehaviorSubject.create();
 
-    public static synchronized void notify(StateType type) {
+    public static void notify(StateType type) {
         if (type == null)
             return;
         Timber.tag(TAG).d("ENGINE STATE: %s", type);

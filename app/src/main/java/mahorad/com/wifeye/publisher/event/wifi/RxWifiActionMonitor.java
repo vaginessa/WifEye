@@ -17,7 +17,7 @@ public class RxWifiActionMonitor {
 
     private static BehaviorSubject<WifiAction> source = BehaviorSubject.create();
 
-    public static synchronized void notify(WifiAction action) {
+    public static void notify(WifiAction action) {
         if (action == null)
             return;
         Timber.tag(TAG).d("ACTION: %s", action);

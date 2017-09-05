@@ -18,7 +18,7 @@ public abstract class RxPersistenceMonitor {
 
     private static final BehaviorSubject<PersistenceChangedEvent> source = BehaviorSubject.create();
 
-    public static synchronized void notify(String ssid, String ctid) {
+    public static void notify(String ssid, String ctid) {
         if (isNullOrEmpty(ssid) || isNullOrEmpty(ctid))
             return;
         Timber.tag(TAG).d("PERSIST: ssid: %s, ctid: %s", ssid, ctid);

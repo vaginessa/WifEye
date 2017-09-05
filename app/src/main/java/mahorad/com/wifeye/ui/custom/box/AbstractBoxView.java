@@ -1,17 +1,19 @@
 package mahorad.com.wifeye.ui.custom.box;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.support.annotation.CallSuper;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.jakewharton.rxbinding2.view.RxView;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import mahorad.com.wifeye.base.BaseView;
+import mahorad.com.wifeye.service.EngineService;
 import timber.log.Timber;
 
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
@@ -26,6 +28,13 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     private static final String TAG = AbstractBoxView.class.getSimpleName();
 
     private CompositeDisposable disposables;
+    private Disposable serviceDisposable;
+    private final Consumer<Boolean> booleanConsumer = started -> {
+        if (started)
+            attachDisposables();
+        else
+            detachDisposables();
+    };
 
     public AbstractBoxView(Context context) {
         super(context);
@@ -39,6 +48,7 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
         super(context, attrs, defStyle);
     }
 
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -46,9 +56,18 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
         if (disposables != null) return;
         Timber.tag(TAG).i("layout inflated");
         disposables = new CompositeDisposable();
+        serviceDisposable = EngineService
+                .stateChanges()
+                .subscribe(booleanConsumer);
+        disposables.add(serviceDisposable);
+    }
+
+    private void attachDisposables() {
         disposables.add(refreshDisposable());
         attachViewDisposables();
-        RxView.clicks(this).subscribe(this::onClick);
+        RxView.clicks(this)
+                .subscribeOn(mainThread())
+                .subscribe(this::onClick);
     }
 
     private Disposable refreshDisposable() {
@@ -72,8 +91,14 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         Timber.tag(TAG).i("detached from window");
-        disposables.clear();
+        detachDisposables();
+    }
+
+    private void detachDisposables() {
+        if (disposables == null)
+            return;
         disposables.dispose();
+        disposables.clear();
         disposables = null;
     }
 
