@@ -98,9 +98,6 @@ public class WifiActionView extends AbstractBoxView {
                 });
     }
 
-    @Override
-    protected void onClick(Object o) {}
-
     /********** SETUP **********/
 
     @Override

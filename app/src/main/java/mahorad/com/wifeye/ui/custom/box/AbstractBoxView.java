@@ -49,10 +49,8 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
         attachViewDisposables();
         RxView.clicks(this)
                 .observeOn(mainThread())
-                .subscribe(this::onClick);
+                .subscribe(o -> refresh());
     }
-
-    protected abstract void onClick(Object o);
 
     public abstract void attachViewDisposables();
 
