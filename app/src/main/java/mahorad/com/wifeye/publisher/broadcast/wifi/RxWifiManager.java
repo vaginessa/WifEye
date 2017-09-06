@@ -1,6 +1,7 @@
 package mahorad.com.wifeye.publisher.broadcast.wifi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
@@ -38,12 +39,15 @@ public final class RxWifiManager {
         IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         return RxBroadcastReceiver
                 .create(context, filter)
-                .map(intent -> {
-                    NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                    String bssid = intent.getStringExtra(WifiManager.EXTRA_BSSID);
-                    WifiInfo wifiInfo = intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
-                    return NetworkStateChangedEvent.create(networkInfo, bssid, wifiInfo);
-                });
+                .map(RxWifiManager::toNetworkStateEvent);
+    }
+
+    @NonNull
+    private static NetworkStateChangedEvent toNetworkStateEvent(Intent intent) {
+        NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+        String bssid = intent.getStringExtra(WifiManager.EXTRA_BSSID);
+        WifiInfo wifiInfo = intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
+        return NetworkStateChangedEvent.create(networkInfo, bssid, wifiInfo);
     }
 
     @CheckResult
@@ -63,10 +67,13 @@ public final class RxWifiManager {
         IntentFilter filter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         return RxBroadcastReceiver
                 .create(context, filter)
-                .map(intent -> {
-                    SupplicantState newState = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
-                    int error = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
-                    return SupplicantStateChangedEvent.create(newState, error);
-                });
+                .map(RxWifiManager::toSupplicantStateEvent);
+    }
+
+    @NonNull
+    private static SupplicantStateChangedEvent toSupplicantStateEvent(Intent intent) {
+        SupplicantState newState = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
+        int error = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
+        return SupplicantStateChangedEvent.create(newState, error);
     }
 }

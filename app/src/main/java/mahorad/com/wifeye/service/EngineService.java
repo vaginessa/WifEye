@@ -8,13 +8,10 @@ import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.base.BaseService;
 import mahorad.com.wifeye.engine.Engine;
 import mahorad.com.wifeye.publisher.event.persistence.Chronograph;
+import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
 import mahorad.com.wifeye.util.Constants;
 import timber.log.Timber;
 
@@ -33,8 +30,6 @@ public class EngineService extends BaseService {
     private ResultReceiver resultReceiver;
 
     private static boolean started;
-
-    private static final BehaviorSubject<Boolean> source = BehaviorSubject.create();
 
     @Inject
     Engine engine;
@@ -66,7 +61,7 @@ public class EngineService extends BaseService {
         chronograph.start();
         engine.start();
         Timber.tag(TAG).v("started main service");
-        source.onNext(true);
+        RxEngineServiceMonitor.notify(true);
     }
 
     @Override
@@ -80,13 +75,7 @@ public class EngineService extends BaseService {
         chronograph.stop();
         engine.stop();
         Timber.tag(TAG).v("stopped main service");
-        source.onNext(false);
+        RxEngineServiceMonitor.notify(false);
     }
 
-    public static Flowable<Boolean> stateChanges() {
-        return source
-                .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
-    }
 }

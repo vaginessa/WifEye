@@ -2,7 +2,6 @@ package mahorad.com.wifeye.publisher.event.persistence;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
@@ -28,8 +27,7 @@ public abstract class RxPersistenceMonitor {
     public static Flowable<PersistenceChangedEvent> persistenceChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
+                .toFlowable(BackpressureStrategy.LATEST);
     }
 
 

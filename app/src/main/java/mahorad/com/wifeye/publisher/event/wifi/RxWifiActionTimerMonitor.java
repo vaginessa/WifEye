@@ -2,7 +2,6 @@ package mahorad.com.wifeye.publisher.event.wifi;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
@@ -25,7 +24,6 @@ public class RxWifiActionTimerMonitor {
     public static Flowable<Long> timerTickChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
+                .toFlowable(BackpressureStrategy.LATEST);
     }
 }

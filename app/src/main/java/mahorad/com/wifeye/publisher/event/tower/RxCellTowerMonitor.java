@@ -9,7 +9,6 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.BiFunction;
-import io.reactivex.schedulers.Schedulers;
 import mahorad.com.wifeye.publisher.broadcast.telephony.RxTelephonyManager;
 import mahorad.com.wifeye.publisher.event.internet.InternetStateChangedEvent;
 import mahorad.com.wifeye.publisher.event.internet.RxInternetMonitor;
@@ -28,30 +27,26 @@ public class RxCellTowerMonitor {
 
     private static final String TAG = RxCellTowerMonitor.class.getSimpleName();
 
-    private static Flowable<String> cellTowerChanges;
-    private static Flowable<InternetStateChangedEvent> internetChanges;
-
     public static Flowable<CellTowerIdChangedEvent> cellTowerIdChanges(@NonNull Context context) {
         checkNotNull(context, "context == null");
-        observeTowerIdChanges(context);
-        observeInternetChanges(context);
-        return combineLatest(cellTowerChanges, internetChanges, toEvent())
-                .distinctUntilChanged()
-                .observeOn(Schedulers.newThread());
+        return combineLatest(
+                    observeTowerIdChanges(context),
+                    observeInternetChanges(context),
+                    toEvent())
+                .distinctUntilChanged();
     }
 
-    private static void observeTowerIdChanges(@NonNull Context context) {
-        cellTowerChanges = RxTelephonyManager
+    private static Flowable<String> observeTowerIdChanges(@NonNull Context context) {
+        return RxTelephonyManager
                 .cellLocationChanges(context)
                 .distinctUntilChanged()
                 .map(Object::toString)
                 .filter(RxCellTowerMonitor::isValid)
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
+                .toFlowable(BackpressureStrategy.LATEST);
     }
 
-    private static void observeInternetChanges(@NonNull Context context) {
-        internetChanges = RxInternetMonitor
+    private static Flowable<InternetStateChangedEvent> observeInternetChanges(@NonNull Context context) {
+        return RxInternetMonitor
                 .internetStateChanges(context);
     }
 

@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import mahorad.com.wifeye.publisher.broadcast.wifi.RxWifiManager;
 
 import static dagger.internal.Preconditions.checkNotNull;
@@ -23,16 +21,18 @@ public class RxWifiStateMonitor {
     public static Flowable<Boolean> wifiStateChanges(@NonNull Context context) {
         checkNotNull(context, "context == null");
         return RxWifiManager
-                .wifiStateChanges(context)
-                .filter(i ->
-                        i == WIFI_STATE_DISABLED ||
-                        i == WIFI_STATE_ENABLED  ||
-                        i == WIFI_STATE_UNKNOWN)
-                .distinctUntilChanged()
-                .map(wifiState -> wifiState == WIFI_STATE_ENABLED)
-                .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
+                    .wifiStateChanges(context)
+                    .filter(RxWifiStateMonitor::isImportant)
+                    .distinctUntilChanged()
+                    .map(wifiState -> wifiState == WIFI_STATE_ENABLED)
+                    .distinctUntilChanged()
+                    .toFlowable(BackpressureStrategy.LATEST);
+    }
+
+    private static boolean isImportant(Integer state) {
+        return state == WIFI_STATE_DISABLED ||
+               state == WIFI_STATE_ENABLED  ||
+               state == WIFI_STATE_UNKNOWN;
     }
 
 }

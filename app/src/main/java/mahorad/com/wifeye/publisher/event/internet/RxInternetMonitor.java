@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import mahorad.com.wifeye.publisher.broadcast.wifi.NetworkStateChangedEvent;
 import mahorad.com.wifeye.publisher.broadcast.wifi.RxWifiManager;
 import mahorad.com.wifeye.util.Utils;
@@ -31,14 +29,12 @@ public class RxInternetMonitor {
         return RxWifiManager
                 .networkStateChanges(context)
                 .distinctUntilChanged()
-                .map(RxInternetMonitor::toEvent)
+                .map(RxInternetMonitor::toInternetStateEvent)
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
-
+                .toFlowable(BackpressureStrategy.LATEST);
     }
 
-    private static InternetStateChangedEvent toEvent(NetworkStateChangedEvent e) {
+    private static InternetStateChangedEvent toInternetStateEvent(NetworkStateChangedEvent e) {
         boolean c1, c2 = true, c3 = true;
         NetworkInfo net = e.networkInfo();
         String ssid = net.getExtraInfo();

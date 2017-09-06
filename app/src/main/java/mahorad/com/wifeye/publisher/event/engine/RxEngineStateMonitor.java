@@ -2,7 +2,6 @@ package mahorad.com.wifeye.publisher.event.engine;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.engine.state.StateType;
 import timber.log.Timber;
@@ -27,7 +26,6 @@ public class RxEngineStateMonitor {
     public static Flowable<StateType> engineStateChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.newThread());
+                .toFlowable(BackpressureStrategy.LATEST);
     }
 }

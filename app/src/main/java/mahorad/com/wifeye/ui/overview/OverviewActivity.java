@@ -26,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.base.BaseActivity;
+import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
 import mahorad.com.wifeye.service.EngineService;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -80,8 +81,8 @@ public class OverviewActivity extends BaseActivity {
     }
 
     private Disposable engineState() {
-        return EngineService
-                .stateChanges()
+        return RxEngineServiceMonitor
+                .serviceStateChanges()
                 .doOnError(Timber::e)
                 .observeOn(mainThread())
                 .subscribe(this::updateFloatingButton);
