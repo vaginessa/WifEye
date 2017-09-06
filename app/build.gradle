@@ -26,13 +26,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    def appCompatVersion = '26.0.1'
+    def appCompatVersion = '26.0.2'
     def constraintLayoutVersion = '1.0.2'
 
     def rxAndroidVersion = '2.0.1'
     def rxJavaVersion = '2.1.3'
     def rxBindingVersion = '2.0.0'
-    def rxLifecycleVersion = '2.1.0'
 
     def daggerVersion = '2.11'
     def butterKnifeVersion = '8.7.0'
