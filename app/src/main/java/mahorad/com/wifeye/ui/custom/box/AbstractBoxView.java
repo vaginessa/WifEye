@@ -81,7 +81,11 @@ public abstract class AbstractBoxView extends BoxView implements BaseView {
         setupCaption();
     }
 
-    protected abstract void setupHeader();
+    protected void setupHeader() {
+        setHeader(getHeader());
+    }
+
+    protected abstract String getHeader();
 
     protected abstract void setupContent();
 

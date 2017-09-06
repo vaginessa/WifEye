@@ -101,8 +101,8 @@ public class WifiActionView extends AbstractBoxView {
     /********** SETUP **********/
 
     @Override
-    protected void setupHeader() {
-        setHeader(HEADER);
+    protected String getHeader() {
+        return HEADER;
     }
 
     @Override
@@ -173,9 +173,7 @@ public class WifiActionView extends AbstractBoxView {
     /********** REFRESH **********/
 
     @Override
-    protected void refreshHeader() {
-        setHeader(HEADER);
-    }
+    protected void refreshHeader() { }
 
     @Override
     protected void refreshContent() {
@@ -250,12 +248,10 @@ public class WifiActionView extends AbstractBoxView {
     @Override
     protected void refreshCaption() {
         Date latest = getLatest(WifiAction);
-        if (latest == null)
-            setCaption(BLANK);
-        else {
-            String ago = toAgo(latest, getContext());
-            setCaption("since ".concat(ago));
-        }
+        String caption = (latest ==  null)
+                ? BLANK
+                : "since ".concat(toAgo(latest, getContext()));
+        setCaption(caption);
     }
 
 }
