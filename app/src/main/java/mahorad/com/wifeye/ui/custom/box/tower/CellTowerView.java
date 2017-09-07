@@ -36,7 +36,7 @@ public class CellTowerView extends AbstractBoxView {
 
     private RippleView ripple;
     private boolean firstEvent = true;
-    private Disposable signalDisposable;
+    private Disposable disposable;
     private int dark = getColor(getContext(), colorMainBackground);
     private int lite = getColor(getContext(), colorGreen);
 
@@ -69,22 +69,22 @@ public class CellTowerView extends AbstractBoxView {
     }
 
     private void update(Boolean e) {
-        updateRippleImage(e);
-        updateSignalDisposable(e);
+        updateStateIcon(e);
+        updateDisposable(e);
     }
 
-    private void updateRippleImage(boolean enabled) {
+    private void updateStateIcon(boolean enabled) {
         int image = enabled
                 ? tower_on
                 : tower_off;
         ripple.setImage(image);
     }
 
-    private void updateSignalDisposable(boolean enabled) {
+    private void updateDisposable(boolean enabled) {
         if (enabled)
-            signalDisposable = cellTowerSignalDisposable();
-        else if (signalDisposable != null)
-            signalDisposable.dispose();
+            disposable = cellTowerSignalDisposable();
+        else if (disposable != null)
+            disposable.dispose();
     }
 
     private Disposable cellTowerSignalDisposable() {
