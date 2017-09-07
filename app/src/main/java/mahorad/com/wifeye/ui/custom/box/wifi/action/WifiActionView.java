@@ -47,11 +47,14 @@ public class WifiActionView extends AbstractBoxView {
 
     private static final String HEADER = "A C T I O N";
 
-    private WifiAction action = Halt;
     private LinearLayout contentsLayout;
     private final Shimmer shimmer = new Shimmer();
     private ShimmerTextView shimmerText;
     private CircleProgressBar progressBar;
+
+    private int actionDuration;
+    private int actionFillColor;
+    private String actionTitle;
 
     private int activeTextColor = getColor(getContext(), R.color.boxActiveTextColor);
     private int mainBackground = getColor(getContext(), R.color.colorMainBackground);
@@ -68,6 +71,11 @@ public class WifiActionView extends AbstractBoxView {
 
     public WifiActionView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    @Override
+    protected void onClicked(Object o) {
+        refreshCaption("");
     }
 
     @Override
@@ -93,8 +101,7 @@ public class WifiActionView extends AbstractBoxView {
                 .doOnError(Timber::e)
                 .subscribe(e -> {
                     Timber.tag(TAG).v("received action %s", e);
-                    action = e;
-                    refresh();
+                    refresh(e);
                 });
     }
 
@@ -173,10 +180,14 @@ public class WifiActionView extends AbstractBoxView {
     /********** REFRESH **********/
 
     @Override
-    protected void refreshHeader() { }
+    protected void refreshHeader(Object event) { }
 
     @Override
-    protected void refreshContent() {
+    protected void refreshContent(Object event) {
+        WifiAction action = (WifiAction) event;
+        actionDuration = actionDuration(action);
+        actionFillColor = actionFillColor(action);
+        actionTitle = action.title();
         shimmerText.setText(action.title());
         if (action == Halt) {
             stopProgressBar();
@@ -187,6 +198,12 @@ public class WifiActionView extends AbstractBoxView {
         }
     }
 
+    private int actionFillColor(WifiAction action) {
+        return (action == ObserveModeEnabling)
+                ? activeTextColor
+                : activeRedColor;
+    }
+
     public void stopProgressBar() {
         Timber.tag(TAG).v("stopping progress bar");
         progressBar.setProgressWithAnimation(0);
@@ -195,15 +212,14 @@ public class WifiActionView extends AbstractBoxView {
     }
 
     private void setProgress(Long passed) {
-        progressBar.setStrokeColor(actionColor());
+        progressBar.setStrokeColor(actionFillColor);
         int progress = calculateProgress(passed);
         progressBar.setProgressWithAnimation(progress);
     }
 
     private int calculateProgress(long passed) {
-        int duration = actionDuration();
-        if (duration == WIFI_HALT_DURATION) return 0;
-        int progress = (100 * (int) passed) / duration;
+        if (actionDuration == WIFI_HALT_DURATION) return 0;
+        int progress = (100 * (int) passed) / actionDuration;
         Timber.tag(TAG).v("--> passed %d, progress %d", passed, progress);
         return progress;
     }
@@ -215,7 +231,7 @@ public class WifiActionView extends AbstractBoxView {
         shimmer.cancel();
     }
 
-    private int actionDuration() {
+    private int actionDuration(WifiAction action) {
         switch (action) {
             case ObserveModeEnabling:
                 return WIFI_ENABLE_TIMEOUT;
@@ -229,24 +245,18 @@ public class WifiActionView extends AbstractBoxView {
 
     private void startShimmerText() {
         Timber.tag(TAG).v("starting shimmer text");
-        shimmerText.setText(action.title());
+        shimmerText.setText(actionTitle);
         shimmerText.setPrimaryColor(mainBackground);
         shimmerText.setTextColor(mainBackground);
-        shimmerText.setReflectionColor(actionColor());
+        shimmerText.setReflectionColor(actionFillColor);
         shimmer.start(shimmerText);
     }
 
-    private int actionColor() {
-        return (action == ObserveModeEnabling)
-                ? activeTextColor
-                : activeRedColor;
-    }
+    @Override
+    protected void refreshFact(Object event) {}
 
     @Override
-    protected void refreshFact() {}
-
-    @Override
-    protected void refreshCaption() {
+    protected void refreshCaption(Object event) {
         Date latest = getLatest(WifiAction);
         String caption = (latest ==  null)
                 ? BLANK

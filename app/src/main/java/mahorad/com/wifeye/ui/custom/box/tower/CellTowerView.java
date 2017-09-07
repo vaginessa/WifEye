@@ -6,8 +6,8 @@ import android.util.AttributeSet;
 import java.util.Date;
 
 import io.reactivex.disposables.Disposable;
-import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
+import mahorad.com.wifeye.publisher.event.tower.CellTowerIdChangedEvent;
 import mahorad.com.wifeye.publisher.event.tower.RxCellTowerMonitor;
 import mahorad.com.wifeye.ui.custom.box.AbstractBoxView;
 import mahorad.com.wifeye.ui.custom.ripple.RippleView;
@@ -17,6 +17,8 @@ import static android.support.v4.content.ContextCompat.getColor;
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static mahorad.com.wifeye.R.color.colorGreen;
 import static mahorad.com.wifeye.R.color.colorMainBackground;
+import static mahorad.com.wifeye.R.drawable.tower_off;
+import static mahorad.com.wifeye.R.drawable.tower_on;
 import static mahorad.com.wifeye.data.Persistence.getLatest;
 import static mahorad.com.wifeye.publisher.event.persistence.EventType.CellTower;
 import static mahorad.com.wifeye.util.Constants.BLANK;
@@ -33,6 +35,8 @@ public class CellTowerView extends AbstractBoxView {
     private static final String HEADER = "S I G N A L";
 
     private RippleView ripple;
+    private boolean firstEvent = true;
+    private Disposable signalDisposable;
     private int dark = getColor(getContext(), colorMainBackground);
     private int lite = getColor(getContext(), colorGreen);
 
@@ -49,8 +53,10 @@ public class CellTowerView extends AbstractBoxView {
     }
 
     @Override
+    protected void onClicked(Object o) { refreshFact(""); }
+
+    @Override
     public void attachViewDisposables() {
-        attachDisposable(cellTowerSignalDisposable());
         attachDisposable(engineServiceDisposable());
     }
 
@@ -59,7 +65,26 @@ public class CellTowerView extends AbstractBoxView {
                 .serviceStateChanges()
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
-                .subscribe(e -> { if (e) refresh(); });
+                .subscribe(this::update);
+    }
+
+    private void update(Boolean e) {
+        updateRippleImage(e);
+        updateSignalDisposable(e);
+    }
+
+    private void updateRippleImage(boolean enabled) {
+        int tower = enabled
+                ? tower_on
+                : tower_off;
+        ripple.setImage(tower);
+    }
+
+    private void updateSignalDisposable(boolean enabled) {
+        if (enabled)
+            signalDisposable = cellTowerSignalDisposable();
+        else if (signalDisposable != null)
+            signalDisposable.dispose();
     }
 
     private Disposable cellTowerSignalDisposable() {
@@ -67,16 +92,10 @@ public class CellTowerView extends AbstractBoxView {
                 .cellTowerIdChanges(getContext())
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
-                .subscribe(e -> {
-                    if (e.known())
-                        ripple.setStrokeColor(lite);
-                    else
-                        ripple.setStrokeColor(dark);
-                    ripple.startRippling();
-                    setCaption(e.ctid().equals("") ? BLANK : e.ctid());
-                    refresh();
-                });
+                .subscribe(this::refresh);
     }
+
+    /********** SETUP **********/
 
     @Override
     protected String getHeader() {
@@ -86,7 +105,7 @@ public class CellTowerView extends AbstractBoxView {
     @Override
     protected void setupContent() {
         ripple = new RippleView(getContext());
-        ripple.setImage(R.drawable.tower);
+        ripple.setImage(tower_off);
         ripple.setCount(3);
         ripple.setInitialRadius(20f);
         ripple.setScale(10.0f);
@@ -106,11 +125,13 @@ public class CellTowerView extends AbstractBoxView {
         setCaption(BLANK);
     }
 
-    @Override
-    protected void refreshHeader() {}
+    /********** REFRESH **********/
 
     @Override
-    protected void refreshFact() {
+    protected void refreshHeader(Object event) {}
+
+    @Override
+    protected void refreshFact(Object event) {
         Date latest = getLatest(CellTower);
         String fact = (latest ==  null)
                 ? BLANK
@@ -119,8 +140,16 @@ public class CellTowerView extends AbstractBoxView {
     }
 
     @Override
-    protected void refreshContent() {}
+    protected void refreshContent(Object event) {
+        if (firstEvent) { firstEvent = false; return; }
+        CellTowerIdChangedEvent e = (CellTowerIdChangedEvent) event;
+        ripple.setStrokeColor(e.known() ? lite : dark);
+        ripple.startRippling();
+    }
 
     @Override
-    protected void refreshCaption() {}
+    protected void refreshCaption(Object event) {
+        CellTowerIdChangedEvent e = (CellTowerIdChangedEvent) event;
+        setCaption(e.ctid().equals("") ? BLANK : e.ctid());
+    }
 }
