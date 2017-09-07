@@ -258,10 +258,10 @@ public class WifiActionView extends AbstractBoxView {
     @Override
     protected void refreshCaption(Object event) {
         Date latest = getLatest(WifiAction);
-        String caption = (latest ==  null)
+        String date = (latest ==  null)
                 ? BLANK
                 : "since ".concat(toAgo(latest, getContext()));
-        setCaption(caption);
+        setCaption(date);
     }
 
 }

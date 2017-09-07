@@ -74,10 +74,10 @@ public class CellTowerView extends AbstractBoxView {
     }
 
     private void updateRippleImage(boolean enabled) {
-        int tower = enabled
+        int image = enabled
                 ? tower_on
                 : tower_off;
-        ripple.setImage(tower);
+        ripple.setImage(image);
     }
 
     private void updateSignalDisposable(boolean enabled) {
@@ -133,10 +133,10 @@ public class CellTowerView extends AbstractBoxView {
     @Override
     protected void refreshFact(Object event) {
         Date latest = getLatest(CellTower);
-        String fact = (latest ==  null)
+        String date = (latest ==  null)
                 ? BLANK
                 : toAgo(latest, getContext());
-        setFact(fact);
+        setFact(date);
     }
 
     @Override
