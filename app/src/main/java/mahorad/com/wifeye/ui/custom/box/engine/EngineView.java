@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import java.util.Date;
 
 import io.reactivex.disposables.Disposable;
-import mahorad.com.wifeye.R;
 import mahorad.com.wifeye.engine.state.StateType;
 import mahorad.com.wifeye.publisher.event.engine.RxEngineStateMonitor;
 import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
@@ -15,7 +14,12 @@ import mahorad.com.wifeye.ui.custom.box.AbstractBoxView;
 import timber.log.Timber;
 
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+import static mahorad.com.wifeye.R.drawable.state_connected;
+import static mahorad.com.wifeye.R.drawable.state_disconnected;
 import static mahorad.com.wifeye.R.drawable.state_initial;
+import static mahorad.com.wifeye.R.drawable.state_nearby;
+import static mahorad.com.wifeye.R.drawable.state_remote;
+import static mahorad.com.wifeye.R.drawable.state_router;
 import static mahorad.com.wifeye.data.Persistence.getLatest;
 import static mahorad.com.wifeye.engine.state.StateType.Initial;
 import static mahorad.com.wifeye.publisher.event.persistence.EventType.EngineState;
@@ -137,15 +141,15 @@ public class EngineView extends AbstractBoxView {
     public int getIcon(StateType type) {
         switch (type) {
             case Connected:
-                return R.drawable.state_connected;
+                return state_connected;
             case Disconnected:
-                return R.drawable.state_disconnected;
+                return state_disconnected;
             case NearbyArea:
-                return R.drawable.state_nearby;
+                return state_nearby;
             case CloseRange:
-                return R.drawable.state_router;
+                return state_router;
             case RemoteArea:
-                return R.drawable.state_remote;
+                return state_remote;
             default:
                 return state_initial;
         }

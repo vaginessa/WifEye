@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import java.util.Date;
-
 import io.reactivex.disposables.Disposable;
 import mahorad.com.wifeye.publisher.event.persistence.PersistenceChangedEvent;
 import mahorad.com.wifeye.publisher.event.persistence.RxPersistenceMonitor;
@@ -17,11 +15,8 @@ import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static java.lang.String.format;
 import static mahorad.com.wifeye.R.drawable.disk_off;
 import static mahorad.com.wifeye.R.drawable.disk_on;
-import static mahorad.com.wifeye.data.Persistence.getLatest;
 import static mahorad.com.wifeye.data.Persistence.towersOf;
-import static mahorad.com.wifeye.publisher.event.persistence.EventType.Persistence;
 import static mahorad.com.wifeye.util.Constants.BLANK;
-import static mahorad.com.wifeye.util.Utils.toAgo;
 
 /**
  * Created by mahan on 2017-09-07.

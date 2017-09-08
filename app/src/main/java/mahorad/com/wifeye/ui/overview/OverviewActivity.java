@@ -34,6 +34,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static mahorad.com.wifeye.R.color.colorGreen;
 import static mahorad.com.wifeye.R.color.colorPrimary;
+import static mahorad.com.wifeye.R.drawable.eye_off;
+import static mahorad.com.wifeye.R.drawable.eye_on;
 import static mahorad.com.wifeye.util.Constants.PERMISSIONS;
 import static mahorad.com.wifeye.util.Utils.isRunning;
 import static mahorad.com.wifeye.util.Utils.openPermissions;
@@ -205,12 +207,12 @@ public class OverviewActivity extends BaseActivity {
     }
 
     private void setFloatingButtonEnabled() {
-        actionButton.setImageResource(R.drawable.eye);
+        actionButton.setImageResource(eye_on);
         actionButton.setBackgroundTintList(greens);
     }
 
     private void setFloatingButtonDisable() {
-        actionButton.setImageResource(R.drawable.eye_off);
+        actionButton.setImageResource(eye_off);
         actionButton.setBackgroundTintList(accent);
     }
 
