@@ -1,0 +1,79 @@
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_gravity="center_horizontal"
+    android:columnCount="3"
+    android:orientation="horizontal"
+    tools:context=".ui.overview.OverviewFragment">
+
+    <mahorad.com.wifeye.ui.custom.box.tower.CellTowerView
+        android:id="@+id/signalBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+    <mahorad.com.wifeye.ui.custom.box.wifi.action.WifiActionView
+        android:id="@+id/actionBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+    <mahorad.com.wifeye.ui.custom.box.internet.InternetView
+        android:id="@+id/c"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+    <mahorad.com.wifeye.ui.custom.box.engine.EngineView
+        android:id="@+id/d"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/swampGreen"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+    <mahorad.com.wifeye.ui.custom.box.wifi.state.WifiStateView
+        android:id="@+id/a"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+    <mahorad.com.wifeye.ui.custom.box.persist.PersistenceView
+        android:id="@+id/b"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
+
+</GridLayout>
