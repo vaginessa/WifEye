@@ -32,7 +32,7 @@ public class CellTowerView extends AbstractBoxView {
 
     private static final String TAG = CellTowerView.class.getSimpleName();
 
-    private static final String HEADER = "S I G N A L";
+    private static final String HEADER = "T O W E R S";
 
     private RippleView ripple;
     private boolean firstEvent = true;
@@ -65,22 +65,22 @@ public class CellTowerView extends AbstractBoxView {
                 .serviceStateChanges()
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
-                .subscribe(this::update);
+                .subscribe(this::onServiceStateChanged);
     }
 
-    private void update(Boolean e) {
-        updateStateIcon(e);
-        updateDisposable(e);
+    private void onServiceStateChanged(Boolean e) {
+        updateView(e);
+        handleDisposables(e);
     }
 
-    private void updateStateIcon(boolean enabled) {
+    private void updateView(boolean enabled) {
         int image = enabled
                 ? tower_on
                 : tower_off;
         ripple.setImage(image);
     }
 
-    private void updateDisposable(boolean enabled) {
+    private void handleDisposables(boolean enabled) {
         if (enabled)
             disposable = cellTowerSignalDisposable();
         else if (disposable != null)

@@ -54,26 +54,26 @@
         app:headerColor="@color/headerColor"
         app:isSquare="true" />
 
-    <!--<wifeye.app.android.mahorad.com.wifeye.gui.views.WifiView-->
-        <!--android:id="@+id/a"-->
-        <!--android:layout_width="150dp"-->
-        <!--android:layout_height="150dp"-->
-        <!--android:layout_margin="5dp"-->
-        <!--app:backgroundColor="@color/panelColor"-->
-        <!--app:borderThickness="0"-->
-        <!--app:factColor="@color/boxActiveTextColor"-->
-        <!--app:headerColor="@color/headerColor"-->
-        <!--app:isSquare="true" />-->
+    <mahorad.com.wifeye.ui.custom.box.wifi.state.WifiStateView
+        android:id="@+id/a"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
 
-    <!--<wifeye.app.android.mahorad.com.wifeye.gui.views.PersistView-->
-        <!--android:id="@+id/b"-->
-        <!--android:layout_width="150dp"-->
-        <!--android:layout_height="150dp"-->
-        <!--android:layout_margin="5dp"-->
-        <!--app:backgroundColor="@color/panelColor"-->
-        <!--app:borderThickness="0"-->
-        <!--app:factColor="@color/boxActiveTextColor"-->
-        <!--app:headerColor="@color/headerColor"-->
-        <!--app:isSquare="true" />-->
+    <mahorad.com.wifeye.ui.custom.box.persist.PersistenceView
+        android:id="@+id/b"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        app:backgroundColor="@color/panelColor"
+        app:borderThickness="0"
+        app:factColor="@color/boxActiveTextColor"
+        app:headerColor="@color/headerColor"
+        app:isSquare="true" />
 
 </GridLayout>

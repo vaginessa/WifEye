@@ -1,4 +1,4 @@
-package mahorad.com.wifeye.ui.custom.box.engine;
+package mahorad.com.wifeye.ui.custom.box.persist;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,18 +7,19 @@ import android.widget.ImageView;
 import java.util.Date;
 
 import io.reactivex.disposables.Disposable;
-import mahorad.com.wifeye.R;
-import mahorad.com.wifeye.engine.state.StateType;
-import mahorad.com.wifeye.publisher.event.engine.RxEngineStateMonitor;
+import mahorad.com.wifeye.publisher.event.persistence.PersistenceChangedEvent;
+import mahorad.com.wifeye.publisher.event.persistence.RxPersistenceMonitor;
 import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
 import mahorad.com.wifeye.ui.custom.box.AbstractBoxView;
 import timber.log.Timber;
 
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
-import static mahorad.com.wifeye.R.drawable.state_initial;
+import static java.lang.String.format;
+import static mahorad.com.wifeye.R.drawable.disk_off;
+import static mahorad.com.wifeye.R.drawable.disk_on;
 import static mahorad.com.wifeye.data.Persistence.getLatest;
-import static mahorad.com.wifeye.engine.state.StateType.Initial;
-import static mahorad.com.wifeye.publisher.event.persistence.EventType.EngineState;
+import static mahorad.com.wifeye.data.Persistence.towersOf;
+import static mahorad.com.wifeye.publisher.event.persistence.EventType.Persistence;
 import static mahorad.com.wifeye.util.Constants.BLANK;
 import static mahorad.com.wifeye.util.Utils.toAgo;
 
@@ -26,24 +27,24 @@ import static mahorad.com.wifeye.util.Utils.toAgo;
  * Created by mahan on 2017-09-07.
  */
 
-public class EngineView extends AbstractBoxView {
+public class PersistenceView extends AbstractBoxView {
 
-    private static final String TAG = EngineView.class.getSimpleName();
+    private static final String TAG = PersistenceView.class.getSimpleName();
 
-    private static final String HEADER = "E V A L U A T I O N";
+    private static final String HEADER = "P E R S I S T E N C E";
 
     private ImageView stateIcon;
     private Disposable disposable;
 
-    public EngineView(Context context) {
+    public PersistenceView(Context context) {
         super(context);
     }
 
-    public EngineView(Context context, AttributeSet attrs) {
+    public PersistenceView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public EngineView(Context context, AttributeSet attrs, int defStyle) {
+    public PersistenceView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -69,21 +70,22 @@ public class EngineView extends AbstractBoxView {
     }
 
     private void updateView(boolean enabled) {
-        if (enabled) return;
-        stateIcon.setImageResource(state_initial);
-        setFact(Initial.title());
+        if (enabled)
+            stateIcon.setImageResource(disk_on);
+        else
+            stateIcon.setImageResource(disk_off);
     }
 
     private void handleDisposables(Boolean enabled) {
         if (enabled)
-            disposable = engineDisposable();
+            disposable = persistenceDisposable();
         else if (disposable != null)
             disposable.dispose();
     }
 
-    private Disposable engineDisposable() {
-        return RxEngineStateMonitor
-                .engineStateChanges()
+    private Disposable persistenceDisposable() {
+        return RxPersistenceMonitor
+                .persistenceChanges()
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
                 .subscribe(this::refresh);
@@ -104,12 +106,12 @@ public class EngineView extends AbstractBoxView {
 
     private void setupStateIconView() {
         stateIcon = new ImageView(getContext());
-        stateIcon.setImageResource(state_initial);
+        stateIcon.setImageResource(disk_off);
     }
 
     @Override
     protected void setupFact() {
-        setFact(Initial.title());
+        setFact(BLANK);
     }
 
     @Override
@@ -124,39 +126,17 @@ public class EngineView extends AbstractBoxView {
 
     @Override
     protected void refreshFact(Object event) {
-        StateType e = (StateType) event;
-        setFact(e.title());
+        PersistenceChangedEvent e = (PersistenceChangedEvent) event;
+        int towers = towersOf(e.ssid()).size();
+        setFact(format("%d-towers (%s)", towers, e.ssid()));
     }
 
     @Override
-    protected void refreshContent(Object event) {
-        StateType e = (StateType) event;
-        stateIcon.setImageResource(getIcon(e));
-    }
-
-    public int getIcon(StateType type) {
-        switch (type) {
-            case Connected:
-                return R.drawable.state_connected;
-            case Disconnected:
-                return R.drawable.state_disconnected;
-            case NearbyArea:
-                return R.drawable.state_nearby;
-            case CloseRange:
-                return R.drawable.state_router;
-            case RemoteArea:
-                return R.drawable.state_remote;
-            default:
-                return state_initial;
-        }
-    }
+    protected void refreshContent(Object event) {}
 
     @Override
     protected void refreshCaption(Object event) {
-        Date latest = getLatest(EngineState);
-        String date = (latest ==  null)
-                ? BLANK
-                : toAgo(latest, getContext());
-        setCaption(date);
+        PersistenceChangedEvent e = (PersistenceChangedEvent) event;
+        setCaption(e.ctid());
     }
 }

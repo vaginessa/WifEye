@@ -59,22 +59,22 @@ public class InternetView extends AbstractBoxView {
                 .serviceStateChanges()
                 .observeOn(mainThread())
                 .doOnError(Timber::e)
-                .subscribe(this::update);
+                .subscribe(this::onServiceStateChanged);
     }
 
-    private void update(Boolean enabled) {
-        updateStateIcon(enabled);
-        updateDisposable(enabled);
+    private void onServiceStateChanged(Boolean enabled) {
+        updateView(enabled);
+        handleDisposables(enabled);
     }
 
-    private void updateStateIcon(boolean enabled) {
+    private void updateView(boolean enabled) {
         int icon = enabled
                 ? has_ssid
                 : no_ssid;
         stateIcon.setImageResource(icon);
     }
 
-    private void updateDisposable(Boolean enabled) {
+    private void handleDisposables(Boolean enabled) {
         if (enabled)
             disposable = internetDisposable();
         else if (disposable != null)
