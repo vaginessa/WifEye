@@ -9,3 +9,7 @@ In order to fulfill this, the idea was mainly to choose an approach that imposes
 
 Accordingly, WifEye works based on the tower signals that is normally received by the phone.
 
+<p align="center">
+  <img src="https://github.com/mahorad/WifEye/blob/master/resources/Screenshot_20170908_landscape.png" width="300">
+  <img src="https://github.com/mahorad/WifEye/blob/master/resources/Screenshot_20170908_portrait.png" height="300">
+</p>
