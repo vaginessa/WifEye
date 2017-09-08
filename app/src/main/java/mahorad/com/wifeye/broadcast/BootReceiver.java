@@ -1,4 +1,4 @@
-package mahorad.com.wifeye.broadcast.receiver;
+package mahorad.com.wifeye.broadcast;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
