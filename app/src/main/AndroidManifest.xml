@@ -34,7 +34,7 @@
         </activity>
         <service android:name=".service.EngineService"/>
         <receiver
-            android:name=".broadcast.receiver.BootReceiver"
+            android:name=".broadcast.BootReceiver"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
