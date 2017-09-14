@@ -27,14 +27,14 @@ import static mahorad.com.wifeye.publisher.event.persistence.EventType.WifiState
  * Created by mahan on 2017-08-18.
  */
 
-public class Chronograph {
+public class EventRegister {
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
     private Context context;
 
     @Inject
-    public Chronograph(@ApplicationContext Context context) {
+    public EventRegister(@ApplicationContext Context context) {
         this.context = context;
     }
 

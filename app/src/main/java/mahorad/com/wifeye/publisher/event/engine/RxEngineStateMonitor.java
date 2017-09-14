@@ -6,6 +6,8 @@ import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.engine.state.StateType;
 import timber.log.Timber;
 
+import static io.reactivex.BackpressureStrategy.LATEST;
+
 /**
  * Created by mahan on 2017-08-14.
  */
@@ -26,6 +28,6 @@ public class RxEngineStateMonitor {
     public static Flowable<StateType> engineStateChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 }
