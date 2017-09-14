@@ -13,3 +13,8 @@ Accordingly, WifEye works based on the tower signals that is normally received b
   <img src="https://github.com/mahorad/WifEye/blob/master/resources/Screenshot_20170908_landscape.png" width="800">
   <img src="https://github.com/mahorad/WifEye/blob/master/resources/Screenshot_20170908_portrait.png" height="800">
 </p>
+
+The following demonstrates event sources, observables and subscribers.
+<p align="center">
+  <img src="https://github.com/mahorad/WifEye/blob/master/resources/observers.png" width="800">
+</p>
