@@ -12,6 +12,7 @@ import mahorad.com.wifeye.util.Utils;
 
 import static android.net.NetworkInfo.DetailedState.CONNECTED;
 import static dagger.internal.Preconditions.checkNotNull;
+import static io.reactivex.BackpressureStrategy.LATEST;
 
 /**
  * Created by mahan on 2017-08-13.
@@ -31,7 +32,7 @@ public class RxInternetMonitor {
                 .distinctUntilChanged()
                 .map(RxInternetMonitor::toInternetStateEvent)
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 
     private static InternetStateChangedEvent toInternetStateEvent(NetworkStateChangedEvent e) {

@@ -5,6 +5,8 @@ import io.reactivex.Flowable;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
+import static io.reactivex.BackpressureStrategy.LATEST;
+
 /**
  * Created by mahan on 2017-08-18.
  */
@@ -24,6 +26,6 @@ public class RxWifiActionTimerMonitor {
     public static Flowable<Long> timerTickChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 }

@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import mahorad.com.wifeye.base.BaseService;
 import mahorad.com.wifeye.engine.Engine;
-import mahorad.com.wifeye.publisher.event.persistence.Chronograph;
+import mahorad.com.wifeye.publisher.event.persistence.EventRegister;
 import mahorad.com.wifeye.publisher.event.service.RxEngineServiceMonitor;
 import mahorad.com.wifeye.util.Constants;
 import timber.log.Timber;
@@ -35,7 +35,7 @@ public class EngineService extends BaseService {
     Engine engine;
 
     @Inject
-    Chronograph chronograph;
+    EventRegister eventRegister;
 
     @Override
     public void onCreate() {
@@ -58,7 +58,7 @@ public class EngineService extends BaseService {
     private void start() {
         if (started) return;
         started = true;
-        chronograph.start();
+        eventRegister.start();
         engine.start();
         Timber.tag(TAG).v("started main service");
         RxEngineServiceMonitor.notify(true);
@@ -72,7 +72,7 @@ public class EngineService extends BaseService {
     private void stop() {
         if (!started) return;
         started = false;
-        chronograph.stop();
+        eventRegister.stop();
         engine.stop();
         Timber.tag(TAG).v("stopped main service");
         RxEngineServiceMonitor.notify(false);

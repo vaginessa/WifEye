@@ -4,6 +4,8 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import static io.reactivex.BackpressureStrategy.LATEST;
+
 /**
  * Created by mahan on 2017-09-05.
  */
@@ -17,7 +19,7 @@ public class RxEngineServiceMonitor {
     public static Flowable<Boolean> serviceStateChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 
     public static void notify(boolean enabled) {

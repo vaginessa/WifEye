@@ -8,6 +8,7 @@ import io.reactivex.Flowable;
 import mahorad.com.wifeye.publisher.broadcast.wifi.RxWifiManager;
 
 import static dagger.internal.Preconditions.checkNotNull;
+import static io.reactivex.BackpressureStrategy.LATEST;
 import static mahorad.com.wifeye.util.Constants.WIFI_STATE_DISABLED;
 import static mahorad.com.wifeye.util.Constants.WIFI_STATE_ENABLED;
 import static mahorad.com.wifeye.util.Constants.WIFI_STATE_UNKNOWN;
@@ -26,7 +27,7 @@ public class RxWifiStateMonitor {
                     .distinctUntilChanged()
                     .map(wifiState -> wifiState == WIFI_STATE_ENABLED)
                     .distinctUntilChanged()
-                    .toFlowable(BackpressureStrategy.LATEST);
+                    .toFlowable(LATEST);
     }
 
     private static boolean isImportant(Integer state) {

@@ -6,6 +6,8 @@ import io.reactivex.subjects.BehaviorSubject;
 import mahorad.com.wifeye.engine.wifi.WifiAction;
 import timber.log.Timber;
 
+import static io.reactivex.BackpressureStrategy.LATEST;
+
 /**
  * Created by mahan on 2017-08-14.
  */
@@ -25,6 +27,6 @@ public class RxWifiActionMonitor {
     public static Flowable<WifiAction> wifiActionChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 }

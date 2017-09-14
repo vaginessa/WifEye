@@ -5,6 +5,7 @@ import io.reactivex.Flowable;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
+import static io.reactivex.BackpressureStrategy.LATEST;
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
 
 /**
@@ -27,7 +28,7 @@ public abstract class RxPersistenceMonitor {
     public static Flowable<PersistenceChangedEvent> persistenceChanges() {
         return source
                 .distinctUntilChanged()
-                .toFlowable(BackpressureStrategy.LATEST);
+                .toFlowable(LATEST);
     }
 
 
