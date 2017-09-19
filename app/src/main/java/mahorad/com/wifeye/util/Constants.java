@@ -4,7 +4,6 @@ import permission.auron.com.marshmallowpermissionhelper.PermissionUtils;
 
 public class Constants {
 
-
     public static final String NOT_ANY = "n/a";
     public static final String BLANK = "-";
 
@@ -34,6 +33,5 @@ public class Constants {
             = "No permitted to save cell tower information on phone";
 
     public static final String PARCELABLE_RESULT_RECEIVER = "ResultReceiver";
-
 
 }
