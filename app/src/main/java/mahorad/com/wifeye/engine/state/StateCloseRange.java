@@ -24,6 +24,7 @@ public class StateCloseRange extends State {
     @Override
     public void onInternetDisconnects() {
         engine.toDisconnectedState();
+        engine.disableWifi(); // startMainService a disabling timeout
     }
 
     @Override
