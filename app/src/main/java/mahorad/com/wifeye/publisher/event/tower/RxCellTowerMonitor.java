@@ -5,14 +5,12 @@ import android.content.Context;
 
 import java.util.Objects;
 
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
 import mahorad.com.wifeye.publisher.broadcast.telephony.RxTelephonyManager;
 
 import static dagger.internal.Preconditions.checkNotNull;
 import static io.reactivex.BackpressureStrategy.LATEST;
-import static io.reactivex.Flowable.combineLatest;
 import static mahorad.com.wifeye.data.Persistence.exist;
 import static mahorad.com.wifeye.util.Constants.UNKNOWN_CTID;
 import static mahorad.com.wifeye.util.Utils.isNullOrEmpty;
